@@ -16,7 +16,7 @@ import Link from "next/link";
 import { CarShowcase } from "@/components/car-showcase";
 import { FaqList } from "@/components/faq-list";
 import { getStore } from "@/lib/data";
-import { LOCATIONS, ROUTE_CATEGORIES } from "@/lib/site-content";
+import { ROUTE_CATEGORIES } from "@/lib/site-content";
 
 const routeIcons = {
   city: CarFront,
@@ -30,14 +30,14 @@ const serviceIcons = [CarFront, CalendarDays, ShieldCheck, MapPin, Sparkles, Cam
 const steps = [
   ["Выбор авто", "Сравните реальные фотографии и характеристики."],
   ["Подходящая дата", "Укажите начало и окончание поездки."],
-  ["Подача заявки", "Передайте контакты и способ получения."],
-  ["Общение с менеджером", "Уточните доступность и финальные условия."],
+  ["Детали аренды", "Передайте контакты и способ получения."],
+  ["Согласование", "Менеджер подтвердит доступность и финальные условия."],
   ["Получение авто", "Зафиксируйте договорённости и заберите автомобиль."]
 ] as const;
 
 export default async function HomePage() {
   const store = await getStore();
-  const [cars, services, faqs] = await Promise.all([store.getCars(), store.getServices(), store.getFaqs()]);
+  const [cars, services, faqs, locations] = await Promise.all([store.getCars(), store.getServices(), store.getFaqs(), store.getLocations()]);
   const hero = cars.find((car) => car.slug === "porsche-911-carrera-4s") ?? cars[0];
   const homeFaqs = [
     ...faqs.slice(0, 5),
@@ -70,7 +70,7 @@ export default async function HomePage() {
       <section className="section section-product" id="cars">
         <div className="container">
           <div className="section-head fleet-heading">
-            <h2 className="title">Автомобили<br /><span>для разных сценариев</span></h2>
+            <h2 className="title">Автомобили<br /><span>для разных маршрутов</span></h2>
             <div className="route-chip-row" aria-label="Категории автомобилей">
               {ROUTE_CATEGORIES.slice(0, 3).map(({ label, href, icon }) => {
                 const Icon = routeIcons[icon];
@@ -97,7 +97,7 @@ export default async function HomePage() {
         <div className="container">
           <div className="section-head"><h2 className="title">Локации</h2><p className="section-lead">Выберите настроение поездки и перейдите к подходящей подборке.</p></div>
           <div className="locations-grid">
-            {LOCATIONS.map((location, index) => <Link className="location-card" href={location.href} key={location.title}><Image alt={location.title} fill sizes="(max-width:760px) 88vw, 42vw" src={location.image} /><span className="location-shade" /><span className="location-index">0{index + 1}</span><span className="location-copy"><small>{location.subtitle}</small><strong>{location.title}</strong></span><ArrowRight size={20} /></Link>)}
+            {locations.map((location, index) => <Link className="location-card" href={`/locations/${location.slug}`} key={location.id}><Image alt={location.title} fill sizes="(max-width:760px) 88vw, 42vw" src={location.image} /><span className="location-shade" /><span className="location-index">{String(index + 1).padStart(2, "0")}</span><span className="location-copy"><small>{location.subtitle}</small><strong>{location.title}</strong></span><ArrowRight size={20} /></Link>)}
           </div>
         </div>
       </section>
@@ -125,7 +125,7 @@ export default async function HomePage() {
       <section className="section price-section">
         <div className="container price-layout">
           <div><h2 className="title">Из чего складывается<br />предварительный расчёт</h2><div className="button-row"><Link className="button ghost" href="/rental-terms">Подробнее об условиях</Link></div></div>
-          <div className="price-example surface"><p className="price-example-label">Пример структуры расчёта</p><div className="price-line"><span>Ставка автомобиля</span><strong>за сутки</strong></div><div className="price-line"><span>Срок аренды</span><strong>выбранные даты</strong></div><div className="price-line"><span>Дополнительные услуги</span><strong>если выбраны</strong></div><div className="price-line price-line-total"><span>Залог</span><strong>отдельно</strong></div><p>Конкретные суммы указаны в карточке автомобиля и сводке заявки.</p></div>
+          <div className="price-example surface"><span className="price-orbit" aria-hidden /><p className="price-example-label">Пример структуры расчёта</p><div className="price-line"><span>Ставка автомобиля</span><strong>за сутки</strong></div><div className="price-line"><span>Срок аренды</span><strong>выбранные даты</strong></div><div className="price-line"><span>Дополнительные услуги</span><strong>если выбраны</strong></div><div className="price-line price-line-total"><span>Залог</span><strong>отдельно</strong></div><p>Конкретные суммы указаны в карточке автомобиля и сводке оформления.</p></div>
         </div>
       </section>
 

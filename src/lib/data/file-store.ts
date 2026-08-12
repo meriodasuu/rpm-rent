@@ -7,7 +7,7 @@ import { prepareBooking } from "@/lib/domain/booking";
 import { assertRentalPeriod, normalizeStoredDate } from "@/lib/domain/dates";
 import { DomainError } from "@/lib/domain/errors";
 import type { BookingInput } from "@/lib/validation";
-import type { Booking, BookingStatus, Car, DevDatabase, Faq, Service } from "@/types/domain";
+import type { Booking, BookingStatus, Car, DevDatabase, Faq, Location, Service } from "@/types/domain";
 import type { DataStore } from "./store";
 
 const configuredDbPath = process.env.FILE_DATABASE_PATH?.trim();
@@ -37,7 +37,8 @@ const normalizeBooking = (booking: Booking): Booking => ({
 const normalizeDatabase = (database: DevDatabase): DevDatabase => ({
   ...database,
   cars: database.cars.map(normalizeCar),
-  bookings: database.bookings.map(normalizeBooking)
+  bookings: database.bookings.map(normalizeBooking),
+  locations: database.locations ?? []
 });
 
 export class FileStore implements DataStore {
@@ -146,6 +147,33 @@ export class FileStore implements DataStore {
 
   async deleteFaq(id: string) {
     await this.mutate((database) => { database.faqs = database.faqs.filter((item) => item.id !== id); });
+  }
+
+  async getLocations(options?: { includeHidden?: boolean }) {
+    return (await this.readDatabase()).locations
+      .filter((item) => options?.includeHidden || item.published)
+      .sort((a, b) => a.sortOrder - b.sortOrder);
+  }
+
+  async getLocationBySlug(slug: string, options?: { includeHidden?: boolean }) {
+    return (await this.readDatabase()).locations
+      .find((item) => item.slug === slug && (options?.includeHidden || item.published)) ?? null;
+  }
+
+  async saveLocation(location: Location) {
+    return this.mutate((database) => {
+      if (database.locations.some((item) => item.slug === location.slug && item.id !== location.id)) {
+        throw new DomainError("DUPLICATE_SLUG", "Локация с таким slug уже существует", 409);
+      }
+      const index = database.locations.findIndex((item) => item.id === location.id);
+      if (index < 0) database.locations.push(location);
+      else database.locations[index] = location;
+      return location;
+    });
+  }
+
+  async deleteLocation(id: string) {
+    await this.mutate((database) => { database.locations = database.locations.filter((item) => item.id !== id); });
   }
 
   async isCarAvailable(carId: string, startDate: string, endDate: string) {

@@ -1,6 +1,6 @@
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../src/generated/prisma/client";
-import { seedCars, seedFaqs, seedServices } from "../src/data/seed";
+import { seedCars, seedFaqs, seedLocations, seedServices } from "../src/data/seed";
 
 if (!process.env.DATABASE_URL) throw new Error("DATABASE_URL is required");
 const prisma = new PrismaClient({ adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL }) });
@@ -13,5 +13,6 @@ for (const car of seedCars) {
 }
 for (const service of seedServices) await prisma.service.upsert({ where: { id: service.id }, create: service, update: service });
 for (const faq of seedFaqs) await prisma.faq.upsert({ where: { id: faq.id }, create: faq, update: faq });
+for (const location of seedLocations) await prisma.location.upsert({ where: { id: location.id }, create: location, update: location });
 await prisma.$disconnect();
 console.log("PostgreSQL seed completed");

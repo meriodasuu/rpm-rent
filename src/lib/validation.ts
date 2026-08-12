@@ -138,3 +138,16 @@ export const faqAdminSchema = z.object({
   published: z.boolean(),
   sortOrder: z.coerce.number().int().min(0).max(100_000)
 }).strict();
+
+export const locationAdminSchema = z.object({
+  id: z.string().trim().min(1).max(100),
+  slug: z.string().trim().min(1).max(100).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Используйте латиницу, цифры и одиночные дефисы"),
+  title: safeText(2, 160, "Укажите название локации"),
+  subtitle: safeText(2, 160, "Добавьте короткое описание"),
+  description: safeText(20, 10_000, "Добавьте описание локации"),
+  image: z.string().trim().min(1).max(500).refine((value) => value.startsWith("/") || /^https:\/\//i.test(value), "Укажите локальный путь или HTTPS URL изображения"),
+  published: z.boolean(),
+  sortOrder: z.coerce.number().int().min(0).max(100_000),
+  seoTitle: optionalText(200),
+  seoDescription: optionalText(500)
+}).strict();

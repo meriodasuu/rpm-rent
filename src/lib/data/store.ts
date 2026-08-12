@@ -1,4 +1,4 @@
-import type { Booking, BookingStatus, Car, Faq, Service } from "@/types/domain";
+import type { Booking, BookingStatus, Car, Faq, Location, Service } from "@/types/domain";
 import type { BookingInput } from "@/lib/validation";
 
 export interface DataStore {
@@ -13,6 +13,10 @@ export interface DataStore {
   getFaqs(options?: { includeHidden?: boolean }): Promise<Faq[]>;
   saveFaq(faq: Faq): Promise<Faq>;
   deleteFaq(id: string): Promise<void>;
+  getLocations(options?: { includeHidden?: boolean }): Promise<Location[]>;
+  getLocationBySlug(slug: string, options?: { includeHidden?: boolean }): Promise<Location | null>;
+  saveLocation(location: Location): Promise<Location>;
+  deleteLocation(id: string): Promise<void>;
   createBooking(input: BookingInput): Promise<Booking>;
   isCarAvailable(carId: string, startDate: string, endDate: string): Promise<boolean>;
   getBookings(): Promise<Booking[]>;

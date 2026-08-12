@@ -39,7 +39,7 @@ export function CarShowcase({ cars }: { cars: Car[] }) {
           const image = car.images[0];
           const specs = [car.bodyType, car.horsepower ? `${car.horsepower} л.с.` : null, car.driveType].filter(Boolean);
           return (
-            <article className="showcase-card" key={car.id}>
+            <article className={`showcase-card ${index === 0 ? "showcase-card-featured" : ""}`} key={car.id}>
               <Link href={`/cars/${car.slug}`} aria-label={`Открыть ${car.title}`}>
                 {image ? <Image alt={image.alt} fill loading={index < 2 ? "eager" : "lazy"} sizes="(max-width: 760px) 86vw, 48vw" src={image.url} /> : <span className="showcase-image-missing">Фото готовится</span>}
                 <span className="showcase-gradient" />

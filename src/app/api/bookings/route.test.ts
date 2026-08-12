@@ -12,7 +12,7 @@ describe("POST /api/bookings boundary", () => {
   it("rejects malformed JSON without leaking an internal error", async () => {
     const response = await POST(request("{", "192.0.2.1"));
     expect(response.status).toBe(400);
-    expect(await response.json()).toEqual({ message: "Некорректный формат запроса" });
+    expect(await response.json()).toEqual({ message: "Некорректный формат данных" });
   });
 
   it("rejects an oversized request from the header before parsing", async () => {

@@ -58,6 +58,19 @@ export type Faq = {
   sortOrder: number;
 };
 
+export type Location = {
+  id: string;
+  slug: string;
+  title: string;
+  subtitle: string;
+  description: string;
+  image: string;
+  published: boolean;
+  sortOrder: number;
+  seoTitle: string | null;
+  seoDescription: string | null;
+};
+
 export type BookingStatus = "NEW" | "IN_PROGRESS" | "CONFIRMED" | "DECLINED" | "CANCELLED" | "COMPLETED";
 
 export type BookingServiceSnapshot = { id: string; title: string; price: number };
@@ -101,5 +114,6 @@ export type DevDatabase = {
   cars: Car[];
   services: Service[];
   faqs: Faq[];
+  locations: Location[];
   bookings: Booking[];
 };

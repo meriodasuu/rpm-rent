@@ -86,7 +86,7 @@ export default async function CarPage({ params, searchParams }: { params: Promis
               <div className="summary-line"><span>Подтверждение</span><strong>менеджером</strong></div>
             </div>
             {policyProblem ? <p className="period-note"><FileCheck2 size={16} /> {policyProblem}. Точные требования должен опубликовать владелец.</p> : busyForPeriod ? <p className="period-note"><CalendarDays size={16} /> На выбранный период уже есть активное обращение. Измените даты в каталоге.</p> : period.start && period.end ? <p className="period-note"><CalendarDays size={16} /> Автомобиль свободен на выбранный период; сервер проверит его ещё раз при отправке.</p> : <p className="period-note"><CalendarDays size={16} /> Укажите период при оформлении. Система повторно проверит доступность.</p>}
-            <Link className="button red" href={bookable ? bookingHref : busyForPeriod ? "/cars" : "/contacts"} data-event={bookable ? "booking_open" : busyForPeriod ? "date_check" : "contact_click"} data-event-label={car.slug}>{bookable ? "Проверить данные и оформить" : busyForPeriod ? "Изменить даты" : "Уточнить условия"} <ArrowRight size={17} /></Link>
+            <Link className="button red" href={busyForPeriod ? "/cars" : bookingHref} data-event={busyForPeriod ? "date_check" : "booking_open"} data-event-label={car.slug}>{busyForPeriod ? "Изменить даты" : "Забронировать"} <ArrowRight size={17} /></Link>
             <Link className="booking-secondary" href="/rental-terms">Посмотреть общие условия</Link>
           </aside>
         </div>
@@ -112,11 +112,11 @@ export default async function CarPage({ params, searchParams }: { params: Promis
           <div className="price-detail-card surface"><CircleDollarSign size={22} /><div className="price-line"><span>Ставка</span><strong>{formatPrice(car.pricePerDay)} / сутки</strong></div><div className="price-line"><span>Срок</span><strong>по выбранным датам</strong></div><div className="price-line"><span>Залог</span><strong>{formatPrice(car.deposit)} отдельно</strong></div></div>
         </section>
 
-        <section className="detail-section"><div className="grid-2"><div><p className="eyebrow">До оформления</p><h2>Ответы на частые вопросы</h2><p className="detail-copy">Проверьте, как рассчитывается сумма, когда подтверждается автомобиль и какие параметры зависят от конкретной модели.</p><div className="button-row"><Link className="button ghost" href="/faq">Все вопросы</Link><Link className="button" href={bookable ? bookingHref : "/contacts"}>{bookable ? "Перейти к заявке" : "Уточнить условия"}</Link></div></div><FaqList items={faqs.slice(0, 6)} /></div></section>
+        <section className="detail-section"><div className="grid-2"><div><p className="eyebrow">До оформления</p><h2>Ответы на частые вопросы</h2><p className="detail-copy">Проверьте, как рассчитывается сумма, когда подтверждается автомобиль и какие параметры зависят от конкретной модели.</p><div className="button-row"><Link className="button ghost" href="/faq">Все вопросы</Link><Link className="button" href={bookingHref}>Забронировать</Link></div></div><FaqList items={faqs.slice(0, 6)} /></div></section>
 
         <section className="detail-section" style={{ borderBottom: 0 }}><div className="section-head section-head-copy"><div><p className="eyebrow">Продолжите выбор</p><h2 className="title">Похожие автомобили</h2></div><p className="section-lead">Альтернативы подобраны по категории, классу и близости суточной ставки. Сравните несколько вариантов перед выбором дат.</p></div><div className="car-grid">{recommendations.map((item) => <CarCard key={item.id} car={item} period={period} />)}</div><div className="section-action"><Link className="button ghost" href="/cars">Вернуться в каталог <ArrowRight size={17} /></Link></div></section>
       </div>
-      <div className="mobile-cta"><Link className="button red" href={bookable ? bookingHref : busyForPeriod ? "/cars" : "/contacts"} data-event={bookable ? "booking_open" : busyForPeriod ? "date_check" : "contact_click"} data-event-label={`${car.slug}_sticky`}>{bookable ? `Заявка · ${formatPrice(car.pricePerDay)}` : busyForPeriod ? "Изменить даты" : "Уточнить условия"}</Link></div>
+      <div className="mobile-cta"><Link className="button red" href={busyForPeriod ? "/cars" : bookingHref} data-event={busyForPeriod ? "date_check" : "booking_open"} data-event-label={`${car.slug}_sticky`}>{busyForPeriod ? "Изменить даты" : `Забронировать · ${formatPrice(car.pricePerDay)}`}</Link></div>
     </div>
   );
 }

@@ -4,9 +4,9 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { clearSession, requireAdmin } from "@/lib/auth";
 import { getStore } from "@/lib/data";
-import { carAdminSchema, faqAdminSchema, serviceAdminSchema } from "@/lib/validation";
+import { carAdminSchema, faqAdminSchema, locationAdminSchema, serviceAdminSchema } from "@/lib/validation";
 import { getSafeAdminReturnTo } from "@/lib/admin-operations";
-import type { BookingStatus, Car, Faq, Service } from "@/types/domain";
+import type { BookingStatus, Car, Faq, Location, Service } from "@/types/domain";
 
 const checked = (formData: FormData, key: string) => formData.get(key) === "on";
 const lines = (formData: FormData, key: string) => String(formData.get(key) ?? "").split(/\r?\n/).map((value) => value.trim()).filter(Boolean);
@@ -83,3 +83,31 @@ export async function saveFaqAction(formData: FormData) {
 }
 
 export async function deleteFaqAction(formData: FormData) { await requireAdmin(); await (await getStore()).deleteFaq(String(formData.get("id"))); revalidatePath("/", "layout"); redirect("/admin/content"); }
+
+export async function saveLocationAction(formData: FormData) {
+  await requireAdmin();
+  const parsed = locationAdminSchema.safeParse({
+    id: formData.get("id") || crypto.randomUUID(),
+    slug: formData.get("slug"),
+    title: formData.get("title"),
+    subtitle: formData.get("subtitle"),
+    description: formData.get("description"),
+    image: formData.get("image"),
+    published: checked(formData, "published"),
+    sortOrder: formData.get("sortOrder") || 99,
+    seoTitle: formData.get("seoTitle"),
+    seoDescription: formData.get("seoDescription")
+  });
+  if (!parsed.success) throw new Error(parsed.error.issues[0]?.message ?? "Проверьте данные локации");
+  const location: Location = parsed.data;
+  await (await getStore()).saveLocation(location);
+  revalidatePath("/", "layout");
+  redirect("/admin/locations?saved=1");
+}
+
+export async function deleteLocationAction(formData: FormData) {
+  await requireAdmin();
+  await (await getStore()).deleteLocation(String(formData.get("id")));
+  revalidatePath("/", "layout");
+  redirect("/admin/locations");
+}

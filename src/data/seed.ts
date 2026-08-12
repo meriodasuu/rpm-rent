@@ -1,4 +1,4 @@
-import type { Car, DevDatabase, Faq, Service } from "@/types/domain";
+import type { Car, DevDatabase, Faq, Location, Service } from "@/types/domain";
 
 const car = (
   value: Pick<Car, "id" | "slug" | "brand" | "model" | "title" | "category" | "bodyType" | "vehicleClass" | "pricePerDay" | "deposit" | "images"> &
@@ -184,9 +184,61 @@ export const seedFaqs: Faq[] = [
   { id: "faq-docs", question: "Какие документы понадобятся?", answer: "Перечень документов должен быть подтверждён менеджером до заключения договора и может зависеть от условий выбранного автомобиля.", category: "rental", published: true, sortOrder: 8 }
 ];
 
+export const seedLocations: Location[] = [
+  {
+    id: "location-city-centre",
+    slug: "city-centre",
+    title: "Центр Петербурга",
+    subtitle: "Личный маршрут",
+    description: "Маршрут для деловых встреч, прогулок и особых поводов в центре Санкт-Петербурга. Выберите автомобиль, который поддержит ваш темп и планы на день.",
+    image: "/images/atmosphere/saint-petersburg-blue-hour.png",
+    published: true,
+    sortOrder: 1,
+    seoTitle: null,
+    seoDescription: null
+  },
+  {
+    id: "location-petrogradka",
+    slug: "petrogradka",
+    title: "Петроградская сторона",
+    subtitle: "Город и пространство",
+    description: "Спокойный городской маршрут между островами, проспектами и ресторанами Петроградской стороны. Подберите автомобиль для дня без лишней спешки.",
+    image: "/images/cars/li-auto-l6/01.jpg",
+    published: true,
+    sortOrder: 2,
+    seoTitle: null,
+    seoDescription: null
+  },
+  {
+    id: "location-palace-embankment",
+    slug: "palace-embankment",
+    title: "Дворцовая набережная",
+    subtitle: "Особый повод",
+    description: "Автомобили для событий, вечерних маршрутов и съёмок на одной из самых узнаваемых набережных Санкт-Петербурга.",
+    image: "/images/cars/bentley-continental/02.jpg",
+    published: true,
+    sortOrder: 3,
+    seoTitle: null,
+    seoDescription: null
+  },
+  {
+    id: "location-resort-route",
+    slug: "resort-route",
+    title: "Курортный маршрут",
+    subtitle: "Долгая поездка",
+    description: "Выезд к Финскому заливу и спокойный загородный ритм. Подберите комфортный автомобиль для длинного маршрута.",
+    image: "/images/cars/lamborghini-urus/05.jpg",
+    published: true,
+    sortOrder: 4,
+    seoTitle: null,
+    seoDescription: null
+  }
+];
+
 export const createSeedDatabase = (): DevDatabase => ({
   cars: structuredClone(seedCars),
   services: structuredClone(seedServices),
   faqs: structuredClone(seedFaqs),
+  locations: structuredClone(seedLocations),
   bookings: []
 });

@@ -6,7 +6,7 @@ import { prepareBooking } from "@/lib/domain/booking";
 import { assertRentalPeriod, normalizeStoredDate, parseDateOnly } from "@/lib/domain/dates";
 import { DomainError } from "@/lib/domain/errors";
 import type { BookingInput } from "@/lib/validation";
-import type { Booking, BookingServiceSnapshot, BookingStatus, Car, Faq, Service } from "@/types/domain";
+import type { Booking, BookingServiceSnapshot, BookingStatus, Car, Faq, Location, Service } from "@/types/domain";
 import type { DataStore } from "./store";
 
 declare global {
@@ -90,6 +90,22 @@ const mapCar = (record: NonNullable<PrismaCarRecord>): Car => ({
   isDemo: record.isDemo,
   recommendedOrder: record.recommendedOrder,
   images: (record.images ?? []).sort((a, b) => a.sortOrder - b.sortOrder).map(({ url, alt }) => ({ url, alt })),
+  seoTitle: record.seoTitle,
+  seoDescription: record.seoDescription
+});
+
+const mapLocation = (record: {
+  id: string; slug: string; title: string; subtitle: string; description: string; image: string;
+  published: boolean; sortOrder: number; seoTitle: string | null; seoDescription: string | null;
+}): Location => ({
+  id: record.id,
+  slug: record.slug,
+  title: record.title,
+  subtitle: record.subtitle,
+  description: record.description,
+  image: record.image,
+  published: record.published,
+  sortOrder: record.sortOrder,
   seoTitle: record.seoTitle,
   seoDescription: record.seoDescription
 });
@@ -198,6 +214,30 @@ export class PrismaStore implements DataStore {
 
   async saveFaq(faq: Faq) { return getPrisma().faq.upsert({ where: { id: faq.id }, create: faq, update: faq }); }
   async deleteFaq(id: string) { await getPrisma().faq.delete({ where: { id } }); }
+
+  async getLocations(options?: { includeHidden?: boolean }) {
+    const rows = await getPrisma().location.findMany({
+      where: options?.includeHidden ? undefined : { published: true },
+      orderBy: { sortOrder: "asc" }
+    });
+    return rows.map(mapLocation);
+  }
+
+  async getLocationBySlug(slug: string, options?: { includeHidden?: boolean }) {
+    const row = await getPrisma().location.findFirst({
+      where: { slug, ...(options?.includeHidden ? {} : { published: true }) }
+    });
+    return row ? mapLocation(row) : null;
+  }
+
+  async saveLocation(location: Location) {
+    const duplicate = await getPrisma().location.findFirst({ where: { slug: location.slug, NOT: { id: location.id } }, select: { id: true } });
+    if (duplicate) throw new DomainError("DUPLICATE_SLUG", "Локация с таким slug уже существует", 409);
+    const { id, ...data } = location;
+    return mapLocation(await getPrisma().location.upsert({ where: { id }, create: { id, ...data }, update: data }));
+  }
+
+  async deleteLocation(id: string) { await getPrisma().location.delete({ where: { id } }); }
 
   async createBooking(input: BookingInput): Promise<Booking> {
     try {
