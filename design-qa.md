@@ -54,4 +54,16 @@
 - [x] Verify desktop, mobile, light, dark, and booking route.
 - [x] Re-run focused comparison after fixing the terms heading overflow.
 
+## Footer correction — 2026-08-13
+
+- Source visual truth: `C:\Users\wthtw\OneDrive\Pictures\Screenshots\Снимок экрана 2026-08-13 000947.png`.
+- Compared in one review pass with the rendered desktop and mobile states.
+- Restored the original text-based `RPM / RENT` mark in the header and footer; the later raster crop is no longer rendered.
+- Removed the footer car image completely. The statement “Ваш маршрут начинается здесь.” is the only content in the large black statement area and is centered horizontally and vertically.
+- Preserved the lower footer navigation, company copy, phone, MAX (`+7 993 983-80-80`), Telegram, and address.
+- Desktop QA: 1440 × 1000, statement area 1280 × 560, no footer image, no horizontal overflow.
+- Mobile QA: 390 × 844, statement area 347 × 320, center offset 7 px from the viewport because of the scrollbar gutter, no horizontal overflow.
+- Browser console: no errors or warnings in the final checked state.
+- Findings: no actionable P0/P1/P2 issues remain.
+
 final result: passed

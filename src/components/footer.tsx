@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import { CONTACTS } from "@/lib/site-content";
 import { Logo } from "./logo";
@@ -8,7 +7,6 @@ export function Footer() {
     <footer className="site-footer">
       <div className="container">
         <div className="footer-statement">
-          <Image alt="" aria-hidden height={1088} sizes="(max-width:760px) 92vw, 70vw" src="/images/cars/rpm-footer-cutout.png" width={1445} />
           <strong>Ваш маршрут<br />начинается здесь.</strong>
         </div>
         <div className="footer-grid">

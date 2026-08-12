@@ -1317,10 +1317,6 @@ body.gallery-open { overflow: hidden; }
 .home-hero .hero-copy .subtitle { max-width: 470px; }
 .home-hero .hero-car { inset: 0 0 0 35%; background: url("/images/atmosphere/saint-petersburg-blue-hour.png") center / cover; }
 .home-hero .hero-car img { opacity: 0; }
-.logo { width: 108px; height: 36px; display: inline-flex; align-items: center; transform: none; }
-.logo-image { width: 100%; height: auto; object-fit: contain; }
-:root[data-theme="dark"] .logo-image { filter: invert(1) grayscale(1) brightness(2); }
-
 .fleet-heading .title span { color: var(--muted); }
 .route-chip-row { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 9px; }
 .route-chip { min-height: 42px; display: inline-flex; align-items: center; gap: 9px; padding: 0 15px; border: 1px solid var(--line); border-radius: 999px; color: var(--ink); background: var(--surface); font-size: 12px; font-weight: 750; }
@@ -1506,9 +1502,8 @@ body.gallery-open { overflow: hidden; }
 .booking-intro-simple { grid-template-columns: 1fr; min-height: 260px; align-content: end; margin-top: 24px; padding: clamp(34px, 5vw, 64px); border: 0; border-radius: 6px; color: #fff; background: #09090a; }
 .booking-page .booking-progress { margin-top: 18px; }
 
-.site-footer .footer-statement { position: relative; min-height: clamp(430px, 48vw, 650px); display: grid; grid-template-columns: 1fr; place-items: center; margin-bottom: 80px; padding: 40px 0; overflow: hidden; text-align: center; }
-.footer-statement > img { position: absolute; z-index: 0; width: min(900px, 76vw); height: auto; object-fit: contain; opacity: .78; filter: saturate(.92) brightness(.75); }
-.footer-statement > strong { position: relative; z-index: 1; color: rgba(255,255,255,.62); font-size: clamp(58px, 8vw, 116px); text-shadow: 0 5px 34px rgba(0,0,0,.76); }
+.site-footer .footer-statement { min-height: clamp(380px, 42vw, 560px); display: grid; grid-template-columns: 1fr; place-items: center; margin-bottom: 80px; padding: 40px 0; text-align: center; }
+.footer-statement > strong { color: rgba(255,255,255,.9); font-size: clamp(58px, 8vw, 116px); }
 .footer-brand > p { max-width: 330px; margin: 24px 0 0; }
 
 :root[data-theme="dark"] .service-detail-card:not(:nth-child(3n + 1)),
@@ -1544,16 +1539,11 @@ body.gallery-open { overflow: hidden; }
   .social-links { grid-template-columns: repeat(3, 1fr); }
   .terms-flow-vertical .terms-flow-list li { padding: 19px; }
   .booking-intro-simple { min-height: 280px; padding: 28px 24px; }
-  .site-footer .footer-statement { min-height: 420px; margin-bottom: 55px; }
-  .footer-statement > img { width: 112vw; max-width: none; }
+  .site-footer .footer-statement { min-height: 320px; margin-bottom: 55px; }
   .footer-statement > strong { font-size: clamp(48px, 14vw, 66px); }
 }
 
 /* Screenshot corrections 2026-08-12 */
-.logo { position: relative; overflow: hidden; }
-.logo-image { width: 108px; height: 36px; max-width: none; object-fit: cover; object-position: 50% 70%; transform: scale(1.55); }
-:root[data-theme="dark"] .logo-image { filter: none; }
-
 .home-hero .hero-card { position: relative; min-height: 410px; overflow: hidden; isolation: isolate; }
 .home-hero .hero-card > img { z-index: -3; object-fit: cover; object-position: center 58%; }
 .home-hero .hero-grid { display: none; }
