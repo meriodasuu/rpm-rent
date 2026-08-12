@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { clearSession, requireAdmin } from "@/lib/auth";
 import { getStore } from "@/lib/data";
 import { carAdminSchema, faqAdminSchema, serviceAdminSchema } from "@/lib/validation";
+import { getSafeAdminReturnTo } from "@/lib/admin-operations";
 import type { BookingStatus, Car, Faq, Service } from "@/types/domain";
 
 const checked = (formData: FormData, key: string) => formData.get(key) === "on";
@@ -59,7 +60,8 @@ export async function updateBookingStatusAction(formData: FormData) {
   const status = String(formData.get("status")) as BookingStatus;
   if (!["NEW", "IN_PROGRESS", "CONFIRMED", "DECLINED", "CANCELLED", "COMPLETED"].includes(status)) throw new Error("Некорректный статус");
   await (await getStore()).updateBookingStatus(String(formData.get("id")), status);
-  revalidatePath("/admin/bookings");
+  revalidatePath("/admin", "layout");
+  redirect(getSafeAdminReturnTo(formData.get("returnTo")));
 }
 
 export async function saveServiceAction(formData: FormData) {

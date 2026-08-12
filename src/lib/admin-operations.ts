@@ -2,6 +2,18 @@ import type { Booking, BookingStatus, Car } from "@/types/domain";
 
 export type AdminBookingFilter = "all" | "attention" | "today" | BookingStatus;
 
+const adminBookingFilters = new Set<AdminBookingFilter>([
+  "all",
+  "attention",
+  "today",
+  "NEW",
+  "IN_PROGRESS",
+  "CONFIRMED",
+  "DECLINED",
+  "CANCELLED",
+  "COMPLETED",
+]);
+
 export type AdminSummary = {
   attention: number;
   pickupsToday: number;
@@ -35,6 +47,16 @@ const weekdayFormatter = new Intl.DateTimeFormat("ru-RU", {
 
 const toBusinessDateKey = (value: Date): string => businessDateFormatter.format(value);
 const normalize = (value: string): string => value.toLocaleLowerCase("ru-RU").replace(/\s+/g, " ").trim();
+
+export const parseAdminBookingFilter = (value: unknown): AdminBookingFilter =>
+  typeof value === "string" && adminBookingFilters.has(value as AdminBookingFilter)
+    ? value as AdminBookingFilter
+    : "attention";
+
+export const getSafeAdminReturnTo = (value: unknown): string => {
+  if (typeof value !== "string") return "/admin/bookings";
+  return /^\/admin\/bookings(?:[?#].*)?$/.test(value) ? value : "/admin/bookings";
+};
 
 export const bookingOccupiesDay = (booking: Booking, day: string): boolean => (
   occupancyStatuses.has(booking.status) && booking.startAt.slice(0, 10) <= day && booking.endAt.slice(0, 10) >= day

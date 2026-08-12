@@ -6,7 +6,9 @@ import {
   filterAdminBookings,
   getAdminSummary,
   getBookingAgeLabel,
-  getNextActiveBooking
+  getNextActiveBooking,
+  getSafeAdminReturnTo,
+  parseAdminBookingFilter
 } from "./admin-operations";
 
 const booking = (overrides: Partial<Booking> = {}): Booking => ({
@@ -85,6 +87,18 @@ const car = (id: string): Car => ({
 });
 
 const now = new Date("2026-08-12T09:00:00.000Z");
+
+describe("admin booking controls", () => {
+  it("parses filters and accepts only booking-workspace return locations", () => {
+    expect(parseAdminBookingFilter("attention")).toBe("attention");
+    expect(parseAdminBookingFilter("CONFIRMED")).toBe("CONFIRMED");
+    expect(parseAdminBookingFilter("unknown")).toBe("attention");
+    expect(getSafeAdminReturnTo("/admin/bookings?booking=booking-1&filter=today")).toBe("/admin/bookings?booking=booking-1&filter=today");
+    expect(getSafeAdminReturnTo("https://example.com/admin/bookings")).toBe("/admin/bookings");
+    expect(getSafeAdminReturnTo("//example.com")).toBe("/admin/bookings");
+    expect(getSafeAdminReturnTo("/admin/cars")).toBe("/admin/bookings");
+  });
+});
 
 describe("getAdminSummary", () => {
   it("returns actionable counts for the current Moscow business day", () => {
