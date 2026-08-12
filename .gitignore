@@ -1,0 +1,17 @@
+node_modules/
+.next/
+.vercel/
+out/
+.data/
+src/generated/
+.env
+.env.local
+.env.*.local
+!.env.example
+coverage/
+*.log
+*.err
+*.tsbuildinfo
+.DS_Store
+Thumbs.db
+.codex-docx-render/

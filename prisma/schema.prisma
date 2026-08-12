@@ -1,0 +1,133 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum BookingStatus {
+  NEW
+  IN_PROGRESS
+  CONFIRMED
+  DECLINED
+  CANCELLED
+  COMPLETED
+}
+
+model Car {
+  id                       String     @id @default(cuid())
+  slug                     String     @unique
+  brand                    String
+  model                    String
+  title                    String
+  category                 String
+  bodyType                 String
+  vehicleClass             String
+  year                     Int?
+  transmission             String?
+  engine                   String?
+  horsepower               Int?
+  driveType                String?
+  seats                    Int?
+  shortDescription         String
+  description              String
+  pricePerDay              Int
+  oldPrice                 Int?
+  deposit                  Int
+  minimumAge               Int?
+  minimumDrivingExperience Int?
+  minimumRentalDays        Int?
+  mileageLimit             Int?
+  extraMileagePrice        Int?
+  insurance                String?
+  features                 Json
+  rentalConditions         Json
+  available                Boolean    @default(true)
+  published                Boolean    @default(false)
+  isNew                    Boolean    @default(false)
+  isPromotion              Boolean    @default(false)
+  isDemo                    Boolean    @default(true)
+  recommendedOrder         Int        @default(0)
+  seoTitle                 String?
+  seoDescription           String?
+  images                    CarImage[]
+  bookings                 Booking[]
+  createdAt                 DateTime   @default(now())
+  updatedAt                 DateTime   @updatedAt
+}
+
+model CarImage {
+  id        String @id @default(cuid())
+  carId     String
+  car       Car    @relation(fields: [carId], references: [id], onDelete: Cascade)
+  url       String
+  alt       String
+  sortOrder Int    @default(0)
+
+  @@index([carId, sortOrder])
+}
+
+model Booking {
+  id                        String        @id @default(cuid())
+  carId                     String
+  car                       Car           @relation(fields: [carId], references: [id], onDelete: Restrict)
+  carTitle                  String
+  startAt                   DateTime      @db.Date
+  endAt                     DateTime      @db.Date
+  pickupMethod              String
+  deliveryAddress           String?
+  customerName              String
+  phone                     String
+  telegram                  String?
+  birthDate                 DateTime?     @db.Date
+  licenseIssuedOn           DateTime?     @db.Date
+  driverAgeAtStart          Int?
+  drivingExperienceMonths   Int
+  minimumAgeApplied         Int?
+  minimumExperienceApplied  Int?
+  minimumRentalDaysApplied  Int?
+  additionalServiceIds      Json
+  additionalServicesSnapshot Json        @default("[]")
+  comment                   String?
+  rentalDays                Int
+  pricePerDaySnapshot       Int
+  rentalPrice               Int
+  additionalServicesPrice   Int
+  deposit                   Int
+  source                    String
+  utm                       Json?
+  referrer                  String?
+  idempotencyKey            String        @unique
+  privacyConsentAt          DateTime?
+  integrityProtected        Boolean       @default(true)
+  status                    BookingStatus @default(NEW)
+  createdAt                 DateTime      @default(now())
+  updatedAt                 DateTime      @updatedAt
+
+  @@index([carId, startAt, endAt])
+}
+
+model Service {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String
+  description String
+  price       Int?
+  published   Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Faq {
+  id        String   @id @default(cuid())
+  question  String
+  answer    String
+  category  String   @default("general")
+  published Boolean  @default(true)
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

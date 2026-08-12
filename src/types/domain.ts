@@ -1,0 +1,105 @@
+export type CarImage = { url: string; alt: string };
+
+export type Car = {
+  id: string;
+  slug: string;
+  brand: string;
+  model: string;
+  title: string;
+  category: string;
+  bodyType: string;
+  vehicleClass: string;
+  year: number | null;
+  transmission: string | null;
+  engine: string | null;
+  horsepower: number | null;
+  driveType: string | null;
+  seats: number | null;
+  shortDescription: string;
+  description: string;
+  pricePerDay: number;
+  oldPrice: number | null;
+  deposit: number;
+  minimumAge: number | null;
+  minimumDrivingExperience: number | null;
+  minimumRentalDays: number | null;
+  mileageLimit: number | null;
+  extraMileagePrice: number | null;
+  insurance: string | null;
+  features: string[];
+  rentalConditions: string[];
+  available: boolean;
+  published: boolean;
+  isNew: boolean;
+  isPromotion: boolean;
+  isDemo: boolean;
+  recommendedOrder: number;
+  images: CarImage[];
+  seoTitle: string | null;
+  seoDescription: string | null;
+};
+
+export type Service = {
+  id: string;
+  slug: string;
+  title: string;
+  description: string;
+  price: number | null;
+  published: boolean;
+  sortOrder: number;
+};
+
+export type Faq = {
+  id: string;
+  question: string;
+  answer: string;
+  category: string;
+  published: boolean;
+  sortOrder: number;
+};
+
+export type BookingStatus = "NEW" | "IN_PROGRESS" | "CONFIRMED" | "DECLINED" | "CANCELLED" | "COMPLETED";
+
+export type BookingServiceSnapshot = { id: string; title: string; price: number };
+
+export type Booking = {
+  id: string;
+  carId: string;
+  carTitle: string;
+  startAt: string;
+  endAt: string;
+  pickupMethod: "office" | "delivery";
+  deliveryAddress: string | null;
+  customerName: string;
+  phone: string;
+  telegram: string | null;
+  birthDate: string | null;
+  licenseIssuedOn: string | null;
+  driverAgeAtStart: number | null;
+  drivingExperienceMonths: number;
+  minimumAgeApplied: number | null;
+  minimumDrivingExperienceApplied: number | null;
+  minimumRentalDaysApplied: number | null;
+  additionalServiceIds: string[];
+  additionalServicesSnapshot: BookingServiceSnapshot[];
+  comment: string | null;
+  rentalDays: number;
+  pricePerDaySnapshot: number;
+  rentalPrice: number;
+  additionalServicesPrice: number;
+  deposit: number;
+  source: string;
+  utm: Record<string, string>;
+  referrer: string | null;
+  idempotencyKey: string;
+  privacyConsentAt: string | null;
+  status: BookingStatus;
+  createdAt: string;
+};
+
+export type DevDatabase = {
+  cars: Car[];
+  services: Service[];
+  faqs: Faq[];
+  bookings: Booking[];
+};
