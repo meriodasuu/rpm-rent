@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { closeNavigationMenu, isNavigationActive } from "./navigation";
+import { closeNavigationMenu, isAdminPath, isNavigationActive } from "./navigation";
 
 describe("isNavigationActive", () => {
   it("matches exact and nested routes", () => {
@@ -29,5 +29,19 @@ describe("closeNavigationMenu", () => {
 
   it("does nothing when the link is outside a details menu", () => {
     expect(() => closeNavigationMenu(null)).not.toThrow();
+  });
+});
+
+describe("isAdminPath", () => {
+  it("recognizes the login screen and every nested admin route", () => {
+    expect(isAdminPath("/admin")).toBe(true);
+    expect(isAdminPath("/admin/login")).toBe(true);
+    expect(isAdminPath("/admin/bookings/request-1")).toBe(true);
+  });
+
+  it("does not hide the public chrome on similarly named routes", () => {
+    expect(isAdminPath("/administrator")).toBe(false);
+    expect(isAdminPath("/admin-preview")).toBe(false);
+    expect(isAdminPath("/")).toBe(false);
   });
 });

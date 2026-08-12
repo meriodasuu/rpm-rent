@@ -5,5 +5,5 @@ export const metadata = { title: { default: "Панель управления",
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const session = await requireAdmin();
-  return <div className="admin-shell"><AdminHeader email={session.email} /><main>{children}</main></div>;
+  return <div className="admin-shell"><AdminHeader email={session.email} /><main className="admin-main">{children}</main></div>;
 }

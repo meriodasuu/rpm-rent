@@ -1,7 +1,38 @@
-import Link from "next/link";
+import { LogOut } from "lucide-react";
 import { Logo } from "@/components/logo";
 import { logoutAction } from "@/app/admin/actions";
+import { AdminNavigation } from "./admin-navigation";
 
 export function AdminHeader({ email }: { email: string }) {
-  return <header className="admin-header"><div className="container admin-header-inner"><Logo /><nav className="admin-nav"><Link href="/admin">Обзор</Link><Link href="/admin/cars">Автомобили</Link><Link href="/admin/bookings">Заявки</Link><Link href="/admin/content">Контент</Link><Link href="/" target="_blank">Открыть сайт</Link></nav><form action={logoutAction}><button className="button ghost small-button" type="submit" title={email}>Выйти</button></form></div></header>;
+  return (
+    <>
+      <aside className="admin-sidebar">
+        <div className="admin-sidebar-brand">
+          <Logo />
+          <span>OPERATIONS</span>
+        </div>
+        <AdminNavigation />
+        <div className="admin-sidebar-account">
+          <span title={email}>{email}</span>
+          <form action={logoutAction}>
+            <button type="submit">
+              <LogOut aria-hidden="true" size={17} />
+              Выйти
+            </button>
+          </form>
+        </div>
+      </aside>
+      <header className="admin-mobile-header">
+        <div className="admin-mobile-brand">
+          <Logo />
+          <span>OPS</span>
+        </div>
+        <form action={logoutAction}>
+          <button type="submit" aria-label={`Выйти из аккаунта ${email}`}>
+            <LogOut aria-hidden="true" size={19} />
+          </button>
+        </form>
+      </header>
+    </>
+  );
 }
