@@ -16,9 +16,10 @@ describe("public site content", () => {
   it("contains the supplied contact details and safe external links", () => {
     expect(CONTACTS.phone).toBe("+7 993 983-80-80");
     expect(CONTACTS.max.phone).toBe("+7 993 983-80-80");
-    expect(CONTACTS.max.href).toBe("tel:+79939838080");
+    expect(CONTACTS.max.href).toBe("https://max.ru/");
+    expect(CONTACTS.socials[0]).toEqual({ label: "MAX", href: "https://max.ru/" });
     expect(CONTACTS.address).toBe("Санкт-Петербург, проспект Маршала Блюхера, 12к7");
-    expect(CONTACTS.socials).toHaveLength(7);
+    expect(CONTACTS.socials).toHaveLength(8);
     expect(CONTACTS.socials.every((item) => item.href.startsWith("https://"))).toBe(true);
   });
 

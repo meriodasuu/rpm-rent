@@ -6,7 +6,7 @@ import { CONTACTS } from "@/lib/site-content";
 
 export const metadata: Metadata = { title: "Контакты", description: "Свяжитесь с RPM Rent по вопросу выбора и аренды автомобиля в Санкт-Петербурге.", alternates: { canonical: "/contacts" } };
 
-const socialIcons = [MessageCircle, Instagram, Music2, Youtube, Send, ShoppingBag, Globe2] as const;
+const socialIcons = [MessageCircle, MessageCircle, Instagram, Music2, Youtube, Send, ShoppingBag, Globe2] as const;
 
 export default function ContactsPage() {
   return (
@@ -16,7 +16,7 @@ export default function ContactsPage() {
 
       <div className="contacts-layout">
         <section className="surface contacts-card">
-          <div className="contacts-primary"><a href={CONTACTS.phoneHref}><Phone size={22} /><span><small>Телефон</small><strong>{CONTACTS.phone}</strong></span></a><a href={CONTACTS.max.href}><MessageCircle size={22} /><span><small>MAX</small><strong>{CONTACTS.max.phone}</strong></span></a><a href={CONTACTS.mapHref} rel="noreferrer" target="_blank"><MapPin size={22} /><span><small>Адрес</small><strong>{CONTACTS.address}</strong></span></a></div>
+          <div className="contacts-primary"><a href={CONTACTS.phoneHref}><Phone size={22} /><span><small>Телефон</small><strong>{CONTACTS.phone}</strong></span></a><a className="contacts-max" href={CONTACTS.max.href} rel="noreferrer" target="_blank"><MessageCircle size={22} /><span><small>MAX · мессенджер</small><strong>{CONTACTS.max.phone}</strong><em>Найдите RPM Rent в MAX по этому номеру</em></span></a><a href={CONTACTS.mapHref} rel="noreferrer" target="_blank"><MapPin size={22} /><span><small>Адрес</small><strong>{CONTACTS.address}</strong></span></a></div>
           <div className="social-links" aria-label="Социальные сети RPM Rent">{CONTACTS.socials.map((social, index) => { const Icon = socialIcons[index] ?? Globe2; return <a aria-label={social.label} href={social.href} key={social.label} rel="noreferrer" target="_blank" title={social.label}><Icon aria-hidden size={22} /><span>{social.label}</span></a>; })}</div>
           <div className="button-row"><Link className="button red" href="/cars">Выбрать автомобиль</Link></div>
         </section>

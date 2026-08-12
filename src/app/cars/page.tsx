@@ -32,7 +32,7 @@ export default async function CarsPage({ searchParams }: { searchParams: Promise
         <Breadcrumbs items={[{ label: "Главная", href: "/" }, { label: "Каталог" }]} />
         <div className="page-intro catalog-intro">
           <div><p className="eyebrow">Автопарк RPM Rent</p><h1 className="title">Найдите автомобиль под свой маршрут</h1></div>
-          <div><p className="subtitle">Сравнивайте кузов, класс и суточную ставку. Откройте карточку автомобиля, чтобы увидеть фотографии, залог, доступные характеристики и перейти к проверке дат.</p>{hasValidPeriod && start && end ? <p className="period-banner"><CalendarDays size={17} /> Проверен период с {new Date(`${start}T00:00:00Z`).toLocaleDateString("ru-RU")} по {new Date(`${end}T00:00:00Z`).toLocaleDateString("ru-RU")}. Занятые машины остаются видимыми с объяснением.</p> : <p className="period-banner"><CalendarDays size={17} /> Без корректных дат показан весь опубликованный каталог. Период можно выбрать на главной или в заявке.</p>}</div>
+          <div><p className="subtitle">Сравнивайте кузов, класс и суточную ставку. Откройте карточку автомобиля, чтобы увидеть фотографии, залог, доступные характеристики и перейти к проверке дат.</p>{hasValidPeriod && start && end ? <p className="period-banner"><CalendarDays size={17} /> Проверен период с {new Date(`${start}T00:00:00Z`).toLocaleDateString("ru-RU")} по {new Date(`${end}T00:00:00Z`).toLocaleDateString("ru-RU")}. Занятые машины остаются видимыми с объяснением.</p> : <p className="period-banner"><CalendarDays size={17} /> Без корректных дат показан весь опубликованный каталог. Период можно выбрать на главной или при оформлении.</p>}</div>
         </div>
 
         <div className="catalog-discovery" aria-label="Категории автомобилей">
@@ -54,7 +54,7 @@ export default async function CarsPage({ searchParams }: { searchParams: Promise
           <div className="button-row"><Link className="button" href="/services">Посмотреть сценарии аренды</Link><Link className="button ghost" href="/contacts">Задать вопрос</Link></div>
         </section>
 
-        <section className="cta-panel catalog-cta"><div className="cta-content"><p className="eyebrow">После выбора</p><h2 className="title">Укажите период и отправьте запрос</h2><p className="subtitle">Заявка передаст автомобиль, даты и способ получения. Менеджер подтвердит доступность и финальные условия до договора.</p><div className="button-row"><Link className="button red" href="/booking">Перейти к заявке <ArrowRight size={17} /></Link><Link className="button cta-secondary" href="/rental-terms">Условия аренды</Link></div></div></section>
+        <section className="cta-panel catalog-cta"><div className="cta-content"><p className="eyebrow">После выбора</p><h2 className="title">Укажите период и оформите бронь</h2><p className="subtitle">Форма передаст автомобиль, даты и способ получения. Менеджер подтвердит доступность и финальные условия до договора.</p><div className="button-row"><Link className="button red" href="/booking">Перейти к оформлению <ArrowRight size={17} /></Link><Link className="button cta-secondary" href="/rental-terms">Условия аренды</Link></div></div></section>
       </div>
     </div>
   );

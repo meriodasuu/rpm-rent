@@ -11,12 +11,13 @@ export const normalizeSocialUrl = (kind: SocialKind, value: string): string => {
 export const CONTACTS = {
   phone: "+7 993 983-80-80",
   phoneHref: "tel:+79939838080",
-  max: { phone: "+7 993 983-80-80", href: "tel:+79939838080" },
+  max: { phone: "+7 993 983-80-80", href: "https://max.ru/" },
   address: "Санкт-Петербург, проспект Маршала Блюхера, 12к7",
   website: "https://rpmrent.ru",
   mapHref: "https://yandex.ru/maps/?text=%D0%A1%D0%B0%D0%BD%D0%BA%D1%82-%D0%9F%D0%B5%D1%82%D0%B5%D1%80%D0%B1%D1%83%D1%80%D0%B3%2C%20%D0%BF%D1%80%D0%BE%D1%81%D0%BF%D0%B5%D0%BA%D1%82%20%D0%9C%D0%B0%D1%80%D1%88%D0%B0%D0%BB%D0%B0%20%D0%91%D0%BB%D1%8E%D1%85%D0%B5%D1%80%D0%B0%2C%2012%D0%BA7",
   mapEmbed: "https://yandex.ru/map-widget/v1/?mode=search&text=%D0%A1%D0%B0%D0%BD%D0%BA%D1%82-%D0%9F%D0%B5%D1%82%D0%B5%D1%80%D0%B1%D1%83%D1%80%D0%B3%2C%20%D0%BF%D1%80%D0%BE%D1%81%D0%BF%D0%B5%D0%BA%D1%82%20%D0%9C%D0%B0%D1%80%D1%88%D0%B0%D0%BB%D0%B0%20%D0%91%D0%BB%D1%8E%D1%85%D0%B5%D1%80%D0%B0%2C%2012%D0%BA7&z=16",
   socials: [
+    { label: "MAX", href: "https://max.ru/" },
     { label: "ВКонтакте", href: normalizeSocialUrl("generic", "https://vk.ru/rpm_rent") },
     { label: "Instagram", href: normalizeSocialUrl("instagram", "rpm_rent") },
     { label: "TikTok", href: normalizeSocialUrl("generic", "https://www.tiktok.com/@rpmrent") },

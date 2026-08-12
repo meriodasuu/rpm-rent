@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 
-export const metadata: Metadata = { title: "Условия аренды автомобилей", description: "Как выбрать автомобиль, проверить даты, рассчитать стоимость и отправить заявку на аренду.", alternates: { canonical: "/rental-terms" } };
+export const metadata: Metadata = { title: "Условия аренды автомобилей", description: "Как выбрать автомобиль, проверить даты, рассчитать стоимость и оформить аренду.", alternates: { canonical: "/rental-terms" } };
 
 const checks = [
   { icon: UserRound, title: "Требования к водителю", text: "Минимальный возраст и стаж зависят от автомобиля." },
@@ -29,9 +29,9 @@ export default function RentalTermsPage() {
 
       <section className="section terms-flow terms-flow-vertical"><div><h2 className="title">От каталога до подтверждения</h2></div><ol className="terms-flow-list">{flow.map(({ icon: Icon, title, text }, index) => <li key={title}><span><Icon size={19} /></span><div><h3>{index + 1}. {title}</h3><p>{text}</p></div></li>)}</ol></section>
 
-      <section className="section terms-details"><div><h2 className="title">Что проверить перед заявкой</h2></div><div className="condition-checklist surface">{["Суточная ставка", "Размер залога", "Минимальный срок", "Возраст и водительский стаж", "Лимит пробега", "Страхование", "Доставка или самовывоз"].map((item) => <div className="check-row" key={item}><Check size={17} /><span>{item}</span></div>)}</div></section>
+      <section className="section terms-details"><div><h2 className="title">Что проверить перед оформлением</h2></div><div className="condition-checklist surface">{["Суточная ставка", "Размер залога", "Минимальный срок", "Возраст и водительский стаж", "Лимит пробега", "Страхование", "Доставка или самовывоз"].map((item) => <div className="check-row" key={item}><Check size={17} /><span>{item}</span></div>)}</div></section>
 
-      <section className="terms-notice surface"><FileCheck2 size={24} /><div><h2>Заявка не является автоматической бронью</h2><p>Менеджер проверит выбранный автомобиль, даты и условия до оформления договора.</p></div></section>
+      <section className="terms-notice surface"><FileCheck2 size={24} /><div><h2>Бронь подтверждает менеджер</h2><p>Менеджер проверит выбранный автомобиль, даты и условия до оформления договора.</p></div></section>
 
       <section className="section"><div className="cta-panel"><div className="cta-content"><h2 className="title">Сравните автомобили и их условия</h2><div className="button-row"><Link className="button red" href="/cars">Перейти в каталог <ArrowRight size={18} /></Link><Link className="button cta-secondary" href="/faq">Частые вопросы</Link></div></div></div></section>
     </div></div>
