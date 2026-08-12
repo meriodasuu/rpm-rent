@@ -29,7 +29,7 @@ export function CarForm({ car }: { car: Car }) {
         </div>
       </section>
 
-      {policyIncomplete ? <div className="admin-form-warning"><AlertTriangle size={18} /><span><strong>Онлайн-заявки заблокированы</strong>Укажите возраст, стаж и минимальный срок аренды. Не подставляйте приблизительные значения.</span></div> : null}
+      {policyIncomplete ? <div className="admin-form-warning"><AlertTriangle size={18} /><span><strong>Онлайн-обращения заблокированы</strong>Укажите возраст, стаж и минимальный срок аренды. Не подставляйте приблизительные значения.</span></div> : null}
 
       <FormSection icon={<CarFront size={19} />} title="Основная информация" description="Название и описание, которые видит клиент в каталоге.">
         <div className="form-grid">
@@ -46,7 +46,7 @@ export function CarForm({ car }: { car: Car }) {
         <TextArea name="description" label="Полное описание" value={car.description} required />
       </FormSection>
 
-      <FormSection icon={<BadgeRussianRuble size={19} />} title="Цена и правила аренды" description="Эти значения фиксируются в заявке клиента в момент отправки.">
+      <FormSection icon={<BadgeRussianRuble size={19} />} title="Цена и правила аренды" description="Эти значения фиксируются в обращении клиента в момент отправки.">
         <div className="form-grid">
           <TextField name="pricePerDay" label="Цена за сутки, ₽" value={car.pricePerDay} type="number" min={0} max={RENTAL_POLICY.maximumDailyPrice} required />
           <TextField name="oldPrice" label="Старая цена, ₽" value={car.oldPrice} type="number" min={0} max={RENTAL_POLICY.maximumMoneyAmount} />

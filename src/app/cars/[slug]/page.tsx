@@ -77,7 +77,7 @@ export default async function CarPage({ params, searchParams }: { params: Promis
         <div className="detail-layout">
           <CarGallery images={car.images} title={car.title} />
           <aside className="surface booking-card">
-            <span className="tag">{bookable ? "Доступен для запроса" : busyForPeriod ? "Занят на выбранные даты" : "Онлайн-заявка недоступна"}</span>
+            <span className="tag">{bookable ? "Доступен для оформления" : busyForPeriod ? "Занят на выбранные даты" : "Онлайн-оформление недоступно"}</span>
             <p className="booking-card-label">Стоимость аренды</p>
             <div className="price">{formatPrice(car.pricePerDay)} <small>/ сутки</small></div>
             <div className="summary-lines">
@@ -85,8 +85,8 @@ export default async function CarPage({ params, searchParams }: { params: Promis
               <div className="summary-line"><span>Расчёт</span><strong>по выбранным датам</strong></div>
               <div className="summary-line"><span>Подтверждение</span><strong>менеджером</strong></div>
             </div>
-            {policyProblem ? <p className="period-note"><FileCheck2 size={16} /> {policyProblem}. Точные требования должен опубликовать владелец.</p> : busyForPeriod ? <p className="period-note"><CalendarDays size={16} /> На выбранный период уже есть активная заявка. Измените даты в каталоге.</p> : period.start && period.end ? <p className="period-note"><CalendarDays size={16} /> Автомобиль свободен на выбранный период; сервер проверит его ещё раз при отправке.</p> : <p className="period-note"><CalendarDays size={16} /> Укажите период в заявке. Система повторно проверит доступность.</p>}
-            <Link className="button red" href={bookable ? bookingHref : busyForPeriod ? "/cars" : "/contacts"} data-event={bookable ? "booking_open" : busyForPeriod ? "date_check" : "contact_click"} data-event-label={car.slug}>{bookable ? "Проверить данные и оставить заявку" : busyForPeriod ? "Изменить даты" : "Уточнить условия"} <ArrowRight size={17} /></Link>
+            {policyProblem ? <p className="period-note"><FileCheck2 size={16} /> {policyProblem}. Точные требования должен опубликовать владелец.</p> : busyForPeriod ? <p className="period-note"><CalendarDays size={16} /> На выбранный период уже есть активное обращение. Измените даты в каталоге.</p> : period.start && period.end ? <p className="period-note"><CalendarDays size={16} /> Автомобиль свободен на выбранный период; сервер проверит его ещё раз при отправке.</p> : <p className="period-note"><CalendarDays size={16} /> Укажите период при оформлении. Система повторно проверит доступность.</p>}
+            <Link className="button red" href={bookable ? bookingHref : busyForPeriod ? "/cars" : "/contacts"} data-event={bookable ? "booking_open" : busyForPeriod ? "date_check" : "contact_click"} data-event-label={car.slug}>{bookable ? "Проверить данные и оформить" : busyForPeriod ? "Изменить даты" : "Уточнить условия"} <ArrowRight size={17} /></Link>
             <Link className="booking-secondary" href="/rental-terms">Посмотреть общие условия</Link>
           </aside>
         </div>
@@ -98,17 +98,17 @@ export default async function CarPage({ params, searchParams }: { params: Promis
 
         <section className="detail-section"><div className="detail-section-head"><div><p className="eyebrow">Данные автомобиля</p><h2>Характеристики</h2></div><p>Показываем только заполненные параметры. Подтверждённые ограничения по аренде вынесены в отдельный блок ниже.</p></div><div className="spec-grid">{specs.map(([label, value]) => <div className="spec" key={label}><span>{label}</span><strong>{value}</strong></div>)}</div></section>
 
-        <section className="detail-section use-cases-section"><div><p className="eyebrow">Сценарии</p><h2>Подойдёт для</h2></div><div className="use-case-list">{editorial.useCases.map((item) => <span className="use-case-chip" key={item}>{item}</span>)}</div><p className="detail-copy">Если ваш сценарий требует доставки, водителя или специальной подготовки для события, укажите это в заявке. Возможность и стоимость согласуются отдельно.</p></section>
+        <section className="detail-section use-cases-section"><div><p className="eyebrow">Сценарии</p><h2>Подойдёт для</h2></div><div className="use-case-list">{editorial.useCases.map((item) => <span className="use-case-chip" key={item}>{item}</span>)}</div><p className="detail-copy">Если ваш сценарий требует доставки, водителя или специальной подготовки для события, укажите это при оформлении. Возможность и стоимость согласуются отдельно.</p></section>
 
         <section className="detail-section">
-          <div className="detail-section-head"><div><p className="eyebrow">Перед заявкой</p><h2>Условия этого автомобиля</h2></div><p>Ставка и залог уже участвуют в расчёте. Остальные параметры показываются только после заполнения в карточке автомобиля.</p></div>
-          {policyProblem ? <p className="field-error">Возраст, водительский стаж и минимальный срок пока не опубликованы. Система не принимает онлайн-заявку без этих данных.</p> : null}
+          <div className="detail-section-head"><div><p className="eyebrow">Перед оформлением</p><h2>Условия этого автомобиля</h2></div><p>Ставка и залог уже участвуют в расчёте. Остальные параметры показываются только после заполнения в карточке автомобиля.</p></div>
+          {policyProblem ? <p className="field-error">Возраст, водительский стаж и минимальный срок пока не опубликованы. Система не принимает онлайн-обращение без этих данных.</p> : null}
           <div className="condition-list">{conditions.map(({ icon: Icon, title, value, note }) => <div className="condition condition-rich" key={title}><Icon size={20} aria-hidden /><div><strong>{title}</strong><span>{value}</span><small>{note}</small></div></div>)}</div>
-          <div className="rental-assurance"><FileCheck2 size={22} /><div><h3>Финальные условия фиксируются до получения автомобиля</h3><p>Менеджер подтверждает доступность, способ получения и применимые ограничения. Отправка заявки сама по себе не является бронью.</p></div><Link className="text-link" href="/rental-terms">Подробнее <ArrowRight size={16} /></Link></div>
+          <div className="rental-assurance"><FileCheck2 size={22} /><div><h3>Финальные условия фиксируются до получения автомобиля</h3><p>Менеджер подтверждает доступность, способ получения и применимые ограничения. Отправка формы сама по себе не является бронью.</p></div><Link className="text-link" href="/rental-terms">Подробнее <ArrowRight size={16} /></Link></div>
         </section>
 
         <section className="detail-section price-detail-section">
-          <div><p className="eyebrow">Расчёт</p><h2>Что вы увидите в заявке</h2><p className="detail-copy">Система рассчитает аренду по суточной ставке и длительности периода. Платные услуги добавляются только при выборе, а залог остаётся отдельной строкой.</p></div>
+          <div><p className="eyebrow">Расчёт</p><h2>Что вы увидите при оформлении</h2><p className="detail-copy">Система рассчитает аренду по суточной ставке и длительности периода. Платные услуги добавляются только при выборе, а залог остаётся отдельной строкой.</p></div>
           <div className="price-detail-card surface"><CircleDollarSign size={22} /><div className="price-line"><span>Ставка</span><strong>{formatPrice(car.pricePerDay)} / сутки</strong></div><div className="price-line"><span>Срок</span><strong>по выбранным датам</strong></div><div className="price-line"><span>Залог</span><strong>{formatPrice(car.deposit)} отдельно</strong></div></div>
         </section>
 

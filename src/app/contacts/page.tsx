@@ -16,9 +16,9 @@ export default function ContactsPage() {
 
       <div className="contacts-layout">
         <section className="surface contacts-card">
-          <div className="contacts-primary"><a href={CONTACTS.phoneHref}><Phone size={22} /><span><small>Телефон</small><strong>{CONTACTS.phone}</strong></span></a><a href={CONTACTS.mapHref} rel="noreferrer" target="_blank"><MapPin size={22} /><span><small>Адрес</small><strong>{CONTACTS.address}</strong></span></a></div>
+          <div className="contacts-primary"><a href={CONTACTS.phoneHref}><Phone size={22} /><span><small>Телефон</small><strong>{CONTACTS.phone}</strong></span></a><a href={CONTACTS.max.href}><MessageCircle size={22} /><span><small>MAX</small><strong>{CONTACTS.max.phone}</strong></span></a><a href={CONTACTS.mapHref} rel="noreferrer" target="_blank"><MapPin size={22} /><span><small>Адрес</small><strong>{CONTACTS.address}</strong></span></a></div>
           <div className="social-links" aria-label="Социальные сети RPM Rent">{CONTACTS.socials.map((social, index) => { const Icon = socialIcons[index] ?? Globe2; return <a aria-label={social.label} href={social.href} key={social.label} rel="noreferrer" target="_blank" title={social.label}><Icon aria-hidden size={22} /><span>{social.label}</span></a>; })}</div>
-          <div className="button-row"><Link className="button red" href="/cars">Выбрать автомобиль</Link><Link className="button ghost" href="/booking">Оставить заявку</Link></div>
+          <div className="button-row"><Link className="button red" href="/cars">Выбрать автомобиль</Link><Link className="button ghost" href="/booking">Перейти к оформлению</Link></div>
         </section>
 
         <section className="surface contacts-map"><iframe allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade" src={CONTACTS.mapEmbed} title="RPM Rent на Яндекс Картах" /><a href={CONTACTS.mapHref} rel="noreferrer" target="_blank">Открыть в Яндекс Картах <MapPin size={16} /></a></section>

@@ -19,13 +19,13 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: { default: "RPM Rent | аренда автомобилей в Санкт-Петербурге", template: "%s | RPM Rent" },
-  description: "Сравните автомобили RPM Rent, укажите даты и отправьте заявку на аренду в Санкт-Петербурге.",
+  description: "Сравните автомобили RPM Rent, укажите даты и оформите аренду в Санкт-Петербурге.",
   openGraph: {
     type: "website",
     locale: "ru_RU",
     siteName: "RPM Rent",
     title: "RPM Rent | аренда автомобилей в Санкт-Петербурге",
-    description: "Сравните автомобили, проверьте даты и отправьте заявку менеджеру.",
+    description: "Сравните автомобили, проверьте даты и отправьте обращение менеджеру.",
     images: [{ url: "/images/cars/porsche-911-carrera-4s/01.jpg", width: 1200, height: 900, alt: "Porsche 911 из автопарка RPM Rent" }]
   },
   twitter: { card: "summary_large_image" },

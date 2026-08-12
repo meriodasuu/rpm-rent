@@ -69,13 +69,13 @@ export const assertRentalPeriod = ({
   if (!parseDateOnly(startDate)) throw validationError("Укажите корректную дату начала в формате ГГГГ-ММ-ДД", "startAt");
   if (!parseDateOnly(endDate)) throw validationError("Укажите корректную дату окончания в формате ГГГГ-ММ-ДД", "endAt");
   const today = todayInBusinessTimeZone(now);
-  if (startDate < today) throw validationError("Нельзя оформить заявку на прошедший период", "startAt");
+  if (startDate < today) throw validationError("Нельзя оформить аренду на прошедший период", "startAt");
   const days = differenceInCalendarDays(startDate, endDate);
   if (days <= 0) throw validationError("Дата окончания должна быть позже даты начала", "endAt");
   if (days < minimumRentalDays) throw validationError(`Минимальный срок аренды: ${minimumRentalDays} сут.`, "endAt");
   if (days > RENTAL_POLICY.maximumRentalDays) throw validationError(`Период не может превышать ${RENTAL_POLICY.maximumRentalDays} сут.`, "endAt");
   if (differenceInCalendarDays(today, startDate) > RENTAL_POLICY.maximumAdvanceDays) {
-    throw validationError(`Заявку можно отправить не более чем за ${RENTAL_POLICY.maximumAdvanceDays} дней`, "startAt");
+    throw validationError(`Оформление доступно не более чем за ${RENTAL_POLICY.maximumAdvanceDays} дней`, "startAt");
   }
   return days;
 };

@@ -15,6 +15,8 @@ describe("normalizeSocialUrl", () => {
 describe("public site content", () => {
   it("contains the supplied contact details and safe external links", () => {
     expect(CONTACTS.phone).toBe("+7 993 983-80-80");
+    expect(CONTACTS.max.phone).toBe("+7 993 983-80-80");
+    expect(CONTACTS.max.href).toBe("tel:+79939838080");
     expect(CONTACTS.address).toBe("Санкт-Петербург, проспект Маршала Блюхера, 12к7");
     expect(CONTACTS.socials).toHaveLength(7);
     expect(CONTACTS.socials.every((item) => item.href.startsWith("https://"))).toBe(true);

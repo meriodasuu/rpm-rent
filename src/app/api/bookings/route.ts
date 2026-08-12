@@ -8,7 +8,7 @@ const limiter = new FixedWindowRateLimiter(8, 60_000);
 
 export async function POST(request: NextRequest) {
   const contentLength = Number(request.headers.get("content-length") ?? 0);
-  if (Number.isFinite(contentLength) && contentLength > 32_768) return NextResponse.json({ message: "Запрос слишком большой" }, { status: 413 });
+  if (Number.isFinite(contentLength) && contentLength > 32_768) return NextResponse.json({ message: "Объём данных слишком большой" }, { status: 413 });
   const forwarded = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim();
   const key = forwarded || "local";
   const rate = limiter.attempt(key);
@@ -19,9 +19,9 @@ export async function POST(request: NextRequest) {
   let body: unknown;
   try {
     const raw = await request.text();
-    if (new TextEncoder().encode(raw).byteLength > 32_768) return NextResponse.json({ message: "Запрос слишком большой" }, { status: 413 });
+    if (new TextEncoder().encode(raw).byteLength > 32_768) return NextResponse.json({ message: "Объём данных слишком большой" }, { status: 413 });
     body = JSON.parse(raw);
-  } catch { return NextResponse.json({ message: "Некорректный формат запроса" }, { status: 400 }); }
+  } catch { return NextResponse.json({ message: "Некорректный формат данных" }, { status: 400 }); }
   const parsed = bookingSchema.safeParse(body);
   if (!parsed.success) return NextResponse.json({ message: "Проверьте заполнение формы", errors: parsed.error.flatten().fieldErrors }, { status: 422 });
   try {
@@ -35,6 +35,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ message: error.message, code: error.code, errors: error.fieldErrors }, { status: error.status });
     }
     console.error("booking.create.failed", error instanceof Error ? error.name : "UnknownError");
-    return NextResponse.json({ message: "Не удалось сохранить заявку. Попробуйте ещё раз позднее." }, { status: 500 });
+    return NextResponse.json({ message: "Не удалось сохранить обращение. Попробуйте ещё раз позднее." }, { status: 500 });
   }
 }

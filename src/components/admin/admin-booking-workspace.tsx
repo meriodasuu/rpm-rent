@@ -87,7 +87,7 @@ export function AdminBookingWorkspace({
         <header className="admin-page-heading">
           <div>
             <p className="admin-kicker">Обращения клиентов</p>
-            <h1>Заявки</h1>
+            <h1>Обращения</h1>
             <p>Очередь, контакты и решение по бронированию в одном окне.</p>
           </div>
           <div className="admin-booking-total"><Inbox aria-hidden="true" size={17} /><strong>{bookings.length}</strong><span>всего</span></div>
@@ -106,7 +106,7 @@ export function AdminBookingWorkspace({
           </div>
           <label className="admin-booking-search">
             <Search aria-hidden="true" size={17} />
-            <span className="sr-only">Поиск по заявкам</span>
+            <span className="sr-only">Поиск по обращениям</span>
             <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Имя, телефон, автомобиль…" />
           </label>
         </div>
@@ -128,14 +128,14 @@ export function AdminBookingWorkspace({
                   <span className="admin-booking-list-bottom"><span>{formatRentalDate(booking.startAt)} — {formatRentalDate(booking.endAt)}</span><BookingStatusBadge status={booking.status} /></span>
                 </button>
               )) : (
-                <div className="admin-booking-list-empty"><Search size={23} /><strong>Ничего не найдено</strong><span>Измените фильтр или поисковый запрос.</span></div>
+                <div className="admin-booking-list-empty"><Search size={23} /><strong>Ничего не найдено</strong><span>Измените фильтр или поисковую фразу.</span></div>
               )}
             </section>
 
             {selected ? (
               <article className="admin-booking-detail">
                 <header className="admin-booking-detail-header">
-                  <div><span>Заявка · {formatDateTime(selected.createdAt)}</span><h2>{selected.customerName}</h2><small>{selected.id}</small></div>
+                  <div><span>Обращение · {formatDateTime(selected.createdAt)}</span><h2>{selected.customerName}</h2><small>{selected.id}</small></div>
                   <BookingStatusBadge status={selected.status} />
                 </header>
 
@@ -181,7 +181,7 @@ export function AdminBookingWorkspace({
                 <section className="admin-booking-note admin-booking-source"><h3>Источник</h3><p><MapPin size={14} /> {selected.source}{selected.referrer ? ` · ${selected.referrer}` : ""}</p></section>
 
                 <footer className="admin-booking-decision">
-                  <div><Clock3 size={17} /><span><strong>Следующий шаг</strong><small>Выберите новый статус заявки</small></span></div>
+                  <div><Clock3 size={17} /><span><strong>Следующий шаг</strong><small>Выберите новый статус обращения</small></span></div>
                   {allowedBookingTransitions[selected.status].length ? (
                     <form action={updateBookingStatusAction}>
                       <input type="hidden" name="id" value={selected.id} />
@@ -197,7 +197,7 @@ export function AdminBookingWorkspace({
             ) : null}
           </div>
         ) : (
-          <div className="admin-panel admin-panel-empty"><Inbox size={28} /><strong>Заявок пока нет</strong><span>После отправки формы новая заявка появится здесь.</span></div>
+          <div className="admin-panel admin-panel-empty"><Inbox size={28} /><strong>Обращений пока нет</strong><span>После отправки формы новое обращение появится здесь.</span></div>
         )}
       </div>
     </div>
