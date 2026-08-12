@@ -1,5 +1,5 @@
 export const isNavigationActive = (pathname: string, href: string): boolean => {
-  if (href === "/") return pathname === href;
+  if (href === "/" || href === "/admin") return pathname === href;
   return pathname === href || pathname.startsWith(`${href}/`);
 };
 

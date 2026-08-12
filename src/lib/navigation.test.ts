@@ -16,6 +16,11 @@ describe("isNavigationActive", () => {
     expect(isNavigationActive("/", "/")).toBe(true);
     expect(isNavigationActive("/cars", "/")).toBe(false);
   });
+
+  it("matches the admin overview only exactly", () => {
+    expect(isNavigationActive("/admin", "/admin")).toBe(true);
+    expect(isNavigationActive("/admin/cars", "/admin")).toBe(false);
+  });
 });
 
 describe("closeNavigationMenu", () => {

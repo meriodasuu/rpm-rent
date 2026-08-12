@@ -609,19 +609,28 @@ img { max-width: 100%; }
 .admin-login-kicker { display: block; margin: -15px 0 28px; color: #ff4c51; font-size: 9px; font-weight: 900; letter-spacing: .16em; }
 
 @media (max-width: 900px) {
+  .admin-shell { display: flex; flex-direction: column; }
   .admin-sidebar { position: sticky; inset: 0; width: auto; height: auto; padding: 0; }
+  .admin-sidebar { order: -1; }
   .admin-sidebar-brand, .admin-sidebar-account { display: none; }
   .admin-sidebar .admin-nav { display: flex; gap: 4px; margin: 0; padding: 8px 12px; overflow-x: auto; }
   .admin-sidebar .admin-nav a { flex: 0 0 auto; min-height: 42px; padding: 0 12px; }
   .admin-sidebar .admin-nav a[aria-current="page"] { box-shadow: inset 0 -3px #ff4c51; }
   .admin-sidebar .admin-nav .admin-public-link { margin: 0 0 0 auto; padding-top: 0; border: 0; border-radius: 7px; }
-  .admin-mobile-header { min-height: 58px; display: flex; align-items: center; justify-content: space-between; padding: 0 18px; color: #fff; background: #111113; border-bottom: 1px solid #29292c; }
+  .admin-mobile-header { order: -2; min-height: 58px; display: flex; align-items: center; justify-content: space-between; padding: 0 18px; color: #fff; background: #111113; border-bottom: 1px solid #29292c; }
   .admin-mobile-brand { display: flex; align-items: center; gap: 12px; }
   .admin-mobile-brand .logo { color: #fff; }
   .admin-mobile-brand > span { color: #77777e; font-size: 9px; font-weight: 900; letter-spacing: .15em; }
   .admin-mobile-header button { display: grid; place-items: center; padding: 8px; border: 0; color: #aaaab0; background: transparent; }
   .admin-main { margin-left: 0; }
 }
+
+.admin-sidebar .admin-nav,
+.admin-booking-tabs,
+.admin-contact-actions { scrollbar-width: none; }
+.admin-sidebar .admin-nav::-webkit-scrollbar,
+.admin-booking-tabs::-webkit-scrollbar,
+.admin-contact-actions::-webkit-scrollbar { display: none; }
 
 @media (max-width: 620px) {
   .admin-sidebar .admin-nav a { min-width: 46px; justify-content: center; padding-inline: 12px; }
