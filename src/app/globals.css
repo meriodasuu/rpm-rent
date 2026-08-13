@@ -109,8 +109,6 @@ img { max-width: 100%; }
   :root:not([data-theme]) .logo-image-dark { display: none; }
   :root:not([data-theme]) .logo-image-light { display: block; }
 }
-.logo small { margin-top: 6px; padding-left: 21px; font-size: 7px; letter-spacing: .35em; transform: skew(8deg); }
-.logo span::after { content: ""; display: inline-block; width: 18px; height: 5px; margin-left: 4px; background: var(--accent); transform: skew(-20deg); }
 .nav { display: flex; align-items: center; gap: 27px; font-size: 13px; font-weight: 650; }
 .nav a { transition: color .2s; }
 .nav a:hover { color: var(--accent); }
