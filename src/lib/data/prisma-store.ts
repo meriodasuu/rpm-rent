@@ -98,6 +98,7 @@ const mapCar = (record: NonNullable<PrismaCarRecord>): Car => ({
 
 const mapLocation = (record: {
   id: string; slug: string; title: string; subtitle: string; description: string; image: string;
+  images: unknown;
   published: boolean; sortOrder: number; seoTitle: string | null; seoDescription: string | null;
 }): Location => ({
   id: record.id,
@@ -105,7 +106,7 @@ const mapLocation = (record: {
   title: record.title,
   subtitle: record.subtitle,
   description: record.description,
-  image: record.image,
+  images: asStringArray(record.images).length ? asStringArray(record.images) : [record.image].filter(Boolean),
   published: record.published,
   sortOrder: record.sortOrder,
   seoTitle: record.seoTitle,
@@ -235,7 +236,8 @@ export class PrismaStore implements DataStore {
   async saveLocation(location: Location) {
     const duplicate = await getPrisma().location.findFirst({ where: { slug: location.slug, NOT: { id: location.id } }, select: { id: true } });
     if (duplicate) throw new DomainError("DUPLICATE_SLUG", "Локация с таким slug уже существует", 409);
-    const { id, ...data } = location;
+    const { id, images, ...rest } = location;
+    const data = { ...rest, image: images[0] ?? "", images };
     return mapLocation(await getPrisma().location.upsert({ where: { id }, create: { id, ...data }, update: data }));
   }
 

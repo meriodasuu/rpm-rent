@@ -19,7 +19,7 @@ function LocationFields({ location, ownerId }: { location?: Location; ownerId: s
       <div className="field"><label>Короткая подпись</label><input className="input" name="subtitle" defaultValue={location?.subtitle} required /></div>
       <div className="field"><label>Порядок на сайте</label><input className="input" name="sortOrder" type="number" min="0" defaultValue={location?.sortOrder ?? 99} required /></div>
     </div>
-    <div className="field full"><label>Изображение</label><AdminMediaUploader name="image" ownerType="locations" ownerId={ownerId} initialImages={location?.image ? [location.image] : []} mode="single" /></div>
+    <div className="field full"><label>Фотографии</label><AdminMediaUploader name="images" ownerType="locations" ownerId={ownerId} initialImages={location?.images ?? []} mode="multiple" /></div>
     <div className="field"><label>Описание страницы</label><textarea className="textarea" name="description" defaultValue={location?.description} required /></div>
     <details className="admin-content-editor">
       <summary><span><strong>Поисковая выдача</strong><small>Необязательные SEO-заголовок и описание</small></span><span>Открыть</span></summary>

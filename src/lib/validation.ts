@@ -145,11 +145,11 @@ export const locationAdminSchema = z.object({
   title: safeText(2, 160, "Укажите название локации"),
   subtitle: safeText(2, 160, "Добавьте короткое описание"),
   description: safeText(20, 10_000, "Добавьте описание локации"),
-  image: z.string().trim().max(500).refine((value) => value === "" || value.startsWith("/") || /^https:\/\//i.test(value), "Некорректное изображение"),
+  images: z.array(z.string().trim().max(500).refine((value) => value.startsWith("/") || /^https:\/\//i.test(value), "Некорректное изображение")).max(50),
   published: z.boolean(),
   sortOrder: z.coerce.number().int().min(0).max(100_000),
   seoTitle: optionalText(200),
   seoDescription: optionalText(500)
 }).strict().superRefine((value, context) => {
-  if (value.published && value.image === "") context.addIssue({ code: "custom", path: ["image"], message: "Добавьте изображение перед публикацией" });
+  if (value.published && value.images.length === 0) context.addIssue({ code: "custom", path: ["images"], message: "Добавьте изображение перед публикацией" });
 });

@@ -15,6 +15,10 @@ for (const car of seedCars) {
 }
 for (const service of seedServices) await prisma.service.upsert({ where: { id: service.id }, create: service, update: service });
 for (const faq of seedFaqs) await prisma.faq.upsert({ where: { id: faq.id }, create: faq, update: faq });
-for (const location of seedLocations) await prisma.location.upsert({ where: { id: location.id }, create: location, update: location });
+for (const location of seedLocations) {
+  const { images, ...data } = location;
+  const locationData = { ...data, image: images[0] ?? "", images };
+  await prisma.location.upsert({ where: { id: location.id }, create: locationData, update: locationData });
+}
 await prisma.$disconnect();
 console.log("PostgreSQL seed completed");

@@ -1685,6 +1685,68 @@ body.gallery-open { overflow: hidden; }
 
 .site-footer .footer-statement { color: var(--chrome-ink); background: var(--chrome-bg); border-bottom-color: var(--chrome-line); }
 .site-footer .footer-statement > strong { color: var(--chrome-ink); }
+
+.accent-dot { color: var(--accent); }
+
+.cookie-consent {
+  position: fixed;
+  z-index: 1000;
+  right: clamp(16px, 3vw, 32px);
+  bottom: clamp(16px, 3vw, 32px);
+  width: min(560px, calc(100vw - 32px));
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: color-mix(in srgb, var(--surface) 96%, transparent);
+  box-shadow: 0 20px 60px rgb(0 0 0 / 24%);
+  backdrop-filter: blur(18px);
+}
+
+.cookie-consent p { margin: 6px 0 0; color: var(--muted); line-height: 1.55; }
+.cookie-consent-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+.cookie-consent-actions .button { min-height: 42px; padding: 0 16px; }
+
+@media (max-width: 640px) {
+  .cookie-consent-actions .button { flex: 1 1 100%; }
+}
+
+.home-hero .hero-card > img { object-position: center 52%; }
+.home-hero .hero-shade { background: linear-gradient(90deg, rgba(3,3,4,.94) 0%, rgba(3,3,4,.78) 31%, rgba(3,3,4,.14) 67%, rgba(3,3,4,.04) 100%); }
+.home-hero .hero-copy { width: 49%; padding: 50px 0 48px 58px; }
+.home-hero .hero-copy .display { max-width: 510px; margin-top: 0; font-size: clamp(54px, 5.5vw, 78px); line-height: .93; letter-spacing: -.065em; }
+.home-hero .hero-copy .subtitle { max-width: 430px; margin-top: 24px; font-size: 16px; line-height: 1.55; }
+.home-hero .hero-copy .button-row { margin-top: 25px; }
+
+.location-gallery { position: relative; min-height: clamp(340px, 54vw, 680px); overflow: hidden; color: #fff; background: #09090a; }
+.location-gallery > img { object-fit: cover; }
+.location-gallery-shade { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(6,8,12,.82), rgba(6,8,12,.12) 72%); }
+.location-gallery-copy { position: relative; z-index: 1; min-height: inherit; display: grid; align-content: end; max-width: 760px; padding: clamp(28px, 6vw, 76px); }
+.location-gallery-copy .eyebrow { display: flex; align-items: center; gap: 8px; }
+.location-gallery-control { position: absolute; z-index: 3; top: 50%; width: 46px; height: 46px; display: grid; place-items: center; border: 1px solid rgba(255,255,255,.4); border-radius: 50%; color: #fff; background: rgba(0,0,0,.35); backdrop-filter: blur(8px); transform: translateY(-50%); }
+.location-gallery-control:hover { border-color: #fff; background: rgba(0,0,0,.65); }
+.location-gallery-control.is-prev { left: 20px; }
+.location-gallery-control.is-next { right: 20px; }
+.location-gallery-dots { position: absolute; z-index: 3; left: 50%; bottom: 24px; display: flex; gap: 8px; transform: translateX(-50%); }
+.location-gallery-dots button { width: 28px; height: 3px; padding: 0; border: 0; border-radius: 999px; background: rgba(255,255,255,.38); }
+.location-gallery-dots button.is-active { background: var(--accent); }
+.location-gallery-counter { position: absolute; z-index: 3; right: 24px; bottom: 19px; font-size: 11px; font-weight: 800; letter-spacing: .12em; }
+
+@media (max-width: 760px) {
+  .home-hero .hero-card { min-height: 610px; }
+  .home-hero .hero-card > img { object-position: 61% center; }
+  .home-hero .hero-shade { background: linear-gradient(180deg, rgba(3,3,4,.94) 0%, rgba(3,3,4,.78) 49%, rgba(3,3,4,.18) 78%, rgba(3,3,4,.3) 100%); }
+  .home-hero .hero-copy { width: 100%; padding: 38px 22px 32px; }
+  .home-hero .hero-copy .display { max-width: 400px; font-size: clamp(45px, 13.5vw, 62px); }
+  .home-hero .hero-copy .subtitle { max-width: 320px; margin-top: 18px; font-size: 13px; }
+  .desktop-only { display: none; }
+  .location-gallery { min-height: 520px; }
+  .location-gallery-shade { background: linear-gradient(0deg, rgba(6,8,12,.88), rgba(6,8,12,.08) 72%); }
+  .location-gallery-control { top: auto; bottom: 18px; transform: none; }
+  .location-gallery-control.is-prev { left: 18px; }
+  .location-gallery-control.is-next { right: 18px; }
+  .location-gallery-dots { bottom: 37px; }
+  .location-gallery-counter { display: none; }
+}
 .site-footer .footer-column h3,
 .site-footer .footer-column a,
 .site-footer .footer-column span,

@@ -105,7 +105,7 @@ export async function saveLocationAction(formData: FormData) {
     title: formData.get("title"),
     subtitle: formData.get("subtitle"),
     description: formData.get("description"),
-    image: formData.get("image"),
+    images: values(formData, "images"),
     published: checked(formData, "published"),
     sortOrder: formData.get("sortOrder") || 99,
     seoTitle: formData.get("seoTitle"),

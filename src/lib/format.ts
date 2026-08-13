@@ -1,6 +1,8 @@
 export const formatPrice = (value: number) =>
   new Intl.NumberFormat("ru-RU", { maximumFractionDigits: 0 }).format(value) + " ₽";
 
+export const formatDeposit = (value: number) => value > 0 ? formatPrice(value) : "Индивидуально";
+
 export const formatDateTime = (value: string | Date) =>
   new Intl.DateTimeFormat("ru-RU", { dateStyle: "medium", timeStyle: "short" }).format(new Date(value));
 

@@ -22,7 +22,7 @@ import {
   type AdminBookingFilter,
 } from "@/lib/admin-operations";
 import { allowedBookingTransitions, bookingStatusLabels } from "@/lib/domain/booking-status";
-import { formatDateTime, formatPrice, formatRentalDate, phoneHref } from "@/lib/format";
+import { formatDateTime, formatDeposit, formatPrice, formatRentalDate, phoneHref } from "@/lib/format";
 import type { Booking } from "@/types/domain";
 import { BookingStatusBadge } from "./booking-status-badge";
 
@@ -171,7 +171,7 @@ export function AdminBookingWorkspace({
                   <div><span>Аренда</span><strong>{formatPrice(selected.rentalPrice)}</strong></div>
                   <div><span>Доп. услуги</span><strong>{formatPrice(selected.additionalServicesPrice)}</strong></div>
                   <div className="is-total"><span>Итого</span><strong>{formatPrice(selected.rentalPrice + selected.additionalServicesPrice)}</strong></div>
-                  <div><span>Залог</span><strong>{formatPrice(selected.deposit)}</strong></div>
+                  <div><span>Залог</span><strong>{formatDeposit(selected.deposit)}</strong></div>
                 </section>
 
                 {selected.additionalServicesSnapshot.length ? (

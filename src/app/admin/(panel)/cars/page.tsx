@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, CarFront, Plus } from "lucide-react";
 import { getStore } from "@/lib/data";
-import { formatPrice, formatRentalDate } from "@/lib/format";
+import { formatDeposit, formatPrice, formatRentalDate } from "@/lib/format";
 import { getNextActiveBooking } from "@/lib/admin-operations";
 
 export const metadata = { title: "Автопарк" };
@@ -42,7 +42,7 @@ export default async function AdminCarsPage() {
                     <strong>{car.title}</strong>
                     <span>{car.category} · {car.year ?? "год не указан"}</span>
                   </div>
-                  <div className="admin-fleet-price"><small>Ставка</small><strong>{formatPrice(car.pricePerDay)} / сут.</strong><span>Залог {formatPrice(car.deposit)}</span></div>
+                  <div className="admin-fleet-price"><small>Ставка</small><strong>{formatPrice(car.pricePerDay)} / сут.</strong><span>Залог {formatDeposit(car.deposit)}</span></div>
                   <div className="admin-fleet-state">
                     <small>Статус</small>
                     <span className={`admin-fleet-pill ${car.published && car.available ? "is-ready" : "is-muted"}`}>{car.published ? (car.available ? "Доступен" : "Недоступен") : "Скрыт"}</span>

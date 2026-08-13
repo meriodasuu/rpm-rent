@@ -11,7 +11,7 @@ import { getCarEditorial } from "@/lib/content";
 import { getStore } from "@/lib/data";
 import { bookingPolicyProblem } from "@/lib/domain/booking";
 import { assertRentalPeriod, parseDateOnly } from "@/lib/domain/dates";
-import { formatPrice } from "@/lib/format";
+import { formatDeposit, formatPrice } from "@/lib/format";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
@@ -51,7 +51,7 @@ export default async function CarPage({ params, searchParams }: { params: Promis
     ["Мощность", car.horsepower ? `${car.horsepower} л.с.` : null], ["Места", car.seats]
   ].filter((item): item is [string, string | number] => Boolean(item[1]));
   const conditions = [
-    { icon: WalletCards, title: "Залог", value: formatPrice(car.deposit), note: "Показывается отдельно от стоимости аренды." },
+    { icon: WalletCards, title: "Залог", value: formatDeposit(car.deposit), note: "Условия залога согласовываются индивидуально." },
     { icon: UserRound, title: "Возраст", value: car.minimumAge !== null ? `от ${car.minimumAge} лет` : null, note: "Требование для этого автомобиля." },
     { icon: Gauge, title: "Стаж", value: car.minimumDrivingExperience !== null ? `от ${car.minimumDrivingExperience} мес.` : null, note: "Минимальный водительский стаж." },
     { icon: CalendarDays, title: "Минимальный срок", value: car.minimumRentalDays !== null ? `${car.minimumRentalDays} сут.` : null, note: "Дата возврата не входит в оплачиваемый период." },
@@ -82,7 +82,7 @@ export default async function CarPage({ params, searchParams }: { params: Promis
             <p className="booking-card-label">Стоимость аренды</p>
             <div className="price">{formatPrice(car.pricePerDay)} <small>/ сутки</small></div>
             <div className="summary-lines">
-              <div className="summary-line"><span>Залог</span><strong>{formatPrice(car.deposit)}</strong></div>
+              <div className="summary-line"><span>Залог</span><strong>{formatDeposit(car.deposit)}</strong></div>
               <div className="summary-line"><span>Расчёт</span><strong>по выбранным датам</strong></div>
               <div className="summary-line"><span>Подтверждение</span><strong>менеджером</strong></div>
             </div>
@@ -104,15 +104,15 @@ export default async function CarPage({ params, searchParams }: { params: Promis
         <section className="detail-section use-cases-section"><div><p className="eyebrow">Сценарии</p><h2>Подойдёт для</h2></div><div className="use-case-list">{editorial.useCases.map((item, index) => <span className="use-case-chip" key={`${item}-${index}`}>{item}</span>)}</div><p className="detail-copy">Если ваш сценарий требует доставки, водителя или специальной подготовки для события, укажите это при оформлении. Возможность и стоимость согласуются отдельно.</p></section>
 
         <section className="detail-section">
-          <div className="detail-section-head"><div><p className="eyebrow">Перед оформлением</p><h2>Условия этого автомобиля</h2></div><p>Ставка и залог уже участвуют в расчёте. Остальные параметры показываются только после заполнения в карточке автомобиля.</p></div>
+          <div className="detail-section-head"><div><p className="eyebrow">Перед оформлением</p><h2>Условия этого автомобиля</h2></div><p>Ставка участвует в предварительном расчёте, а залог согласовывается индивидуально. Остальные параметры указаны в карточке автомобиля.</p></div>
           {policyProblem ? <p className="field-error">Возраст, водительский стаж и минимальный срок пока не опубликованы. Система не принимает онлайн-обращение без этих данных.</p> : null}
           <div className="condition-list">{conditions.map(({ icon: Icon, title, value, note }) => <div className="condition condition-rich" key={title}><Icon size={20} aria-hidden /><div><strong>{title}</strong><span>{value}</span><small>{note}</small></div></div>)}</div>
           <div className="rental-assurance"><FileCheck2 size={22} /><div><h3>Финальные условия фиксируются до получения автомобиля</h3><p>Менеджер подтверждает доступность, способ получения и применимые ограничения. Отправка формы сама по себе не является бронью.</p></div><Link className="text-link" href="/rental-terms">Подробнее <ArrowRight size={16} /></Link></div>
         </section>
 
         <section className="detail-section price-detail-section">
-          <div><p className="eyebrow">Расчёт</p><h2>Что вы увидите при оформлении</h2><p className="detail-copy">Система рассчитает аренду по суточной ставке и длительности периода. Платные услуги добавляются только при выборе, а залог остаётся отдельной строкой.</p></div>
-          <div className="price-detail-card surface"><CircleDollarSign size={22} /><div className="price-line"><span>Ставка</span><strong>{formatPrice(car.pricePerDay)} / сутки</strong></div><div className="price-line"><span>Срок</span><strong>по выбранным датам</strong></div><div className="price-line"><span>Залог</span><strong>{formatPrice(car.deposit)} отдельно</strong></div></div>
+          <div><p className="eyebrow">Расчёт</p><h2>Что вы увидите при оформлении</h2><p className="detail-copy">Система рассчитает аренду по суточной ставке и длительности периода. Платные услуги добавляются только при выборе, а условия залога подтвердит менеджер.</p></div>
+          <div className="price-detail-card surface"><CircleDollarSign size={22} /><div className="price-line"><span>Ставка</span><strong>{formatPrice(car.pricePerDay)} / сутки</strong></div><div className="price-line"><span>Срок</span><strong>по выбранным датам</strong></div><div className="price-line"><span>Залог</span><strong>{formatDeposit(car.deposit)}</strong></div></div>
         </section>
 
         <section className="detail-section"><div className="grid-2"><div><p className="eyebrow">До оформления</p><h2>Ответы на частые вопросы</h2><p className="detail-copy">Проверьте, как рассчитывается сумма, когда подтверждается автомобиль и какие параметры зависят от конкретной модели.</p><div className="button-row"><Link className="button ghost" href="/faq">Все вопросы</Link><Link className="button" href={bookingHref}>Забронировать</Link></div></div><FaqList items={faqs.slice(0, 6)} /></div></section>

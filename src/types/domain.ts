@@ -64,7 +64,7 @@ export type Location = {
   title: string;
   subtitle: string;
   description: string;
-  image: string;
+  images: string[];
   published: boolean;
   sortOrder: number;
   seoTitle: string | null;

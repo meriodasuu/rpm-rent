@@ -6,8 +6,8 @@ import { Breadcrumbs } from "@/components/breadcrumbs";
 export const metadata: Metadata = { title: "Условия аренды автомобилей", description: "Как выбрать автомобиль, проверить даты, рассчитать стоимость и оформить аренду.", alternates: { canonical: "/rental-terms" } };
 
 const checks = [
-  { icon: UserRound, title: "Требования к водителю", text: "Минимальный возраст и стаж зависят от автомобиля." },
-  { icon: CircleDollarSign, title: "Стоимость и залог", text: "Суточная ставка участвует в расчёте. Залог показан отдельно." },
+  { icon: UserRound, title: "Требования к водителю", text: "Минимальный возраст — 18 лет, водительский стаж — 3 месяца." },
+  { icon: CircleDollarSign, title: "Стоимость и залог", text: "Суточная ставка участвует в расчёте. Условия залога согласовываются индивидуально." },
   { icon: ShieldCheck, title: "Пробег и страхование", text: "Лимит, перепробег и страхование зависят от конкретной машины." },
   { icon: MapPin, title: "Получение и возврат", text: "Самовывоз или доставка согласуются с менеджером." }
 ];
@@ -15,7 +15,7 @@ const checks = [
 const flow = [
   { icon: CarFront, title: "Выберите автомобиль", text: "Сравните фотографии, кузов, класс, суточную ставку и залог." },
   { icon: CalendarDays, title: "Укажите период", text: "Каталог проверит пересечения, затем сервер повторит проверку при отправке." },
-  { icon: CircleDollarSign, title: "Посмотрите расчёт", text: "Аренда считается по ставке и длительности. Услуги и залог показаны отдельно." },
+  { icon: CircleDollarSign, title: "Посмотрите расчёт", text: "Аренда считается по ставке и длительности. Платные услуги добавляются отдельно, залог согласовывается индивидуально." },
   { icon: FileCheck2, title: "Получите подтверждение", text: "Менеджер проверит доступность, требования и способ получения." }
 ];
 
@@ -23,7 +23,7 @@ export default function RentalTermsPage() {
   return (
     <div className="page terms-page"><div className="container">
       <Breadcrumbs items={[{ label: "Главная", href: "/" }, { label: "Условия аренды" }]} />
-      <div className="page-intro"><div><h1 className="title">Как устроены условия аренды</h1></div><p className="subtitle">Конкретные ограничения, ставка и залог зависят от выбранного автомобиля и подтверждаются до оформления.</p></div>
+      <div className="page-intro"><div><h1 className="title">Как устроены условия аренды</h1></div><p className="subtitle">Возраст водителя — от 18 лет, стаж — от 3 месяцев. Ставка и индивидуальные условия залога подтверждаются до оформления.</p></div>
 
       <div className="terms-summary">{checks.map(({ icon: Icon, title, text }) => <article key={title}><Icon size={21} /><h2>{title}</h2><p>{text}</p></article>)}</div>
 

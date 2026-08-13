@@ -15,8 +15,6 @@ const car = (
   description:
     "Посмотрите фотографии, стоимость аренды и доступные условия. Даты и итоговые параметры заказа подтверждаются менеджером до оформления.",
   oldPrice: null,
-  minimumAge: 21,
-  minimumDrivingExperience: 24,
   minimumRentalDays: 1,
   mileageLimit: null,
   extraMileagePrice: null,
@@ -31,7 +29,10 @@ const car = (
   recommendedOrder: 0,
   seoTitle: null,
   seoDescription: null,
-  ...value
+  ...value,
+  deposit: 0,
+  minimumAge: 18,
+  minimumDrivingExperience: 3
 });
 
 const images = (slug: string, order: number[], title: string) =>
@@ -163,7 +164,7 @@ export const seedCars: Car[] = [
     recommendedOrder: 8,
     images: images("toyota-supra", [5, 6, 1, 2, 3, 4], "Toyota GR Supra")
   }),
-  ...importedCars
+  ...importedCars.map((item) => ({ ...item, deposit: 0, minimumAge: 18, minimumDrivingExperience: 3, minimumRentalDays: item.minimumRentalDays ?? 1 }))
 ];
 
 export const seedServices: Service[] = [
@@ -177,11 +178,11 @@ export const seedServices: Service[] = [
 
 export const seedFaqs: Faq[] = [
   { id: "faq-dates", question: "Можно выбрать автомобиль на конкретные даты?", answer: "Да. Укажите начало и окончание аренды на главной странице или при оформлении. Каталог исключит подтверждённые пересечения, а система повторно проверит период перед отправкой обращения.", category: "booking", published: true, sortOrder: 1 },
-  { id: "faq-price", question: "Как рассчитывается предварительная стоимость?", answer: "Суточная ставка автомобиля умножается на срок аренды. Выбранные платные услуги добавляются отдельно, а залог не включается в сумму аренды и показывается отдельной строкой.", category: "payment", published: true, sortOrder: 2 },
-  { id: "faq-deposit", question: "Нужен ли залог?", answer: "Размер залога указан в карточке автомобиля и в сводке оформления. Порядок его внесения и возврата фиксируется в согласованных условиях и договоре.", category: "payment", published: true, sortOrder: 3 },
+  { id: "faq-price", question: "Как рассчитывается предварительная стоимость?", answer: "Суточная ставка автомобиля умножается на срок аренды. Выбранные платные услуги добавляются отдельно, а условия залога согласовываются с менеджером индивидуально.", category: "payment", published: true, sortOrder: 2 },
+  { id: "faq-deposit", question: "Нужен ли залог?", answer: "Условия залога определяются индивидуально и подтверждаются менеджером до оформления договора.", category: "payment", published: true, sortOrder: 3 },
   { id: "faq-confirm", question: "Отправка формы сразу подтверждает бронирование?", answer: "Нет. Форма передаёт выбранный автомобиль, даты и контакты менеджеру. Доступность и итоговые условия подтверждаются отдельно до оформления.", category: "booking", published: true, sortOrder: 4 },
   { id: "faq-pickup", question: "Как получить автомобиль?", answer: "В форме можно выбрать самовывоз или доставку. Для доставки укажите адрес; возможность подачи и применимая стоимость подтверждаются при обработке обращения.", category: "delivery", published: true, sortOrder: 5 },
-  { id: "faq-age", question: "Есть ли требования к возрасту и стажу?", answer: "Они зависят от конкретного автомобиля. Подтверждённые значения публикуются в карточке машины и повторно фиксируются до договора.", category: "rental", published: true, sortOrder: 6 },
+  { id: "faq-age", question: "Есть ли требования к возрасту и стажу?", answer: "Минимальный возраст водителя — 18 лет, минимальный водительский стаж — 3 месяца. Соответствие требованиям проверяется при оформлении заявки.", category: "rental", published: true, sortOrder: 6 },
   { id: "faq-mileage", question: "Есть ли ограничение пробега?", answer: "Лимит и стоимость перепробега могут отличаться у разных автомобилей. Если значения подтверждены, они показаны в карточке выбранной машины.", category: "rental", published: true, sortOrder: 7 },
   { id: "faq-docs", question: "Какие документы понадобятся?", answer: "Перечень документов должен быть подтверждён менеджером до заключения договора и может зависеть от условий выбранного автомобиля.", category: "rental", published: true, sortOrder: 8 }
 ];
@@ -193,7 +194,7 @@ export const seedLocations: Location[] = [
     title: "Центр Петербурга",
     subtitle: "Личный маршрут",
     description: "Маршрут для деловых встреч, прогулок и особых поводов в центре Санкт-Петербурга. Выберите автомобиль, который поддержит ваш темп и планы на день.",
-    image: "/images/atmosphere/saint-petersburg-blue-hour.png",
+    images: ["/images/atmosphere/saint-petersburg-blue-hour.png"],
     published: true,
     sortOrder: 1,
     seoTitle: null,
@@ -205,7 +206,7 @@ export const seedLocations: Location[] = [
     title: "Петроградская сторона",
     subtitle: "Город и пространство",
     description: "Спокойный городской маршрут между островами, проспектами и ресторанами Петроградской стороны. Подберите автомобиль для дня без лишней спешки.",
-    image: "/images/cars/li-auto-l6/01.jpg",
+    images: ["/images/cars/li-auto-l6/01.jpg"],
     published: true,
     sortOrder: 2,
     seoTitle: null,
@@ -217,7 +218,7 @@ export const seedLocations: Location[] = [
     title: "Дворцовая набережная",
     subtitle: "Особый повод",
     description: "Автомобили для событий, вечерних маршрутов и съёмок на одной из самых узнаваемых набережных Санкт-Петербурга.",
-    image: "/images/cars/bentley-continental/02.jpg",
+    images: ["/images/cars/bentley-continental/02.jpg"],
     published: true,
     sortOrder: 3,
     seoTitle: null,
@@ -229,7 +230,7 @@ export const seedLocations: Location[] = [
     title: "Курортный маршрут",
     subtitle: "Долгая поездка",
     description: "Выезд к Финскому заливу и спокойный загородный ритм. Подберите комфортный автомобиль для длинного маршрута.",
-    image: "/images/cars/lamborghini-urus/05.jpg",
+    images: ["/images/cars/lamborghini-urus/05.jpg"],
     published: true,
     sortOrder: 4,
     seoTitle: null,

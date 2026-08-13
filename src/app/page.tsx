@@ -32,10 +32,10 @@ const serviceIcons = [CarFront, CalendarDays, ShieldCheck, MapPin, Sparkles, Cam
 
 const steps = [
   ["Выбор авто", "Выберите автомобиль в каталоге или уточните наличие у менеджера.", CarFront, "/images/cars/drive/mercedes-gle/01.jpg"],
-  ["Подходящая дата", "Укажите даты и время аренды. Мы проверим доступность автомобиля.", CalendarDays, "/images/cars/drive/porsche-taycan/02.jpg"],
-  ["Подтверждение и бронирование", "Мы свяжемся с вами для уточнения всех деталей и брони.", ShieldCheck, "/images/cars/drive/tesla-black-2/01.jpg"],
-  ["Договор и условия", "Подписываем договор и знакомим вас со всеми условиями. Всё прозрачно и безопасно.", FileText, "/images/cars/drive/porsche-macan/03.jpeg"],
-  ["Получение авто", "Заберите автомобиль в удобное время и место. Наслаждайтесь поездкой!", KeyRound, "/images/cars/drive/jeep/01.jpg"]
+  ["Подходящая дата", "Укажите даты и время аренды. Мы проверим доступность автомобиля.", CalendarDays, "/images/editorial/step-date.png"],
+  ["Подтверждение и бронирование", "Мы свяжемся с вами для уточнения всех деталей и брони.", ShieldCheck, "/images/editorial/step-confirmation.png"],
+  ["Договор и условия", "Подписываем договор и знакомим вас со всеми условиями. Всё прозрачно и безопасно.", FileText, "/images/editorial/step-contract.png"],
+  ["Получение авто", "Заберите автомобиль в удобное время и место. Наслаждайтесь поездкой!", KeyRound, "/images/editorial/step-key.png"]
 ] as const;
 
 export default async function HomePage() {
@@ -46,7 +46,7 @@ export default async function HomePage() {
     {
       id: "faq-before-booking",
       question: "Что проверить перед оформлением?",
-      answer: "Суточную ставку и залог, доступность на нужные даты, требования к возрасту и стажу, лимит пробега, страхование, способ получения и возврата.",
+      answer: "Суточную ставку, индивидуальные условия залога, доступность на нужные даты, требования к возрасту и стажу, лимит пробега, страхование, способ получения и возврата.",
       category: "rental",
       published: true,
       sortOrder: 99
@@ -57,13 +57,12 @@ export default async function HomePage() {
     <>
       <section className="hero hero-cinematic home-hero">
         <div className="container hero-card">
-          <Image alt="Ночная дорога в Санкт-Петербурге" fill preload sizes="(max-width:760px) 100vw, 1280px" src="/images/atmosphere/rpm-night-road.png" />
+          <Image alt="Toyota Supra в пространстве RPM Rent" fill preload sizes="(max-width:760px) 100vw, 1280px" src="/images/editorial/home-supra-hero.jpg" />
           <div className="hero-grid" />
           <div className="hero-shade" />
           <div className="hero-copy">
-            <p className="eyebrow">RPM Rent · Санкт-Петербург</p>
-            <h1 className="display">Ваш маршрут<br />начинается здесь.</h1>
-            <p className="subtitle">Премиальные автомобили для города, деловой поездки, события или долгого маршрута.</p>
+            <h1 className="display">Премиальные<br />автомобили<br />для вашего<br />маршрута<span className="accent-dot">.</span></h1>
+            <p className="subtitle">Арендуй авто для города, встреч, свиданий<br className="desktop-only" /> и ярких выходных в Санкт-Петербурге.</p>
             <div className="button-row"><Link className="button red" href="/cars">Выбрать автомобиль <ArrowRight size={18} /></Link></div>
           </div>
         </div>
@@ -99,7 +98,7 @@ export default async function HomePage() {
         <div className="container">
           <div className="section-head"><h2 className="title">Локации</h2><p className="section-lead">Выберите настроение поездки и перейдите к подходящей подборке.</p></div>
           <div className="locations-grid">
-            {locations.map((location, index) => <Link className="location-card" href={`/locations/${location.slug}`} key={location.id}><Image alt={location.title} fill sizes="(max-width:760px) 88vw, 42vw" src={location.image} /><span className="location-shade" /><span className="location-index">{String(index + 1).padStart(2, "0")}</span><span className="location-copy"><small>{location.subtitle}</small><strong>{location.title}</strong></span><ArrowRight size={20} /></Link>)}
+            {locations.map((location, index) => <Link className="location-card" href={`/locations/${location.slug}`} key={location.id}><Image alt={location.title} fill sizes="(max-width:760px) 88vw, 42vw" src={location.images[0]!} /><span className="location-shade" /><span className="location-index">{String(index + 1).padStart(2, "0")}</span><span className="location-copy"><small>{location.subtitle}</small><strong>{location.title}</strong></span><ArrowRight size={20} /></Link>)}
           </div>
         </div>
       </section>
@@ -127,7 +126,7 @@ export default async function HomePage() {
       <section className="section price-section">
         <div className="container price-layout">
           <div><h2 className="title">Из чего складывается<br />предварительный расчёт</h2><p className="price-intro">До оформления вы увидите прозрачную структуру стоимости без скрытых пунктов.</p><div className="button-row"><Link className="button ghost" href="/rental-terms">Подробнее об условиях</Link></div></div>
-          <div className="price-example surface"><p className="price-example-label">Пример структуры расчёта</p><div className="price-line"><span><CarFront size={17} />Ставка автомобиля</span><strong>за сутки</strong></div><div className="price-line"><span><CalendarDays size={17} />Срок аренды</span><strong>выбранные даты</strong></div><div className="price-line"><span><PackagePlus size={17} />Дополнительные услуги</span><strong>если выбраны</strong></div><div className="price-line price-line-total"><span><CircleDollarSign size={17} />Залог</span><strong>отдельно</strong></div><p>Конкретные суммы указаны в карточке автомобиля и сводке оформления.</p></div>
+          <div className="price-example surface"><p className="price-example-label">Пример структуры расчёта</p><div className="price-line"><span><CarFront size={17} />Ставка автомобиля</span><strong>за сутки</strong></div><div className="price-line"><span><CalendarDays size={17} />Срок аренды</span><strong>выбранные даты</strong></div><div className="price-line"><span><PackagePlus size={17} />Дополнительные услуги</span><strong>если выбраны</strong></div><div className="price-line price-line-total"><span><CircleDollarSign size={17} />Залог</span><strong>индивидуально</strong></div><p>Итоговые условия подтверждает менеджер до оформления договора.</p></div>
         </div>
       </section>
 
