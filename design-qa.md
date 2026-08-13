@@ -67,3 +67,14 @@
 - Findings: no actionable P0/P1/P2 issues remain.
 
 final result: passed
+
+## Theme-aware brand and font-preview verification — 2026-08-13
+
+- Browser QA used the in-app browser against the restarted local app at `http://127.0.0.1:3100/`.
+- Desktop (1440 × 1000): light chrome rendered with white header/footer and dark chrome with black header/footer. In both states the appropriate RPM logo is legible on its matching surface, navigation and CTA contrast remain correct, and the transparent logo artwork has no visible square canvas. The document `scrollWidth` was 1425 px within the 1440 px viewport.
+- Font preview: selected `Наш шрифт`, `Conthrax`, and `Inter`. Each applied the expected root value (`manrope`, `conthrax`, and `inter`), active control, and distinct loaded computed font stack (`Manrope`; `ConthraxPreview, Manrope`; and `InterPreview, Manrope`). The visible type changed with each choice. Reload retained the final `Inter` choice and its active control.
+- Mobile (390 × 844): light and dark controls correctly swap the header between white and black; the compact `Шрифт` control opens all three choices; and the mobile menu opens the expected six navigation links. Header and footer logo treatments remain clean, the footer is readable, and `scrollWidth` (383 px) remains within the 390 px viewport.
+- Browser console contained no warnings or errors in the checked final mobile state.
+- Technical checks: `pnpm typecheck`, `pnpm test` (20 files / 92 tests), `pnpm prisma:validate`, `pnpm exec next build --webpack`, and `git diff --check` passed. `pnpm lint` reported 18,187 problems only from 282 generated `.worktrees/**/.next/**` files; no non-worktree file path appeared in its output, so this external sibling-worktree contamination was recorded as non-gating rather than changed in this task.
+
+final result: passed
