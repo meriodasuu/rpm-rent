@@ -30,6 +30,9 @@ describe("font preview preferences", () => {
 
     expect(html).toContain('aria-label="Предпросмотр шрифта"');
     expect(html).toContain('aria-pressed="true"');
+    expect(html).toContain(">Наш шрифт</button>");
+    expect(html).toContain(">Conthrax</button>");
+    expect(html).toContain(">Inter</button>");
     expect(html).toContain("<summary>Шрифт</summary>");
   });
 });

@@ -11,7 +11,7 @@ type RootElement = { dataset: { font?: string } };
 type FontStorage = { setItem(key: string, value: string): void };
 
 const options: Array<{ value: FontPreference; label: string }> = [
-  { value: "manrope", label: "Manrope" },
+  { value: "manrope", label: "Наш шрифт" },
   { value: "conthrax", label: "Conthrax" },
   { value: "inter", label: "Inter" },
 ];
