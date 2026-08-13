@@ -8,4 +8,8 @@ describe("theme contrast", () => {
   it("keeps icon glyphs opposite to an ink-colored icon background", () => {
     expect(stylesheet).toMatch(/\.service-card \.icon-box, \.icon-box \{[^}]*background: var\(--ink\); color: var\(--button-primary-ink\);/s);
   });
+
+  it("keeps text dark inside light status tags", () => {
+    expect(stylesheet).toMatch(/\.tag \{[^}]*background: #fff;[^}]*color: #080809;/s);
+  });
 });

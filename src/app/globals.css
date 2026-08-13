@@ -116,7 +116,7 @@ img { max-width: 100%; }
 .button.small-button { min-height: 40px; padding-inline: 16px; font-size: 13px; }
 .button[disabled] { opacity: .45; pointer-events: none; }
 .button-row { display: flex; flex-wrap: wrap; gap: 12px; }
-.tag { display: inline-flex; align-items: center; min-height: 27px; padding: 0 10px; border-radius: 999px; background: #fff; border: 1px solid var(--line); font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; }
+.tag { display: inline-flex; align-items: center; min-height: 27px; padding: 0 10px; border-radius: 999px; background: #fff; border: 1px solid var(--line); color: #080809; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; }
 .tag.red { background: var(--accent); border-color: var(--accent); color: #fff; }
 
 .site-header { position: sticky; top: 0; z-index: 40; background: rgba(245,245,243,.88); border-bottom: 1px solid rgba(17,17,17,.08); backdrop-filter: blur(18px); }
