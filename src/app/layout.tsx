@@ -42,9 +42,9 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="ru" data-scroll-behavior="smooth" suppressHydrationWarning>
+    <html lang="ru" data-scroll-behavior="smooth" className={manrope.variable} suppressHydrationWarning>
       <head><ThemeInitScript /><script dangerouslySetInnerHTML={{ __html: fontPreviewInitCode }} /></head>
-      <body className={manrope.variable}>
+      <body>
         <SiteChrome header={<Header />} footer={<Footer />}>{children}</SiteChrome>
         <Analytics />
         <ExperienceAnalytics />

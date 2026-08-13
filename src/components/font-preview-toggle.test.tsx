@@ -25,6 +25,15 @@ describe("font preview preferences", () => {
     expect(saved["rpm-font-preview"]).toBe("inter");
   });
 
+  it("applies the default choice to the document root", () => {
+    const root = { dataset: {} as DOMStringMap };
+    const storage = { setItem: () => undefined };
+
+    applyFontPreference("manrope", root, storage);
+
+    expect(root.dataset.font).toBe("manrope");
+  });
+
   it("renders labelled desktop choices and a compact mobile trigger", () => {
     const html = renderToStaticMarkup(<FontPreviewToggle />);
 
