@@ -15,6 +15,14 @@ const manrope = Manrope({
 });
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+const fontPreviewInitCode = `(() => {
+  try {
+    const stored = localStorage.getItem("rpm-font-preview");
+    document.documentElement.dataset.font = stored === "conthrax" || stored === "inter" || stored === "manrope" ? stored : "manrope";
+  } catch {
+    document.documentElement.dataset.font = "manrope";
+  }
+})();`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -35,7 +43,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="ru" data-scroll-behavior="smooth" suppressHydrationWarning>
-      <head><ThemeInitScript /></head>
+      <head><ThemeInitScript /><script dangerouslySetInnerHTML={{ __html: fontPreviewInitCode }} /></head>
       <body className={manrope.variable}>
         <SiteChrome header={<Header />} footer={<Footer />}>{children}</SiteChrome>
         <Analytics />

@@ -1,4 +1,5 @@
 :root {
+  --site-font: var(--font-manrope), Arial, Helvetica, sans-serif;
   --bg: #f5f5f3;
   --surface: #ffffff;
   --surface-2: #eeeeeb;
@@ -44,7 +45,7 @@ body {
   margin: 0;
   color: var(--ink);
   background: var(--bg);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--site-font);
   -webkit-font-smoothing: antialiased;
 }
 a { color: inherit; text-decoration: none; }
@@ -127,6 +128,16 @@ img { max-width: 100%; }
 .theme-toggle-button { width: 30px; height: 30px; display: grid; place-items: center; padding: 0; border: 0; border-radius: 50%; color: #858589; background: transparent; }
 .theme-toggle-button:hover { color: #fff; }
 .theme-toggle-button[aria-pressed="true"] { color: #111; background: #fff; }
+.font-preview-options { display: inline-grid; grid-template-columns: repeat(3, auto); gap: 2px; padding: 3px; border: 1px solid #3a3a3c; border-radius: 999px; background: #111113; }
+.font-preview-button { min-height: 30px; padding: 0 9px; border: 0; border-radius: 999px; color: #858589; background: transparent; font: inherit; font-size: 10px; font-weight: 750; }
+.font-preview-button:hover { color: #fff; }
+.font-preview-button[aria-pressed="true"] { color: #111; background: #fff; }
+.font-preview-menu { display: none; position: relative; }
+.font-preview-menu summary { min-height: 36px; display: flex; align-items: center; padding: 0 12px; border: 1px solid #3a3a3c; border-radius: 999px; color: #fff; cursor: pointer; font-size: 10px; font-weight: 750; }
+.font-preview-menu-options { position: absolute; z-index: 10; top: calc(100% + 6px); right: 0; display: grid; min-width: 120px; gap: 3px; padding: 5px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); box-shadow: 0 12px 30px rgba(0,0,0,.18); }
+.font-preview-menu-options .font-preview-button { color: var(--ink); text-align: left; }
+.font-preview-menu-options .font-preview-button:hover { color: var(--ink); background: var(--surface-2); }
+.font-preview-menu-options .font-preview-button[aria-pressed="true"] { color: #111; background: #fff; }
 
 .hero { padding: 24px 0 34px; }
 .hero-card { min-height: 735px; position: relative; overflow: hidden; border-radius: var(--radius-lg); background: #ececeb; border: 1px solid #dfdfdb; }
@@ -484,6 +495,8 @@ img { max-width: 100%; }
   .nav { display: none; }
   .mobile-menu { display: block; }
   .header-actions .button, .header-phone { display: none; }
+  .font-preview-options { display: none; }
+  .font-preview-menu { display: block; }
   .hero-card { min-height: 770px; }
   .hero-copy { width: 52%; }
   .hero-copy .display { max-width: 420px; font-size: clamp(50px, 6.4vw, 64px); }
@@ -972,8 +985,12 @@ html { background: var(--ink); }
 body {
   overflow-x: hidden;
   background: var(--bg);
-  font-family: var(--font-manrope), Arial, Helvetica, sans-serif;
+  font-family: var(--site-font);
 }
+:root[data-font="conthrax"] { --site-font: "ConthraxPreview", var(--font-manrope), Arial, Helvetica, sans-serif; }
+:root[data-font="inter"] { --site-font: "InterPreview", var(--font-manrope), Arial, Helvetica, sans-serif; }
+@font-face { font-family: "ConthraxPreview"; src: url("/fonts/conthrax-sb.ttf") format("truetype"); font-style: normal; font-weight: 600; font-display: swap; }
+@font-face { font-family: "InterPreview"; src: url("/fonts/inter-variable.ttf") format("truetype"); font-style: normal; font-weight: 100 900; font-display: swap; }
 body.gallery-open { overflow: hidden; }
 .container { width: min(1536px, calc(100% - 64px)); }
 .page { padding-top: 28px; }

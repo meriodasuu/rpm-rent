@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Logo } from "./logo";
 import { phoneHref } from "@/lib/format";
 import { PrimaryNav } from "./primary-nav";
+import { FontPreviewToggle } from "./font-preview-toggle";
 import { ThemeToggle } from "./theme-toggle";
 
 export function Header() {
@@ -15,6 +16,7 @@ export function Header() {
         <PrimaryNav />
         <div className="header-actions">
           {phone ? <a className="header-phone" href={phoneHref(phone)}>{phone}</a> : null}
+          <FontPreviewToggle />
           <ThemeToggle />
           <Link className="button small-button" href={telegram || "/contacts"} target={telegram ? "_blank" : undefined} data-event="contact_click" data-event-label="header">
             <Send size={15} aria-hidden /> {telegram ? "Telegram" : "Связаться"}
