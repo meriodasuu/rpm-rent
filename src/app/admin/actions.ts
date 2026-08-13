@@ -7,9 +7,21 @@ import { getStore } from "@/lib/data";
 import { carAdminSchema, faqAdminSchema, locationAdminSchema, serviceAdminSchema } from "@/lib/validation";
 import { getSafeAdminReturnTo } from "@/lib/admin-operations";
 import type { BookingStatus, Car, Faq, Location, Service } from "@/types/domain";
+import { parseStorageMediaUrl } from "@/lib/admin-media";
+import { removeStorageObject } from "@/lib/supabase-storage";
 
 const checked = (formData: FormData, key: string) => formData.get(key) === "on";
 const lines = (formData: FormData, key: string) => String(formData.get(key) ?? "").split(/\r?\n/).map((value) => value.trim()).filter(Boolean);
+const values = (formData: FormData, key: string) => formData.getAll(key).map(String).map((value) => value.trim()).filter(Boolean);
+const validMediaReference = (url: string) => url.startsWith("/") || /^https:\/\//i.test(url);
+const removeOwnedMedia = async (formData: FormData, ownerType: "cars" | "locations", ownerId: string) => {
+  const removals = values(formData, "removedMedia").flatMap((mediaUrl) => {
+    const path = parseStorageMediaUrl(mediaUrl);
+    return path?.startsWith(`${ownerType}/${ownerId}/`) ? [removeStorageObject(path)] : [];
+  });
+  const results = await Promise.allSettled(removals);
+  if (results.some((result) => result.status === "rejected")) console.error("Some replaced admin media could not be removed from storage");
+};
 
 export async function logoutAction() { await clearSession(); redirect("/admin/login"); }
 
@@ -28,8 +40,8 @@ export async function saveCarAction(formData: FormData) {
   });
   if (!parsed.success) throw new Error(parsed.error.issues[0]?.message ?? "Проверьте форму");
   const store = await getStore();
-  const imageLines = lines(formData, "images");
-  if (imageLines.some((url) => !url.startsWith("/") && !/^https:\/\//i.test(url))) throw new Error("Фотографии должны использовать локальный путь или HTTPS URL");
+  const imageLines = values(formData, "images");
+  if (imageLines.some((url) => !validMediaReference(url))) throw new Error("Некорректная фотография");
   const car: Car = {
     id: parsed.data.id, slug: parsed.data.slug, brand: parsed.data.brand, model: parsed.data.model, title: parsed.data.title, category: parsed.data.category,
     bodyType: parsed.data.bodyType, vehicleClass: parsed.data.vehicleClass, pricePerDay: parsed.data.pricePerDay, deposit: parsed.data.deposit,
@@ -43,6 +55,7 @@ export async function saveCarAction(formData: FormData) {
     images: imageLines.map((url) => ({ url, alt: `${parsed.data.title}, фотография RPM Rent` }))
   };
   await store.saveCar(car);
+  await removeOwnedMedia(formData, "cars", car.id);
   revalidatePath("/", "layout");
   redirect(`/admin/cars/${car.id}?saved=1`);
 }
@@ -101,6 +114,7 @@ export async function saveLocationAction(formData: FormData) {
   if (!parsed.success) throw new Error(parsed.error.issues[0]?.message ?? "Проверьте данные локации");
   const location: Location = parsed.data;
   await (await getStore()).saveLocation(location);
+  await removeOwnedMedia(formData, "locations", location.id);
   revalidatePath("/", "layout");
   redirect("/admin/locations?saved=1");
 }

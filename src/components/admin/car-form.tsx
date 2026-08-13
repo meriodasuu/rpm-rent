@@ -2,6 +2,7 @@ import { AlertTriangle, BadgeRussianRuble, CarFront, FileImage, Save, Settings2 
 import { saveCarAction } from "@/app/admin/actions";
 import { RENTAL_POLICY } from "@/config/rental-policy";
 import type { Car } from "@/types/domain";
+import { AdminMediaUploader } from "./admin-media-uploader";
 
 const TextField = ({ name, label, value, type = "text", min, max, required = false, hint }: { name: string; label: string; value: string | number | null; type?: string; min?: number; max?: number; required?: boolean; hint?: string }) => (
   <div className="field"><label htmlFor={name}>{label}{required ? <span aria-hidden="true"> *</span> : null}</label><input className="input" id={name} name={name} type={type} min={min} max={max} defaultValue={value ?? ""} required={required} />{hint ? <small>{hint}</small> : null}</div>
@@ -73,10 +74,10 @@ export function CarForm({ car }: { car: Car }) {
         <TextArea name="features" label="Особенности" value={car.features.join("\n")} hint="Один пункт на строку" />
       </FormSection>
 
-      <details className="admin-form-section admin-form-collapsible">
+      <details className="admin-form-section admin-form-collapsible" open={car.images.length === 0}>
         <summary><span><FileImage size={19} /></span><div><h2>Фотографии и SEO</h2><p>Медиа и данные для поисковой выдачи.</p></div></summary>
         <div className="admin-form-section-body">
-          <TextArea name="images" label="Пути к фотографиям" value={car.images.map((image) => image.url).join("\n")} placeholder="/images/cars/model/01.jpg" hint="Один локальный путь или HTTPS URL на строку" />
+          <AdminMediaUploader name="images" ownerType="cars" ownerId={car.id} initialImages={car.images.map((image) => image.url)} mode="multiple" />
           <div className="form-grid"><TextField name="seoTitle" label="SEO title" value={car.seoTitle} /><TextField name="seoDescription" label="SEO description" value={car.seoDescription} /></div>
         </div>
       </details>

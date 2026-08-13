@@ -37,6 +37,7 @@ pnpm dev
 - `AUTH_SECRET` — случайная строка от 32 символов для подписи сессии;
 - `ADMIN_EMAIL` — email администратора;
 - `ADMIN_PASSWORD_HASH` — scrypt-хеш пароля;
+- `NEXT_PUBLIC_SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_MEDIA_BUCKET` — приватное Supabase Storage для фотографий из админки; service-role ключ доступен только серверу;
 - `NEXT_PUBLIC_SITE_URL` — канонический origin без завершающего `/`;
 - `NEXT_PUBLIC_YANDEX_METRIKA_ID` — необязательный ID Метрики;
 - `NEXT_PUBLIC_TELEGRAM_URL`, `NEXT_PUBLIC_PHONE`, `NEXT_PUBLIC_ADDRESS` — только подтверждённые контакты;
@@ -66,6 +67,7 @@ pnpm seed:postgres
 Авторизация использует HttpOnly, SameSite=Lax, HMAC-подписанную сессию и scrypt-хеш пароля. В админке доступны:
 
 - CRUD автомобилей, публикация, наличие, цена, залог, фотографии и SEO;
+- загрузка фотографий с компьютера напрямую в приватное Storage с прогрессом, выбором обложки и изменением порядка; для локаций — быстрая замена одного изображения;
 - заявки, период, клиент, источник, расчёт и статусы;
 - редактирование услуг и FAQ.
 

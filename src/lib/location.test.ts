@@ -18,4 +18,20 @@ describe("locationAdminSchema", () => {
 
     expect(result.success).toBe(true);
   });
+
+  it("allows an image-less draft but blocks publishing it", () => {
+    const base = {
+      id: "location-draft",
+      slug: "location-draft",
+      title: "Новая локация",
+      subtitle: "Черновик маршрута",
+      description: "Описание будущей локации, которое будет дополнено перед публикацией.",
+      image: "",
+      sortOrder: 99,
+      seoTitle: null,
+      seoDescription: null,
+    };
+    expect(locationAdminSchema.safeParse({ ...base, published: false }).success).toBe(true);
+    expect(locationAdminSchema.safeParse({ ...base, published: true }).success).toBe(false);
+  });
 });
