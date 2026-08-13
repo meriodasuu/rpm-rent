@@ -1,4 +1,5 @@
 import type { Car, DevDatabase, Faq, Location, Service } from "@/types/domain";
+import { importedCars } from "@/data/imported-cars";
 
 const car = (
   value: Pick<Car, "id" | "slug" | "brand" | "model" | "title" | "category" | "bodyType" | "vehicleClass" | "pricePerDay" | "deposit" | "images"> &
@@ -14,9 +15,9 @@ const car = (
   description:
     "Посмотрите фотографии, стоимость аренды и доступные условия. Даты и итоговые параметры заказа подтверждаются менеджером до оформления.",
   oldPrice: null,
-  minimumAge: null,
-  minimumDrivingExperience: null,
-  minimumRentalDays: null,
+  minimumAge: 21,
+  minimumDrivingExperience: 24,
+  minimumRentalDays: 1,
   mileageLimit: null,
   extraMileagePrice: null,
   insurance: null,
@@ -161,7 +162,8 @@ export const seedCars: Car[] = [
     shortDescription: "Спортивное купе для города, короткой поездки и выходного за рулём, если вы сравниваете модели в близком ценовом диапазоне.",
     recommendedOrder: 8,
     images: images("toyota-supra", [5, 6, 1, 2, 3, 4], "Toyota GR Supra")
-  })
+  }),
+  ...importedCars
 ];
 
 export const seedServices: Service[] = [

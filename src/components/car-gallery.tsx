@@ -3,6 +3,7 @@
 import { ChevronLeft, ChevronRight, Expand, X } from "lucide-react";
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { isYandexMediaUrl } from "@/lib/yandex-public-media";
 
 type GalleryImage = { url: string; alt: string };
 
@@ -44,7 +45,7 @@ export function CarGallery({ images, title }: { images: GalleryImage[]; title: s
         touchStart.current = null;
       }}
     >
-      <Image src={current.url} alt={current.alt} fill preload={active === 0} sizes="(max-width: 760px) 100vw, 70vw" />
+      <Image src={current.url} alt={current.alt} fill loading={active === 0 ? "eager" : "lazy"} sizes="(max-width: 760px) 100vw, 70vw" unoptimized={isYandexMediaUrl(current.url)} />
       {images.length > 1 ? <>
         <button className="gallery-control gallery-prev" type="button" aria-label="Предыдущее фото" onClick={() => move(-1)} data-event="car_gallery_interaction" data-event-label="previous"><ChevronLeft size={21} /></button>
         <button className="gallery-control gallery-next" type="button" aria-label="Следующее фото" onClick={() => move(1)} data-event="car_gallery_interaction" data-event-label="next"><ChevronRight size={21} /></button>
@@ -58,7 +59,7 @@ export function CarGallery({ images, title }: { images: GalleryImage[]; title: s
     <div className="gallery-experience">
       {stage}
       <div className="gallery-thumbs" role="tablist" aria-label={`Фотографии ${title}`}>
-        {images.map((image, index) => <button className={index === active ? "active" : ""} type="button" role="tab" aria-selected={index === active} aria-label={`Фото ${index + 1}`} key={image.url} onClick={() => setActive(index)} data-event="car_gallery_interaction" data-event-label="thumbnail"><Image src={image.url} alt="" fill sizes="120px" /></button>)}
+        {images.map((image, index) => <button className={index === active ? "active" : ""} type="button" role="tab" aria-selected={index === active} aria-label={`Фото ${index + 1}`} key={image.url} onClick={() => setActive(index)} data-event="car_gallery_interaction" data-event-label="thumbnail"><Image src={image.url} alt="" fill sizes="120px" unoptimized={isYandexMediaUrl(image.url)} /></button>)}
       </div>
     </div>
     {expanded ? <div className="gallery-lightbox" role="dialog" aria-modal="true" aria-label={`Галерея ${title}`}>

@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { CarGallery } from "@/components/car-gallery";
 import { CarCard } from "@/components/car-card";
+import { CarImportedDetails } from "@/components/car-imported-details";
 import { FaqList } from "@/components/faq-list";
 import { getCarEditorial } from "@/lib/content";
 import { getStore } from "@/lib/data";
@@ -93,12 +94,14 @@ export default async function CarPage({ params, searchParams }: { params: Promis
 
         <section className="detail-section detail-editorial">
           <div><p className="eyebrow">Почему этот вариант</p><h2>Что важно при выборе {car.title}</h2><p className="detail-copy">Автомобиль стоит оценивать не только по фотографии. Сравните формат кузова, сценарий поездки, стоимость и условия с альтернативами в каталоге.</p></div>
-          <div className="reason-grid">{editorial.reasons.map((reason) => <article className="reason-card" key={reason.title}><Check size={18} /><h3>{reason.title}</h3><p>{reason.text}</p></article>)}</div>
+          <div className="reason-grid">{editorial.reasons.map((reason, index) => <article className="reason-card" key={`${reason.title}-${index}`}><Check size={18} /><h3>{reason.title}</h3><p>{reason.text}</p></article>)}</div>
         </section>
 
         <section className="detail-section"><div className="detail-section-head"><div><p className="eyebrow">Данные автомобиля</p><h2>Характеристики</h2></div><p>Показываем только заполненные параметры. Подтверждённые ограничения по аренде вынесены в отдельный блок ниже.</p></div><div className="spec-grid">{specs.map(([label, value]) => <div className="spec" key={label}><span>{label}</span><strong>{value}</strong></div>)}</div></section>
 
-        <section className="detail-section use-cases-section"><div><p className="eyebrow">Сценарии</p><h2>Подойдёт для</h2></div><div className="use-case-list">{editorial.useCases.map((item) => <span className="use-case-chip" key={item}>{item}</span>)}</div><p className="detail-copy">Если ваш сценарий требует доставки, водителя или специальной подготовки для события, укажите это при оформлении. Возможность и стоимость согласуются отдельно.</p></section>
+        <CarImportedDetails features={car.features} rentalConditions={car.rentalConditions} />
+
+        <section className="detail-section use-cases-section"><div><p className="eyebrow">Сценарии</p><h2>Подойдёт для</h2></div><div className="use-case-list">{editorial.useCases.map((item, index) => <span className="use-case-chip" key={`${item}-${index}`}>{item}</span>)}</div><p className="detail-copy">Если ваш сценарий требует доставки, водителя или специальной подготовки для события, укажите это при оформлении. Возможность и стоимость согласуются отдельно.</p></section>
 
         <section className="detail-section">
           <div className="detail-section-head"><div><p className="eyebrow">Перед оформлением</p><h2>Условия этого автомобиля</h2></div><p>Ставка и залог уже участвуют в расчёте. Остальные параметры показываются только после заполнения в карточке автомобиля.</p></div>
