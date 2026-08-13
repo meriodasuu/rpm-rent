@@ -26,7 +26,14 @@ export function applyFontPreference(
   storage: FontStorage = localStorage,
 ) {
   root.dataset.font = preference;
-  storage.setItem(STORAGE_KEY, preference);
+  try {
+    storage.setItem(STORAGE_KEY, preference);
+  } catch {
+    // Font preview remains usable when browser storage is unavailable.
+  }
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new Event(FONT_EVENT));
+  }
 }
 
 const subscribe = (callback: () => void) => {
@@ -44,7 +51,6 @@ export function FontPreviewToggle() {
   const preference = useSyncExternalStore<FontPreference>(subscribe, getFontSnapshot, () => "manrope");
   const selectFont = (value: FontPreference) => {
     applyFontPreference(value);
-    window.dispatchEvent(new Event(FONT_EVENT));
   };
 
   return (

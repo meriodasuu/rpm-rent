@@ -1697,6 +1697,7 @@ body.gallery-open { overflow: hidden; }
 .site-header .font-preview-menu-options { background: var(--chrome-bg); border-color: var(--chrome-line); }
 .site-header .font-preview-menu-options .font-preview-button { color: var(--chrome-ink); }
 .site-header .font-preview-menu-options .font-preview-button:hover { background: var(--chrome-line); }
+.site-header .font-preview-menu-options .font-preview-button[aria-pressed="true"] { color: var(--chrome-cta-ink); background: var(--chrome-cta-bg); }
 
 .site-footer .footer-statement { color: var(--chrome-ink); background: var(--chrome-bg); border-bottom-color: var(--chrome-line); }
 .site-footer .footer-statement > strong { color: var(--chrome-ink); }

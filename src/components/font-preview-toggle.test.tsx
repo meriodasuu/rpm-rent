@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   applyFontPreference,
   FontPreviewToggle,
@@ -6,6 +6,10 @@ import {
 } from "./font-preview-toggle";
 
 describe("font preview preferences", () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
   it("uses Manrope when no saved preference exists", () => {
     expect(readFontPreference(null)).toBe("manrope");
   });
@@ -32,6 +36,20 @@ describe("font preview preferences", () => {
     applyFontPreference("manrope", root, storage);
 
     expect(root.dataset.font).toBe("manrope");
+  });
+
+  it("applies and notifies subscribers when persistence is unavailable", () => {
+    const root = { dataset: {} as DOMStringMap };
+    const storage = { setItem: () => { throw new Error("storage unavailable"); } };
+    const eventTarget = new EventTarget();
+    let notified = false;
+    eventTarget.addEventListener("rpm-font-preview-change", () => { notified = true; });
+    vi.stubGlobal("window", eventTarget);
+
+    expect(() => applyFontPreference("conthrax", root, storage)).not.toThrow();
+
+    expect(root.dataset.font).toBe("conthrax");
+    expect(notified).toBe(true);
   });
 
   it("renders labelled desktop choices and a compact mobile trigger", () => {
