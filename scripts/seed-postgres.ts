@@ -1,9 +1,11 @@
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../src/generated/prisma/client";
 import { seedCars, seedFaqs, seedLocations, seedServices } from "../src/data/seed";
+import { resolveDatabaseUrl } from "../src/lib/database-url";
 
-if (!process.env.DATABASE_URL) throw new Error("DATABASE_URL is required");
-const prisma = new PrismaClient({ adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL }) });
+const databaseUrl = resolveDatabaseUrl();
+if (!databaseUrl) throw new Error("DATABASE_URL (or Supabase env variables) is required");
+const prisma = new PrismaClient({ adapter: new PrismaPg({ connectionString: databaseUrl }) });
 
 for (const car of seedCars) {
   const { images, ...data } = car;

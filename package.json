@@ -17,7 +17,8 @@
     "prisma:deploy": "prisma migrate deploy",
     "seed": "tsx scripts/seed.ts",
     "seed:postgres": "tsx scripts/seed-postgres.ts",
-    "auth:hash": "tsx scripts/hash-password.ts"
+    "auth:hash": "tsx scripts/hash-password.ts",
+    "env:check": "tsx scripts/env-check.ts"
   },
   "dependencies": {
     "@prisma/adapter-pg": "7.9.1",

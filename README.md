@@ -122,3 +122,19 @@ pnpm build
 - указать production-домен и ID Яндекс Метрики;
 - заполнить таблицу 301-редиректов старого сайта;
 - проверить цели аналитики, webhook/CRM и резервное копирование базы.
+
+
+## Quick production setup (Supabase)
+
+Set in Vercel or hosting env:
+- DATABASE_URL=postgresql://... (full DSN), or
+- SUPABASE_PROJECT_REF=<your-supabase-project-ref> and SUPABASE_DB_PASSWORD=<dashboard password>.
+
+Optional: SUPABASE_DB_USER, SUPABASE_DB_NAME, SUPABASE_DB_HOST, SUPABASE_DB_PORT, SUPABASE_DATABASE_URL.
+
+After env is set:
+- pnpm env:check
+- pnpm prisma:migrate
+- pnpm seed:postgres
+- pnpm build
+

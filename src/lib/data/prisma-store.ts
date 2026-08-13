@@ -1,5 +1,6 @@
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "@/generated/prisma/client";
+import { resolveDatabaseUrl } from "@/lib/database-url";
 import { blockingBookingStatuses } from "@/lib/availability";
 import { assertBookingStatusTransition } from "@/lib/domain/booking-status";
 import { prepareBooking } from "@/lib/domain/booking";
@@ -14,9 +15,10 @@ declare global {
 }
 
 const getPrisma = () => {
-  if (!process.env.DATABASE_URL) throw new Error("DATABASE_URL is required for the PostgreSQL data store");
+  const databaseUrl = resolveDatabaseUrl();
+  if (!databaseUrl) throw new Error("DATABASE_URL is required for the PostgreSQL data store");
   if (!globalThis.rpmPrisma) {
-    const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
+    const adapter = new PrismaPg({ connectionString: databaseUrl });
     globalThis.rpmPrisma = new PrismaClient({ adapter });
   }
   return globalThis.rpmPrisma;
