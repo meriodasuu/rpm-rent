@@ -19,8 +19,6 @@ export default async function BookingPage({ searchParams }: { searchParams: Prom
       <Breadcrumbs items={[{ label: "Главная", href: "/" }, { label: "Каталог", href: "/cars" }, { label: "Оформление аренды" }]} />
       <header className="booking-intro-simple"><h1 className="title">Оформление аренды</h1></header>
 
-      <ol className="booking-progress" aria-label="Этапы оформления"><li className="active"><span>01</span><strong>Автомобиль</strong></li><li><span>02</span><strong>Получение</strong></li><li><span>03</span><strong>Водитель</strong></li><li><span>04</span><strong>Подтверждение</strong></li></ol>
-
       <BookingForm cars={cars} services={services} initialCarSlug={params.car} initialStart={params.start} initialEnd={params.end} initialServiceSlug={params.service} />
 
       <section className="booking-after surface"><div><h2>Что произойдёт после отправки</h2></div><div className="booking-after-list"><span><Check size={16} /> Сервер повторно проверит возраст, стаж, срок и цену.</span><span><Check size={16} /> Менеджер проверит детали и доступность автомобиля.</span><span><Check size={16} /> Договор оформляется после согласования.</span></div><Link className="text-link" href="/rental-terms">Условия аренды</Link></section>

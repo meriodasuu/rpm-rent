@@ -85,7 +85,7 @@ export default async function HomePage() {
       </section>
 
       <section className="city-chapter">
-        <Image alt="Набережная Санкт-Петербурга после дождя" fill sizes="100vw" src="/images/atmosphere/saint-petersburg-blue-hour.png" />
+        <Image alt="Дворцовая набережная Санкт-Петербурга после дождя" fill sizes="100vw" src="/images/editorial/palace-embankment.png" />
         <div className="city-chapter-shade" />
         <div className="container city-chapter-content">
           <p className="eyebrow">Дворцовая набережная</p>
