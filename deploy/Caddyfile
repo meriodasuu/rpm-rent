@@ -1,0 +1,14 @@
+{
+  admin off
+}
+
+http://80.90.187.252 {
+  encode zstd gzip
+  reverse_proxy app:3000
+}
+
+rpm-rent.ru {
+  encode zstd gzip
+  reverse_proxy app:3000
+}
+

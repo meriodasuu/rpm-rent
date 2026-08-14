@@ -17,6 +17,7 @@
     "prisma:deploy": "prisma migrate deploy",
     "seed": "tsx scripts/seed.ts",
     "seed:postgres": "tsx scripts/seed-postgres.ts",
+    "import:file-db": "tsx scripts/import-file-db.ts",
     "auth:hash": "tsx scripts/hash-password.ts",
     "env:check": "tsx scripts/env-check.ts"
   },

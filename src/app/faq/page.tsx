@@ -5,6 +5,7 @@ import { Breadcrumbs } from "@/components/breadcrumbs";
 import { FaqList } from "@/components/faq-list";
 import { getStore } from "@/lib/data";
 
+export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Вопросы об аренде", description: "Расчёт стоимости, проверка дат, залог, получение автомобиля и подтверждение обращения.", alternates: { canonical: "/faq" } };
 
 export default async function FaqPage() {

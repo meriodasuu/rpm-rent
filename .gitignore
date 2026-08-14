@@ -6,6 +6,7 @@ out/
 src/generated/
 .env
 .env.local
+.env.production
 .env.*.local
 !.env.example
 coverage/

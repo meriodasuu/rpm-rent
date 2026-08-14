@@ -6,6 +6,7 @@ import { getServiceContext } from "@/lib/content";
 import { getStore } from "@/lib/data";
 import { formatPrice } from "@/lib/format";
 
+export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Услуги", description: "Посуточная и долгосрочная аренда, доставка, аренда с водителем и автомобили для мероприятий.", alternates: { canonical: "/services" } };
 const icons = [KeyRound, CalendarCheck, UserRound, MapPin, Sparkles, Film];
 

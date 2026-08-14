@@ -1,0 +1,9 @@
+[Unit]
+Description=RPM Rent PostgreSQL backup
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=oneshot
+ExecStart=/opt/rpm-rent/deploy/backup-db.sh
+

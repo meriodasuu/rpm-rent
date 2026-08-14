@@ -20,6 +20,8 @@ import { CarShowcase } from "@/components/car-showcase";
 import { FaqList } from "@/components/faq-list";
 import { isStorageMediaUrl } from "@/lib/admin-media";
 import { getStore } from "@/lib/data";
+
+export const dynamic = "force-dynamic";
 import { isYandexMediaUrl } from "@/lib/yandex-public-media";
 import { ROUTE_CATEGORIES } from "@/lib/site-content";
 
