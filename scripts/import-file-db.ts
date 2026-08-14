@@ -5,7 +5,7 @@ import { resolveDatabaseUrl } from "../src/lib/database-url";
 import type { DevDatabase } from "../src/types/domain";
 
 const sourcePath = process.argv[2]?.trim();
-if (!sourcePath) throw new Error("Usage: pnpm import:file-db -- /path/to/db.json");
+if (!sourcePath) throw new Error("Usage: pnpm import:file-db /path/to/db.json");
 
 const databaseUrl = resolveDatabaseUrl();
 if (!databaseUrl) throw new Error("DATABASE_URL is required");

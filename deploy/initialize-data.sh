@@ -11,6 +11,6 @@ if [[ ! -s import/db.json ]]; then
   exit 1
 fi
 
-"${compose[@]}" run --rm tools pnpm import:file-db -- /import/db.json
+"${compose[@]}" run --rm tools pnpm import:file-db /import/db.json
 
 echo "Initial production data import completed"
