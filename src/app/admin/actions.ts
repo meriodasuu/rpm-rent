@@ -6,6 +6,7 @@ import { clearSession, requireAdmin } from "@/lib/auth";
 import { getStore } from "@/lib/data";
 import { carAdminSchema, faqAdminSchema, locationAdminSchema, serviceAdminSchema } from "@/lib/validation";
 import { getSafeAdminReturnTo } from "@/lib/admin-operations";
+import { RENTAL_POLICY } from "@/config/rental-policy";
 import type { BookingStatus, Car, Faq, Location, Service } from "@/types/domain";
 import { parseStorageMediaUrl } from "@/lib/admin-media";
 import { removeStorageObject } from "@/lib/supabase-storage";
@@ -33,7 +34,7 @@ export async function saveCarAction(formData: FormData) {
     deposit: formData.get("deposit"), shortDescription: formData.get("shortDescription"), description: formData.get("description"),
     available: checked(formData, "available"), published: checked(formData, "published"), isNew: checked(formData, "isNew"), isPromotion: checked(formData, "isPromotion"), isDemo: checked(formData, "isDemo"),
     year: formData.get("year"), transmission: formData.get("transmission"), engine: formData.get("engine"), horsepower: formData.get("horsepower"),
-    driveType: formData.get("driveType"), seats: formData.get("seats"), oldPrice: formData.get("oldPrice"), minimumAge: formData.get("minimumAge"),
+    driveType: formData.get("driveType"), seats: formData.get("seats"), oldPrice: formData.get("oldPrice"), minimumAge: RENTAL_POLICY.legalAdultAge,
     minimumDrivingExperience: formData.get("minimumDrivingExperience"), minimumRentalDays: formData.get("minimumRentalDays"), mileageLimit: formData.get("mileageLimit"),
     extraMileagePrice: formData.get("extraMileagePrice"), insurance: formData.get("insurance"), recommendedOrder: formData.get("recommendedOrder"),
     seoTitle: formData.get("seoTitle"), seoDescription: formData.get("seoDescription")

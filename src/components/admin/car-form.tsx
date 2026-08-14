@@ -52,7 +52,6 @@ export function CarForm({ car }: { car: Car }) {
           <TextField name="pricePerDay" label="Цена за сутки, ₽" value={car.pricePerDay} type="number" min={0} max={RENTAL_POLICY.maximumDailyPrice} required />
           <TextField name="oldPrice" label="Старая цена, ₽" value={car.oldPrice} type="number" min={0} max={RENTAL_POLICY.maximumMoneyAmount} />
           <TextField name="deposit" label="Залог, ₽" value={car.deposit} type="number" min={0} max={RENTAL_POLICY.maximumMoneyAmount} required hint="0 — отображать «Индивидуально»" />
-          <TextField name="minimumAge" label="Минимальный возраст" value={car.minimumAge} type="number" min={RENTAL_POLICY.legalAdultAge} max={RENTAL_POLICY.maximumDriverAge} />
           <TextField name="minimumDrivingExperience" label="Минимальный стаж, месяцев" value={car.minimumDrivingExperience} type="number" min={0} max={1200} />
           <TextField name="minimumRentalDays" label="Минимальный срок, суток" value={car.minimumRentalDays} type="number" min={1} max={RENTAL_POLICY.maximumRentalDays} />
           <TextField name="mileageLimit" label="Лимит пробега, км/сутки" value={car.mileageLimit} type="number" min={0} max={100000} />

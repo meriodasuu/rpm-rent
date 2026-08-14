@@ -33,6 +33,8 @@ export const buildAdminMediaPath = (
 
 export const storageMediaUrl = (path: string) => `/api/media/storage?path=${encodeURIComponent(path)}`;
 
+export const isStorageMediaUrl = (url: string) => url.startsWith("/api/media/storage?path=");
+
 export const parseStorageMediaUrl = (url: string) => {
   if (!url.startsWith("/api/media/storage?")) return null;
   const path = new URL(url, "https://rpm-rent.local").searchParams.get("path");
