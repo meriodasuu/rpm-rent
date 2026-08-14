@@ -55,7 +55,8 @@ install -m 0600 -o deploy -g deploy "${authorized_key_path}" /home/deploy/.ssh/a
 install -d -m 0750 -o deploy -g deploy /opt/rpm-rent
 
 if [[ -f "${script_dir}/sshd-rpm-rent.conf" ]]; then
-  install -m 0644 -o root -g root "${script_dir}/sshd-rpm-rent.conf" /etc/ssh/sshd_config.d/99-rpm-rent.conf
+  install -m 0644 -o root -g root "${script_dir}/sshd-rpm-rent.conf" /etc/ssh/sshd_config.d/00-rpm-rent.conf
+  rm -f /etc/ssh/sshd_config.d/99-rpm-rent.conf
   sshd -t
   systemctl reload ssh
 fi
