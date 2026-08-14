@@ -98,6 +98,7 @@ const mapCar = (record: NonNullable<PrismaCarRecord>): Car => ({
 
 const mapLocation = (record: {
   id: string; slug: string; title: string; subtitle: string; description: string; image: string;
+  address: string | null; mapUrl: string | null; directions: string | null; workingHours: string | null;
   images: unknown;
   published: boolean; sortOrder: number; seoTitle: string | null; seoDescription: string | null;
 }): Location => ({
@@ -106,6 +107,10 @@ const mapLocation = (record: {
   title: record.title,
   subtitle: record.subtitle,
   description: record.description,
+  address: record.address,
+  mapUrl: record.mapUrl,
+  directions: record.directions,
+  workingHours: record.workingHours,
   images: asStringArray(record.images).length ? asStringArray(record.images) : [record.image].filter(Boolean),
   published: record.published,
   sortOrder: record.sortOrder,

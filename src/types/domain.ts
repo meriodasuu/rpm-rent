@@ -64,6 +64,10 @@ export type Location = {
   title: string;
   subtitle: string;
   description: string;
+  address: string | null;
+  mapUrl: string | null;
+  directions: string | null;
+  workingHours: string | null;
   images: string[];
   published: boolean;
   sortOrder: number;

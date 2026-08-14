@@ -32,6 +32,12 @@ export default async function LocationPage({ params }: Props) {
         <LocationGallery images={location.images} title={location.title} subtitle={location.subtitle} />
         <div style={{ padding: "clamp(24px, 5vw, 64px)", display: "grid", gap: 28 }}>
           <p className="subtitle" style={{ maxWidth: 760 }}>{location.description}</p>
+          {(location.address || location.workingHours || location.directions || location.mapUrl) && <section aria-label="Информация о локации" style={{ display: "grid", gap: 14, maxWidth: 760, padding: 24, border: "1px solid var(--line)", borderRadius: 6 }}>
+            {location.address && <div><strong>Адрес</strong><p>{location.address}</p></div>}
+            {location.workingHours && <div><strong>Часы работы</strong><p>{location.workingHours}</p></div>}
+            {location.directions && <div><strong>Как добраться</strong><p>{location.directions}</p></div>}
+            {location.mapUrl && <div><a className="button ghost" href={location.mapUrl} target="_blank" rel="noreferrer">Открыть карту</a></div>}
+          </section>}
           <div className="button-row"><Link className="button red" href="/cars">Выбрать автомобиль <ArrowRight size={18} /></Link><Link className="button ghost" href="/contacts">Связаться с нами</Link></div>
         </div>
       </section>

@@ -138,6 +138,10 @@ model Location {
   title          String
   subtitle       String
   description    String
+  address        String?
+  mapUrl         String?
+  directions     String?
+  workingHours   String?
   image          String
   images         Json     @default("[]")
   published      Boolean  @default(true)

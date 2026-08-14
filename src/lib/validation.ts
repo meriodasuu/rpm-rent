@@ -71,6 +71,15 @@ const optionalText = (maximum: number) => z.preprocess(
   z.string().max(maximum).refine((value) => !/[<>\u0000-\u001F]/.test(value), "Недопустимые символы").nullable()
 );
 
+const optionalHttpsUrl = z.preprocess(
+  (value) => String(value ?? "").trim() || null,
+  z.url().max(1000).refine((value) => {
+    const url = new URL(value);
+    const host = url.hostname.toLowerCase();
+    return url.protocol === "https:" && (host === "yandex.ru" || host.endsWith(".yandex.ru") || host === "2gis.ru" || host.endsWith(".2gis.ru"));
+  }, "Укажите ссылку https на Яндекс Карты или 2ГИС").nullable()
+);
+
 export const carAdminSchema = z
   .object({
     id: z.string().trim().min(1).max(100),
@@ -140,6 +149,10 @@ export const faqAdminSchema = z.object({
 }).strict();
 
 export const locationAdminSchema = z.object({
+  address: optionalText(300),
+  mapUrl: optionalHttpsUrl,
+  directions: optionalText(5000),
+  workingHours: optionalText(300),
   id: z.string().trim().min(1).max(100),
   slug: z.string().trim().min(1).max(100).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Используйте латиницу, цифры и одиночные дефисы"),
   title: safeText(2, 160, "Укажите название локации"),

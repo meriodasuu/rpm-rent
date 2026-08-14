@@ -21,6 +21,12 @@ function LocationFields({ location, ownerId }: { location?: Location; ownerId: s
     </div>
     <div className="field full"><label>Фотографии</label><AdminMediaUploader name="images" ownerType="locations" ownerId={ownerId} initialImages={location?.images ?? []} mode="multiple" /></div>
     <div className="field"><label>Описание страницы</label><textarea className="textarea" name="description" defaultValue={location?.description} required /></div>
+    <div className="form-grid">
+      <div className="field"><label>Адрес</label><input className="input" name="address" defaultValue={location?.address ?? ""} /></div>
+      <div className="field"><label>Часы работы</label><input className="input" name="workingHours" defaultValue={location?.workingHours ?? ""} /></div>
+    </div>
+    <div className="field full"><label>Ссылка на карту</label><input className="input" name="mapUrl" type="url" inputMode="url" placeholder="https://yandex.ru/maps/... или https://2gis.ru/..." defaultValue={location?.mapUrl ?? ""} /></div>
+    <div className="field full"><label>Как добраться</label><textarea className="textarea" name="directions" defaultValue={location?.directions ?? ""} /></div>
     <details className="admin-content-editor">
       <summary><span><strong>Поисковая выдача</strong><small>Необязательные SEO-заголовок и описание</small></span><span>Открыть</span></summary>
       <div className="field"><label>SEO-заголовок</label><input className="input" name="seoTitle" defaultValue={location?.seoTitle ?? ""} /></div>
