@@ -18,7 +18,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { CarShowcase } from "@/components/car-showcase";
 import { FaqList } from "@/components/faq-list";
+import { isStorageMediaUrl } from "@/lib/admin-media";
 import { getStore } from "@/lib/data";
+import { isYandexMediaUrl } from "@/lib/yandex-public-media";
 import { ROUTE_CATEGORIES } from "@/lib/site-content";
 
 const routeIcons = {
@@ -98,7 +100,7 @@ export default async function HomePage() {
         <div className="container">
           <div className="section-head"><h2 className="title">Локации</h2><p className="section-lead">Выберите настроение поездки и перейдите к подходящей подборке.</p></div>
           <div className="locations-grid">
-            {locations.map((location, index) => <Link className="location-card" href={`/locations/${location.slug}`} key={location.id}><Image alt={location.title} fill sizes="(max-width:760px) 88vw, 42vw" src={location.images[0]!} /><span className="location-shade" /><span className="location-index">{String(index + 1).padStart(2, "0")}</span><span className="location-copy"><small>{location.subtitle}</small><strong>{location.title}</strong></span><ArrowRight size={20} /></Link>)}
+            {locations.map((location, index) => <Link className="location-card" href={`/locations/${location.slug}`} key={location.id}><Image alt={location.title} fill sizes="(max-width:760px) 88vw, 42vw" src={location.images[0]!} unoptimized={isYandexMediaUrl(location.images[0]!) || isStorageMediaUrl(location.images[0]!)} /><span className="location-shade" /><span className="location-index">{String(index + 1).padStart(2, "0")}</span><span className="location-copy"><small>{location.subtitle}</small><strong>{location.title}</strong></span><ArrowRight size={20} /></Link>)}
           </div>
         </div>
       </section>

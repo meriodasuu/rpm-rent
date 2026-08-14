@@ -3,6 +3,7 @@
 import { ChevronLeft, ChevronRight, MapPinned } from "lucide-react";
 import Image from "next/image";
 import { useCallback, useRef, useState } from "react";
+import { isStorageMediaUrl } from "@/lib/admin-media";
 import { isYandexMediaUrl } from "@/lib/yandex-public-media";
 
 export function LocationGallery({ images, title, subtitle }: { images: string[]; title: string; subtitle: string }) {
@@ -24,7 +25,7 @@ export function LocationGallery({ images, title, subtitle }: { images: string[];
       touchStart.current = null;
     }}
   >
-    <Image src={current} alt={`${title}, фото ${safeActive + 1}`} fill priority={safeActive === 0} sizes="(max-width:760px) 100vw, 1180px" unoptimized={isYandexMediaUrl(current)} />
+    <Image src={current} alt={`${title}, фото ${safeActive + 1}`} fill priority={safeActive === 0} sizes="(max-width:760px) 100vw, 1180px" unoptimized={isYandexMediaUrl(current) || isStorageMediaUrl(current)} />
     <div className="location-gallery-shade" />
     <div className="location-gallery-copy">
       <p className="eyebrow"><MapPinned size={15} /> {subtitle}</p>
