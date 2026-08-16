@@ -27,6 +27,10 @@ export const normalizeVercelCar = (
   current?: Pick<Car, "minimumAge" | "isNew" | "isPromotion" | "isDemo"> | null,
 ): Car => {
   const title = stringValue(raw.title);
+  const minimumAge = current?.minimumAge ?? null;
+  const minimumDrivingExperience = nullableInteger(raw.minimumDrivingExperience);
+  const minimumRentalDays = nullableInteger(raw.minimumRentalDays);
+  const policyComplete = minimumAge !== null && minimumDrivingExperience !== null && minimumRentalDays !== null;
   return {
     id: stringValue(raw.id),
     slug: stringValue(raw.slug),
@@ -47,15 +51,15 @@ export const normalizeVercelCar = (
     pricePerDay: integer(raw.pricePerDay),
     oldPrice: nullableInteger(raw.oldPrice),
     deposit: integer(raw.deposit),
-    minimumAge: current?.minimumAge ?? null,
-    minimumDrivingExperience: nullableInteger(raw.minimumDrivingExperience),
-    minimumRentalDays: nullableInteger(raw.minimumRentalDays),
+    minimumAge,
+    minimumDrivingExperience,
+    minimumRentalDays,
     mileageLimit: nullableInteger(raw.mileageLimit),
     extraMileagePrice: nullableInteger(raw.extraMileagePrice),
     insurance: nullableString(raw.insurance),
     features: lines(raw.features),
     rentalConditions: lines(raw.rentalConditions),
-    available: checked(raw.available),
+    available: checked(raw.available) && policyComplete,
     published: checked(raw.published),
     isNew: checked(raw.isNew),
     isPromotion: checked(raw.isPromotion),

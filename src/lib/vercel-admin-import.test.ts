@@ -30,4 +30,17 @@ describe("Vercel admin import normalization", () => {
 
     expect(result).toMatchObject({ mapUrl: "https://yandex.ru/maps/1", directions: "Вход со двора", published: true });
   });
+
+  test("disables online requests when the old car has an incomplete booking policy", () => {
+    const result = normalizeVercelCar({
+      id: "car-2", slug: "car-2", title: "Car 2", brand: "Brand", model: "Model", category: "sport",
+      bodyType: "coupe", vehicleClass: "premium", shortDescription: "Короткое описание автомобиля",
+      description: "Полное описание автомобиля для страницы каталога", pricePerDay: "10000", deposit: "0",
+      recommendedOrder: "1", published: "on", available: "on", minimumDrivingExperience: "12", minimumRentalDays: "",
+      images: ["/image.jpg"],
+    }, { minimumAge: null, isNew: false, isPromotion: false, isDemo: false });
+
+    expect(result.available).toBe(false);
+    expect(result.published).toBe(true);
+  });
 });
