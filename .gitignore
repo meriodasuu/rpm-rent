@@ -3,6 +3,7 @@ node_modules/
 .vercel/
 out/
 .data/
+import/
 src/generated/
 .env
 .env.local

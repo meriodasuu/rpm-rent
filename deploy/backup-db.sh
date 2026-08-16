@@ -13,5 +13,9 @@ docker compose --env-file .env.production -f compose.production.yml exec -T db \
   sh -c 'pg_dump --format=custom --no-owner --no-acl -U "$POSTGRES_USER" -d "$POSTGRES_DB"' \
   > "${backup_dir}/rpm-rent-${timestamp}.dump"
 
-find "${backup_dir}" -type f -name 'rpm-rent-*.dump' -mtime +7 -delete
+media_backup="${project_dir}/backups/rpm-rent-media-latest.tar.gz"
+docker compose --env-file .env.production -f compose.production.yml run --rm --no-deps tools \
+  tar -C /app/media -czf - . > "${media_backup}.tmp"
+mv "${media_backup}.tmp" "${media_backup}"
 
+find "${backup_dir}" -type f -name 'rpm-rent-*.dump' -mtime +7 -delete

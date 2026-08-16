@@ -37,6 +37,8 @@ services:
         condition: service_healthy
     expose:
       - "3000"
+    volumes:
+      - media_data:/app/media
     networks:
       - backend
       - web
@@ -70,6 +72,7 @@ services:
         condition: service_healthy
     volumes:
       - ./import:/import:ro
+      - media_data:/app/media
     networks:
       - backend
 
@@ -82,4 +85,4 @@ volumes:
   postgres_data:
   caddy_data:
   caddy_config:
-
+  media_data:
