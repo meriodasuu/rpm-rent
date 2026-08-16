@@ -8,9 +8,9 @@
 node_modules
 output
 artifacts
+backups
 docs
 *.md
 *.docx
 *.log
 *.err
-
