@@ -4,7 +4,7 @@ import { normalizeVercelCar, normalizeVercelLocation } from "./vercel-admin-impo
 describe("Vercel admin import normalization", () => {
   test("normalizes editable car fields while preserving fields absent from the old form", () => {
     const result = normalizeVercelCar({
-      id: "car-1", slug: "porsche-911", title: "Porsche 911", brand: "Porsche", model: "911",
+      id: "car-1", slug: "porsche-911-carrera-4s", title: "Porsche 911", brand: "Porsche", model: "911",
       category: "sport", bodyType: "coupe", vehicleClass: "premium", shortDescription: "Короткое описание автомобиля",
       description: "Полное описание автомобиля для страницы каталога", pricePerDay: "45000", oldPrice: "",
       deposit: "100000", minimumDrivingExperience: "36", minimumRentalDays: "2", mileageLimit: "200",
@@ -16,7 +16,7 @@ describe("Vercel admin import normalization", () => {
     }, { minimumAge: 25, isNew: true, isPromotion: false, isDemo: false });
 
     expect(result).toMatchObject({
-      pricePerDay: 45000, oldPrice: null, minimumAge: 25, published: true, available: true,
+      pricePerDay: 45000, oldPrice: null, minimumAge: 25, published: true, available: true, category: "Спорт", vehicleClass: "Спорт",
       year: 2024, rentalConditions: ["Паспорт", "Водительское удостоверение"], features: ["Климат", "CarPlay"],
       isNew: false, images: [{ url: "/api/media/storage?path=cars/car-1/one.jpg", alt: "Porsche 911" }],
     });

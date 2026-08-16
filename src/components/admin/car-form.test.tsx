@@ -17,4 +17,14 @@ describe("CarForm", () => {
     expect(html).not.toContain('name="minimumAge"');
     expect(html).not.toContain("Минимальный возраст");
   });
+
+  it("offers only the three supported vehicle classes and no category field", () => {
+    const html = renderToStaticMarkup(<CarForm car={car} />);
+
+    expect(html).not.toContain('name="category"');
+    expect(html).not.toContain(">Категория<");
+    expect(html).toContain('<option value="Спорт">Спорт</option>');
+    expect(html).toContain('<option value="Бизнес">Бизнес</option>');
+    expect(html).toContain('<option value="Премиум" selected="">Премиум</option>');
+  });
 });

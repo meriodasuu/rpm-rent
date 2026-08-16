@@ -1,4 +1,5 @@
 import type { Car, Location } from "@/types/domain";
+import { isVehicleClass, vehicleClassForCar } from "@/lib/vehicle-class";
 
 type RawRecord = Record<string, unknown>;
 
@@ -27,19 +28,21 @@ export const normalizeVercelCar = (
   current?: Pick<Car, "minimumAge" | "isNew" | "isPromotion" | "isDemo"> | null,
 ): Car => {
   const title = stringValue(raw.title);
+  const slug = stringValue(raw.slug);
+  const vehicleClass = isVehicleClass(raw.vehicleClass) ? raw.vehicleClass : vehicleClassForCar(slug);
   const minimumAge = current?.minimumAge ?? null;
   const minimumDrivingExperience = nullableInteger(raw.minimumDrivingExperience);
   const minimumRentalDays = nullableInteger(raw.minimumRentalDays);
   const policyComplete = minimumAge !== null && minimumDrivingExperience !== null && minimumRentalDays !== null;
   return {
     id: stringValue(raw.id),
-    slug: stringValue(raw.slug),
+    slug,
     brand: stringValue(raw.brand),
     model: stringValue(raw.model),
     title,
-    category: stringValue(raw.category),
+    category: vehicleClass,
     bodyType: stringValue(raw.bodyType),
-    vehicleClass: stringValue(raw.vehicleClass),
+    vehicleClass,
     year: nullableInteger(raw.year),
     transmission: nullableString(raw.transmission),
     engine: nullableString(raw.engine),

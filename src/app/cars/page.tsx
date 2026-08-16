@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/cars" }
 };
 
-export default async function CarsPage({ searchParams }: { searchParams: Promise<{ category?: string; maxPrice?: string; start?: string; end?: string }> }) {
+export default async function CarsPage({ searchParams }: { searchParams: Promise<{ class?: string; maxPrice?: string; start?: string; end?: string }> }) {
   const store = await getStore();
   const [cars, params] = await Promise.all([store.getCars(), searchParams]);
   const start = params.start && parseDateOnly(params.start) ? params.start : null;
@@ -35,12 +35,12 @@ export default async function CarsPage({ searchParams }: { searchParams: Promise
         </div>
 
         <div className="catalog-guide">
-          <article><ListFilter size={20} /><div><strong>1. Сузьте выбор</strong><span>Используйте марку, категорию, кузов и класс.</span></div></article>
+          <article><ListFilter size={20} /><div><strong>1. Сузьте выбор</strong><span>Используйте марку, кузов и класс.</span></div></article>
           <article><ScanSearch size={20} /><div><strong>2. Сравните карточки</strong><span>Оцените формат автомобиля, стоимость и фотографии.</span></div></article>
           <article><CircleDollarSign size={20} /><div><strong>3. Проверьте условия</strong><span>В карточке указана ставка, залог согласует менеджер.</span></div></article>
         </div>
 
-        <CatalogClient cars={cars} availability={availability} initialCategory={params.category} initialMaxPrice={params.maxPrice ? Number(params.maxPrice) : undefined} period={{ start: start ?? undefined, end: end ?? undefined }} />
+        <CatalogClient cars={cars} availability={availability} initialClass={params.class} initialMaxPrice={params.maxPrice ? Number(params.maxPrice) : undefined} period={{ start: start ?? undefined, end: end ?? undefined }} />
 
         <section className="catalog-help">
           <div><p className="eyebrow">Если выбор не очевиден</p><h2>Сравните несколько форматов</h2><p>Спортивное купе подходит не для каждого маршрута, а кроссовер не всегда нужен для короткой городской поездки. Откройте две-три карточки в близком бюджете и сравните сценарии и условия.</p></div>

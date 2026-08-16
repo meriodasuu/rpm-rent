@@ -29,15 +29,15 @@ export const CONTACTS = {
 } as const;
 
 export const LOCATIONS = [
-  { title: "Центр Петербурга", subtitle: "Личный маршрут", image: "/images/atmosphere/saint-petersburg-blue-hour.png", href: "/cars?category=Спорт" },
-  { title: "Петроградская сторона", subtitle: "Город и пространство", image: "/images/cars/li-auto-l6/01.jpg", href: "/cars?category=SUV" },
-  { title: "Дворцовая набережная", subtitle: "Особый повод", image: "/images/cars/bentley-continental/02.jpg", href: "/cars?category=Гран-туризмо" },
-  { title: "Курортный маршрут", subtitle: "Долгая поездка", image: "/images/cars/lamborghini-urus/05.jpg", href: "/cars?category=SUV" }
+  { title: "Центр Петербурга", subtitle: "Личный маршрут", image: "/images/atmosphere/saint-petersburg-blue-hour.png", href: "/cars?class=Спорт" },
+  { title: "Петроградская сторона", subtitle: "Город и пространство", image: "/images/cars/li-auto-l6/01.jpg", href: "/cars?class=Бизнес" },
+  { title: "Дворцовая набережная", subtitle: "Особый повод", image: "/images/cars/bentley-continental/02.jpg", href: "/cars?class=Премиум" },
+  { title: "Курортный маршрут", subtitle: "Долгая поездка", image: "/images/cars/lamborghini-urus/05.jpg", href: "/cars?class=Премиум" }
 ] as const;
 
 export const ROUTE_CATEGORIES = [
-  { label: "Для города", href: "/cars?category=Спорт", icon: "city" },
-  { label: "Для деловой поездки", href: "/cars?category=SUV", icon: "business" },
-  { label: "Для события", href: "/cars?category=Гран-туризмо", icon: "event" },
-  { label: "На длительный срок", href: "/cars?category=SUV", icon: "long" }
+  { label: "Для города", href: "/cars?class=Спорт", icon: "city" },
+  { label: "Для деловой поездки", href: "/cars?class=Бизнес", icon: "business" },
+  { label: "Для события", href: "/cars?class=Премиум", icon: "event" },
+  { label: "На длительный срок", href: "/cars?class=Бизнес", icon: "long" }
 ] as const;

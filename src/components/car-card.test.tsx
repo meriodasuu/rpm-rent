@@ -13,4 +13,11 @@ describe("CarCard", () => {
     const html = renderToStaticMarkup(<CarCard car={car} />);
     expect(html).not.toContain("Онлайн-оформление недоступно");
   });
+
+  it("shows the vehicle class and body type without a separate category", () => {
+    const html = renderToStaticMarkup(<CarCard car={car} />);
+
+    expect(html).toContain("Премиум · Купе");
+    expect(html).not.toContain("Спорт · Купе");
+  });
 });

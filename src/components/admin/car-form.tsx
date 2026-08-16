@@ -1,6 +1,7 @@
 import { AlertTriangle, BadgeRussianRuble, CarFront, FileImage, Save, Settings2 } from "lucide-react";
 import { saveCarAction } from "@/app/admin/actions";
 import { RENTAL_POLICY } from "@/config/rental-policy";
+import { VEHICLE_CLASSES } from "@/lib/vehicle-class";
 import type { Car } from "@/types/domain";
 import { AdminMediaUploader } from "./admin-media-uploader";
 
@@ -10,6 +11,10 @@ const TextField = ({ name, label, value, type = "text", min, max, required = fal
 
 const TextArea = ({ name, label, value, placeholder, required = false, hint }: { name: string; label: string; value: string; placeholder?: string; required?: boolean; hint?: string }) => (
   <div className="field full"><label htmlFor={name}>{label}{required ? <span aria-hidden="true"> *</span> : null}</label><textarea className="textarea" id={name} name={name} defaultValue={value} placeholder={placeholder} required={required} />{hint ? <small>{hint}</small> : null}</div>
+);
+
+const VehicleClassField = ({ value }: { value: string }) => (
+  <div className="field"><label htmlFor="vehicleClass">Класс<span aria-hidden="true"> *</span></label><select className="select" id="vehicleClass" name="vehicleClass" defaultValue={value} required>{VEHICLE_CLASSES.map((vehicleClass) => <option key={vehicleClass} value={vehicleClass}>{vehicleClass}</option>)}</select></div>
 );
 
 function FormSection({ icon, title, description, children }: { icon: React.ReactNode; title: string; description: string; children: React.ReactNode }) {
@@ -38,9 +43,8 @@ export function CarForm({ car }: { car: Car }) {
           <TextField name="slug" label="Адрес страницы (slug)" value={car.slug} required hint="Латиница, цифры и дефисы" />
           <TextField name="brand" label="Марка" value={car.brand} required />
           <TextField name="model" label="Модель" value={car.model} required />
-          <TextField name="category" label="Категория" value={car.category} required />
           <TextField name="bodyType" label="Кузов" value={car.bodyType} required />
-          <TextField name="vehicleClass" label="Класс" value={car.vehicleClass} required />
+          <VehicleClassField value={car.vehicleClass} />
           <TextField name="recommendedOrder" label="Порядок в каталоге" value={car.recommendedOrder} type="number" min={0} max={100000} required />
         </div>
         <TextArea name="shortDescription" label="Краткое описание" value={car.shortDescription} required hint="Один выразительный абзац для карточки каталога" />

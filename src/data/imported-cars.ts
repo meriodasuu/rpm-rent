@@ -1,6 +1,7 @@
 import type { Car } from "@/types/domain";
+import { vehicleClassForCar } from "@/lib/vehicle-class";
 
-export const importedCars: Car[] = [
+const importedCarRecords: Car[] = [
   {
     "id": "car-bmw-m8-2021",
     "slug": "bmw-m8-2021",
@@ -2407,3 +2408,9 @@ export const importedCars: Car[] = [
     "seoDescription": "Tesla Model 3 Black, 2020 год. Характеристики и тарифы импортированы из рабочего стандарта RPM."
   }
 ];
+
+export const importedCars: Car[] = importedCarRecords.map((car) => ({
+  ...car,
+  category: vehicleClassForCar(car.slug),
+  vehicleClass: vehicleClassForCar(car.slug),
+}));

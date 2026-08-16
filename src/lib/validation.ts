@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { RENTAL_POLICY } from "@/config/rental-policy";
 import { DATE_ONLY_PATTERN, differenceInCalendarDays, parseDateOnly } from "@/lib/domain/dates";
+import { VEHICLE_CLASSES } from "@/lib/vehicle-class";
 
 const safeText = (minimum: number, maximum: number, requiredMessage: string) =>
   z.string().trim().min(minimum, requiredMessage).max(maximum).refine((value) => !/[<>\u0000-\u001F]/.test(value), "Недопустимые символы");
@@ -87,9 +88,8 @@ export const carAdminSchema = z
     brand: safeText(1, 100, "Укажите марку"),
     model: safeText(1, 100, "Укажите модель"),
     title: safeText(2, 160, "Укажите название"),
-    category: safeText(1, 100, "Укажите категорию"),
     bodyType: safeText(1, 100, "Укажите кузов"),
-    vehicleClass: safeText(1, 100, "Укажите класс"),
+    vehicleClass: z.enum(VEHICLE_CLASSES, { error: "Выберите класс автомобиля" }),
     pricePerDay: z.coerce.number().int().min(0).max(RENTAL_POLICY.maximumDailyPrice),
     deposit: z.coerce.number().int().min(0).max(RENTAL_POLICY.maximumMoneyAmount),
     shortDescription: safeText(10, 500, "Заполните краткое описание"),

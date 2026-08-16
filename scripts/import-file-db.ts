@@ -3,6 +3,7 @@ import { PrismaPg } from "@prisma/adapter-pg";
 import { BookingStatus, Prisma, PrismaClient } from "../src/generated/prisma/client";
 import { resolveDatabaseUrl } from "../src/lib/database-url";
 import type { DevDatabase } from "../src/types/domain";
+import { vehicleClassForCar } from "../src/lib/vehicle-class";
 
 const sourcePath = process.argv[2]?.trim();
 if (!sourcePath) throw new Error("Usage: pnpm import:file-db /path/to/db.json");
@@ -30,11 +31,13 @@ const prisma = new PrismaClient({ adapter: new PrismaPg({ connectionString: data
 try {
   for (const car of cars) {
     const { id, images, ...data } = car;
+    const vehicleClass = vehicleClassForCar(car.slug);
+    const normalizedData = { ...data, category: vehicleClass, vehicleClass };
     await prisma.$transaction(async (transaction) => {
       await transaction.car.upsert({
         where: { id },
-        create: { id, ...data },
-        update: data
+        create: { id, ...normalizedData },
+        update: normalizedData
       });
       await transaction.carImage.deleteMany({ where: { carId: id } });
       if (images.length) {

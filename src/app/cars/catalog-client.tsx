@@ -5,26 +5,24 @@ import { useEffect, useMemo, useState } from "react";
 import { CarCard } from "@/components/car-card";
 import type { Car } from "@/types/domain";
 
-type Filters = { brands: string[]; categories: string[]; bodyTypes: string[]; classes: string[]; maxPrice: number };
-const empty: Filters = { brands: [], categories: [], bodyTypes: [], classes: [], maxPrice: 100000 };
+type Filters = { brands: string[]; bodyTypes: string[]; classes: string[]; maxPrice: number };
+const empty: Filters = { brands: [], bodyTypes: [], classes: [], maxPrice: 100000 };
 
 function Toggle({ title, values, selected, onChange }: { title: string; values: string[]; selected: string[]; onChange: (value: string) => void }) {
   return <div className="filter-group"><h3>{title}</h3><div className="filter-options">{values.map((value) => <label className="filter-option" key={value}><input type="checkbox" checked={selected.includes(value)} onChange={() => onChange(value)} data-event="filter_change" data-event-label={`${title}:${value}`} /><span>{value}</span></label>)}</div></div>;
 }
 
-export function CatalogClient({ cars, availability, initialCategory, initialMaxPrice, period }: { cars: Car[]; availability?: Record<string, boolean>; initialCategory?: string; initialMaxPrice?: number; period?: { start?: string; end?: string } }) {
-  const [filters, setFilters] = useState<Filters>({ ...empty, categories: initialCategory ? [initialCategory] : [], maxPrice: initialMaxPrice || empty.maxPrice });
+export function CatalogClient({ cars, availability, initialClass, initialMaxPrice, period }: { cars: Car[]; availability?: Record<string, boolean>; initialClass?: string; initialMaxPrice?: number; period?: { start?: string; end?: string } }) {
+  const [filters, setFilters] = useState<Filters>({ ...empty, classes: initialClass ? [initialClass] : [], maxPrice: initialMaxPrice || empty.maxPrice });
   const [sort, setSort] = useState("recommended");
   const [open, setOpen] = useState(false);
   const values = useMemo(() => ({
     brands: [...new Set(cars.map((car) => car.brand))].sort(),
-    categories: [...new Set(cars.map((car) => car.category))].sort(),
     bodyTypes: [...new Set(cars.map((car) => car.bodyType))].sort(),
     classes: [...new Set(cars.map((car) => car.vehicleClass))].sort()
   }), [cars]);
   const result = useMemo(() => cars
     .filter((car) => (!filters.brands.length || filters.brands.includes(car.brand))
-      && (!filters.categories.length || filters.categories.includes(car.category))
       && (!filters.bodyTypes.length || filters.bodyTypes.includes(car.bodyType))
       && (!filters.classes.length || filters.classes.includes(car.vehicleClass))
       && car.pricePerDay <= filters.maxPrice)
@@ -32,7 +30,7 @@ export function CatalogClient({ cars, availability, initialCategory, initialMaxP
 
   useEffect(() => {
     const params = new URLSearchParams();
-    if (filters.categories.length) params.set("category", filters.categories.join(","));
+    if (filters.classes.length) params.set("class", filters.classes.join(","));
     if (filters.maxPrice < empty.maxPrice) params.set("maxPrice", String(filters.maxPrice));
     if (sort !== "recommended") params.set("sort", sort);
     if (period?.start) params.set("start", period.start);
@@ -40,15 +38,14 @@ export function CatalogClient({ cars, availability, initialCategory, initialMaxP
     history.replaceState(null, "", `${location.pathname}${params.size ? `?${params}` : ""}`);
   }, [filters, sort, period]);
 
-  const toggle = (key: "brands" | "categories" | "bodyTypes" | "classes", value: string) => setFilters((current) => ({ ...current, [key]: current[key].includes(value) ? current[key].filter((item) => item !== value) : [...current[key], value] }));
-  const active = [...filters.brands, ...filters.categories, ...filters.bodyTypes, ...filters.classes, filters.maxPrice < empty.maxPrice ? `до ${filters.maxPrice.toLocaleString("ru-RU")} ₽` : ""].filter(Boolean);
+  const toggle = (key: "brands" | "bodyTypes" | "classes", value: string) => setFilters((current) => ({ ...current, [key]: current[key].includes(value) ? current[key].filter((item) => item !== value) : [...current[key], value] }));
+  const active = [...filters.brands, ...filters.bodyTypes, ...filters.classes, filters.maxPrice < empty.maxPrice ? `до ${filters.maxPrice.toLocaleString("ru-RU")} ₽` : ""].filter(Boolean);
   const availableCount = availability ? result.filter((car) => availability[car.id]).length : null;
 
   return <div className="catalog-layout">
     <aside className={`filters surface ${open ? "open" : ""}`}>
       <div className="filter-head"><div><span>Точная настройка</span><strong>Фильтры</strong></div><button className="button ghost small-button" onClick={() => setFilters(empty)} type="button"><X size={14} /> Сбросить</button></div>
       <Toggle title="Марка" values={values.brands} selected={filters.brands} onChange={(value) => toggle("brands", value)} />
-      <Toggle title="Категория" values={values.categories} selected={filters.categories} onChange={(value) => toggle("categories", value)} />
       <Toggle title="Кузов" values={values.bodyTypes} selected={filters.bodyTypes} onChange={(value) => toggle("bodyTypes", value)} />
       <Toggle title="Класс" values={values.classes} selected={filters.classes} onChange={(value) => toggle("classes", value)} />
       <div className="filter-group filter-price"><h3>До {filters.maxPrice.toLocaleString("ru-RU")} ₽ / сутки</h3><input type="range" min="15000" max="100000" step="5000" value={filters.maxPrice} onChange={(event) => setFilters((current) => ({ ...current, maxPrice: Number(event.target.value) }))} data-event="filter_change" data-event-label="max_price" /></div>

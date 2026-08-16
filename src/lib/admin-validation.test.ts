@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { carAdminSchema, faqAdminSchema, serviceAdminSchema } from "./validation";
 
 const car = {
-  id: "car-1", slug: "test-car", brand: "Test", model: "One", title: "Test One", category: "Premium", bodyType: "Sedan", vehicleClass: "Premium",
+  id: "car-1", slug: "test-car", brand: "Test", model: "One", title: "Test One", bodyType: "Sedan", vehicleClass: "Премиум",
   pricePerDay: 10_000, deposit: 20_000, shortDescription: "Подтверждённое краткое описание", description: "Подтверждённое полное описание автомобиля",
   available: false, published: false, isNew: false, isPromotion: false, isDemo: false,
   year: "", horsepower: "", seats: "", oldPrice: "", minimumAge: "", minimumDrivingExperience: "", minimumRentalDays: "", mileageLimit: "", extraMileagePrice: "",
@@ -19,6 +19,13 @@ describe("admin validation", () => {
     expect(carAdminSchema.safeParse({ ...car, published: true, available: true, minimumAge: 18, minimumDrivingExperience: 0, minimumRentalDays: 1 }).success).toBe(true);
   });
 
+  it("accepts only sport, business or premium as a vehicle class", () => {
+    expect(carAdminSchema.safeParse({ ...car, vehicleClass: "Спорт" }).success).toBe(true);
+    expect(carAdminSchema.safeParse({ ...car, vehicleClass: "Бизнес" }).success).toBe(true);
+    expect(carAdminSchema.safeParse({ ...car, vehicleClass: "Люкс" }).success).toBe(false);
+    expect(carAdminSchema.safeParse({ ...car, vehicleClass: "Не указан" }).success).toBe(false);
+  });
+
   it("rejects negative, fractional and nonnumeric admin money", () => {
     expect(carAdminSchema.safeParse({ ...car, pricePerDay: -1 }).success).toBe(false);
     expect(carAdminSchema.safeParse({ ...car, deposit: 1.5 }).success).toBe(false);
@@ -30,4 +37,3 @@ describe("admin validation", () => {
     expect(faqAdminSchema.safeParse({ id: "f", question: "Что такое аренда?", answer: "<script>alert(1)</script>", category: "general", published: true, sortOrder: 1 }).success).toBe(false);
   });
 });
-

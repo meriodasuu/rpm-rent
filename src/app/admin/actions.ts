@@ -30,7 +30,7 @@ export async function saveCarAction(formData: FormData) {
   await requireAdmin();
   const parsed = carAdminSchema.safeParse({
     id: formData.get("id"), slug: formData.get("slug"), brand: formData.get("brand"), model: formData.get("model"), title: formData.get("title"),
-    category: formData.get("category"), bodyType: formData.get("bodyType"), vehicleClass: formData.get("vehicleClass"), pricePerDay: formData.get("pricePerDay"),
+    bodyType: formData.get("bodyType"), vehicleClass: formData.get("vehicleClass"), pricePerDay: formData.get("pricePerDay"),
     deposit: formData.get("deposit"), shortDescription: formData.get("shortDescription"), description: formData.get("description"),
     available: checked(formData, "available"), published: checked(formData, "published"), isNew: checked(formData, "isNew"), isPromotion: checked(formData, "isPromotion"), isDemo: checked(formData, "isDemo"),
     year: formData.get("year"), transmission: formData.get("transmission"), engine: formData.get("engine"), horsepower: formData.get("horsepower"),
@@ -44,7 +44,7 @@ export async function saveCarAction(formData: FormData) {
   const imageLines = values(formData, "images");
   if (imageLines.some((url) => !validMediaReference(url))) throw new Error("Некорректная фотография");
   const car: Car = {
-    id: parsed.data.id, slug: parsed.data.slug, brand: parsed.data.brand, model: parsed.data.model, title: parsed.data.title, category: parsed.data.category,
+    id: parsed.data.id, slug: parsed.data.slug, brand: parsed.data.brand, model: parsed.data.model, title: parsed.data.title, category: parsed.data.vehicleClass,
     bodyType: parsed.data.bodyType, vehicleClass: parsed.data.vehicleClass, pricePerDay: parsed.data.pricePerDay, deposit: parsed.data.deposit,
     shortDescription: parsed.data.shortDescription, description: parsed.data.description, available: parsed.data.available, published: parsed.data.published,
     isNew: parsed.data.isNew, isPromotion: parsed.data.isPromotion, isDemo: parsed.data.isDemo,

@@ -46,7 +46,7 @@ export default async function CarPage({ params, searchParams }: { params: Promis
 
   const editorial = getCarEditorial(car);
   const specs = [
-    ["Категория", car.category], ["Кузов", car.bodyType], ["Класс", car.vehicleClass], ["Год", car.year],
+    ["Класс", car.vehicleClass], ["Кузов", car.bodyType], ["Год", car.year],
     ["Коробка", car.transmission], ["Привод", car.driveType], ["Двигатель", car.engine],
     ["Мощность", car.horsepower ? `${car.horsepower} л.с.` : null], ["Места", car.seats]
   ].filter((item): item is [string, string | number] => Boolean(item[1]));
@@ -63,8 +63,8 @@ export default async function CarPage({ params, searchParams }: { params: Promis
   const recommendations = cars
     .filter((item) => item.id !== car.id)
     .sort((a, b) => {
-      const aScore = Number(a.category === car.category) * 3 + Number(a.vehicleClass === car.vehicleClass) * 2 - Math.abs(a.pricePerDay - car.pricePerDay) / 100000;
-      const bScore = Number(b.category === car.category) * 3 + Number(b.vehicleClass === car.vehicleClass) * 2 - Math.abs(b.pricePerDay - car.pricePerDay) / 100000;
+      const aScore = Number(a.vehicleClass === car.vehicleClass) * 3 - Math.abs(a.pricePerDay - car.pricePerDay) / 100000;
+      const bScore = Number(b.vehicleClass === car.vehicleClass) * 3 - Math.abs(b.pricePerDay - car.pricePerDay) / 100000;
       return bScore - aScore;
     })
     .slice(0, 3);
@@ -73,7 +73,7 @@ export default async function CarPage({ params, searchParams }: { params: Promis
     <div className="page car-detail-page">
       <div className="container">
         <Breadcrumbs items={[{ label: "Главная", href: "/" }, { label: "Каталог", href: "/cars" }, { label: car.title }]} />
-        <div className="page-intro car-intro"><div><p className="eyebrow">{car.brand} · {car.category}</p><h1 className="title">{car.title}</h1></div><div><p className="car-intro-index">RPM / {String(car.recommendedOrder).padStart(2, "0")}</p><p className="subtitle">{editorial.intro}</p></div></div>
+        <div className="page-intro car-intro"><div><p className="eyebrow">{car.brand} · {car.vehicleClass}</p><h1 className="title">{car.title}</h1></div><div><p className="car-intro-index">RPM / {String(car.recommendedOrder).padStart(2, "0")}</p><p className="subtitle">{editorial.intro}</p></div></div>
 
         <div className="detail-layout">
           <CarGallery images={car.images} title={car.title} />
@@ -117,7 +117,7 @@ export default async function CarPage({ params, searchParams }: { params: Promis
 
         <section className="detail-section"><div className="grid-2"><div><p className="eyebrow">До оформления</p><h2>Ответы на частые вопросы</h2><p className="detail-copy">Проверьте, как рассчитывается сумма, когда подтверждается автомобиль и какие параметры зависят от конкретной модели.</p><div className="button-row"><Link className="button ghost" href="/faq">Все вопросы</Link><Link className="button" href={bookingHref}>Забронировать</Link></div></div><FaqList items={faqs.slice(0, 6)} /></div></section>
 
-        <section className="detail-section" style={{ borderBottom: 0 }}><div className="section-head section-head-copy"><div><p className="eyebrow">Продолжите выбор</p><h2 className="title">Похожие автомобили</h2></div><p className="section-lead">Альтернативы подобраны по категории, классу и близости суточной ставки. Сравните несколько вариантов перед выбором дат.</p></div><div className="car-grid">{recommendations.map((item) => <CarCard key={item.id} car={item} period={period} />)}</div><div className="section-action"><Link className="button ghost" href="/cars">Вернуться в каталог <ArrowRight size={17} /></Link></div></section>
+        <section className="detail-section" style={{ borderBottom: 0 }}><div className="section-head section-head-copy"><div><p className="eyebrow">Продолжите выбор</p><h2 className="title">Похожие автомобили</h2></div><p className="section-lead">Альтернативы подобраны по классу и близости суточной ставки. Сравните несколько вариантов перед выбором дат.</p></div><div className="car-grid">{recommendations.map((item) => <CarCard key={item.id} car={item} period={period} />)}</div><div className="section-action"><Link className="button ghost" href="/cars">Вернуться в каталог <ArrowRight size={17} /></Link></div></section>
       </div>
       <div className="mobile-cta"><Link className="button red" href={busyForPeriod ? "/cars" : bookingHref} data-event={busyForPeriod ? "date_check" : "booking_open"} data-event-label={`${car.slug}_sticky`}>{busyForPeriod ? "Изменить даты" : `Забронировать · ${formatPrice(car.pricePerDay)}`}</Link></div>
     </div>

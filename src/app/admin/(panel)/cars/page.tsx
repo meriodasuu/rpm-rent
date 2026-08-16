@@ -42,7 +42,7 @@ export default async function AdminCarsPage() {
                   </div>
                   <div className="admin-fleet-name">
                     <strong>{car.title}</strong>
-                    <span>{car.category} · {car.year ?? "год не указан"}</span>
+                    <span>{car.vehicleClass} · {car.year ?? "год не указан"}</span>
                   </div>
                   <div className="admin-fleet-price"><small>Ставка</small><strong>{formatPrice(car.pricePerDay)} / сут.</strong><span>Залог {formatDeposit(car.deposit)}</span></div>
                   <div className="admin-fleet-state">
