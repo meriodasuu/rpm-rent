@@ -75,6 +75,7 @@ services:
       - media_data:/app/media
     networks:
       - backend
+      - web
 
 networks:
   backend:
