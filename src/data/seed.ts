@@ -112,7 +112,7 @@ export const seedCars: Car[] = [
     title: "Audi RS 5",
     category: "Спорт",
     bodyType: "Лифтбек",
-    vehicleClass: "Премиум",
+    vehicleClass: "Спорт",
     pricePerDay: 21000,
     deposit: 40000,
     shortDescription: "Спортивный лифтбек для города, делового маршрута и выходных, когда нужен более практичный кузов, чем классическое купе.",
