@@ -7,8 +7,7 @@ http://80.90.187.252 {
   reverse_proxy app:3000
 }
 
-rpm-rent.ru {
+rpm-rent.ru, rpmrent.ru, www.rpmrent.ru {
   encode zstd gzip
   reverse_proxy app:3000
 }
-
