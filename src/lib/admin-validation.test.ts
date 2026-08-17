@@ -19,6 +19,10 @@ describe("admin validation", () => {
     expect(carAdminSchema.safeParse({ ...car, published: true, available: true, minimumAge: 18, minimumDrivingExperience: 0, minimumRentalDays: 1 }).success).toBe(true);
   });
 
+  it("accepts line breaks in a car's full description", () => {
+    expect(carAdminSchema.safeParse({ ...car, description: "Первый абзац полного описания.\n\nВторой абзац полного описания." }).success).toBe(true);
+  });
+
   it("accepts only sport, business or premium as a vehicle class", () => {
     expect(carAdminSchema.safeParse({ ...car, vehicleClass: "Спорт" }).success).toBe(true);
     expect(carAdminSchema.safeParse({ ...car, vehicleClass: "Бизнес" }).success).toBe(true);

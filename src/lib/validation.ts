@@ -6,6 +6,9 @@ import { VEHICLE_CLASSES } from "@/lib/vehicle-class";
 const safeText = (minimum: number, maximum: number, requiredMessage: string) =>
   z.string().trim().min(minimum, requiredMessage).max(maximum).refine((value) => !/[<>\u0000-\u001F]/.test(value), "Недопустимые символы");
 
+const safeMultilineText = (minimum: number, maximum: number, requiredMessage: string) =>
+  z.string().trim().min(minimum, requiredMessage).max(maximum).refine((value) => !/[<>\u0000-\u0008\u000B\u000C\u000E-\u001F]/.test(value), "Недопустимые символы");
+
 const dateOnly = z.string().regex(DATE_ONLY_PATTERN, "Используйте дату в формате ГГГГ-ММ-ДД").refine((value) => Boolean(parseDateOnly(value)), "Некорректная дата");
 
 const phone = z
@@ -91,7 +94,7 @@ export const carAdminSchema = z
     pricePerDay: z.coerce.number().int().min(0).max(RENTAL_POLICY.maximumDailyPrice),
     deposit: z.coerce.number().int().min(0).max(RENTAL_POLICY.maximumMoneyAmount),
     shortDescription: safeText(10, 500, "Заполните краткое описание"),
-    description: safeText(20, 10_000, "Заполните описание"),
+    description: safeMultilineText(20, 10_000, "Заполните описание"),
     available: z.boolean(),
     published: z.boolean(),
     isNew: z.boolean(),
