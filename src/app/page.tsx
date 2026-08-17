@@ -39,7 +39,7 @@ const steps = [
   ["Подходящая дата", "Укажите даты и время аренды. Мы проверим доступность автомобиля.", CalendarDays, "/images/editorial/step-date.png"],
   ["Подтверждение и бронирование", "Мы свяжемся с вами для уточнения всех деталей и брони.", ShieldCheck, "/images/editorial/step-confirmation.png"],
   ["Договор и условия", "Подписываем договор и знакомим вас со всеми условиями. Всё прозрачно и безопасно.", FileText, "/images/editorial/step-contract.png"],
-  ["Получение авто", "Заберите автомобиль в удобное время и место. Наслаждайтесь поездкой!", KeyRound, "/images/editorial/step-key.png"]
+  ["Получение авто", "Заберите автомобиль в удобное время и место. Получение автомобиля — в течение 15 минут.", KeyRound, "/images/editorial/step-key.png"]
 ] as const;
 
 export default async function HomePage() {
@@ -93,8 +93,8 @@ export default async function HomePage() {
         <div className="city-chapter-shade" />
         <div className="container city-chapter-content">
           <p className="eyebrow">Дворцовая набережная</p>
-          <h2 className="display">Город задаёт<br />маршрут.</h2>
-          <div className="city-chapter-note"><p>Атмосфера Петербурга задаёт настроение. В автопарке представлены реальные машины RPM Rent.</p></div>
+          <h2 className="display">Атмосфера города<br />задаёт настроение.</h2>
+          <div className="city-chapter-note"><p>Атмосфера Петербурга и автомобили RPM создают настроение для поездок по Санкт-Петербургу.</p></div>
         </div>
       </section>
 
