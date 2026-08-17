@@ -93,7 +93,7 @@ export default async function HomePage() {
         <div className="city-chapter-shade" />
         <div className="container city-chapter-content">
           <p className="eyebrow">Дворцовая набережная</p>
-          <h2 className="display">Атмосфера города<br />задаёт настроение.</h2>
+          <h2 className="display">Премиальный автомобиль<br />задаёт темп города.</h2>
           <div className="city-chapter-note"><p>Атмосфера Петербурга и автомобили RPM создают настроение для поездок по Санкт-Петербургу.</p></div>
         </div>
       </section>

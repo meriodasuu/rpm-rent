@@ -23,4 +23,14 @@ describe("BookingForm", () => {
     expect(html).not.toContain("Дата рождения");
     expect(html).not.toContain("Дата выдачи водительского удостоверения");
   });
+
+  it("marks the required contacts, keeps consent enabled, and uses the rental CTA", () => {
+    const html = renderToStaticMarkup(<BookingForm cars={[car]} services={[]} />);
+
+    expect(html).toContain('for="customerName">Имя <span aria-hidden="true">*</span>');
+    expect(html).toContain('for="phone">Телефон <span aria-hidden="true">*</span>');
+    expect(html).toMatch(/<input type="checkbox" disabled=""[^>]* checked=""/);
+    expect(html).toContain("Оформить машину");
+    expect(html).not.toContain(">Отправить обращение<");
+  });
 });

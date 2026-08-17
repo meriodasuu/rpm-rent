@@ -8,8 +8,7 @@ describe("home page editorial copy", () => {
   it("uses the updated Saint Petersburg city chapter copy", async () => {
     const page = await homePage();
 
-    expect(page).toContain("Атмосфера города<br />задаёт настроение.");
-    expect(page).toContain("Атмосфера Петербурга и автомобили RPM создают настроение для поездок по Санкт-Петербургу.");
+    expect(page).toContain("Премиальный автомобиль<br />задаёт темп города.");
     expect(page).not.toContain("В автопарке представлены реальные машины RPM Rent.");
   });
 
