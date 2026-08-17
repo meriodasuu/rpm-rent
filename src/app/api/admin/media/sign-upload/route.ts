@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { getAdminSession } from "@/lib/auth";
 import { buildAdminMediaPath, storageMediaUrl, validateAdminMediaFile, type AdminMediaOwnerType } from "@/lib/admin-media";
-import { createSignedUpload } from "@/lib/supabase-storage";
 
 export async function POST(request: Request) {
   if (!await getAdminSession()) return NextResponse.json({ message: "Требуется вход" }, { status: 401 });
@@ -15,8 +14,12 @@ export async function POST(request: Request) {
     const validation = validateAdminMediaFile({ mimeType, size });
     if (!validation.ok) return NextResponse.json({ message: validation.error }, { status: 400 });
     const path = buildAdminMediaPath(ownerType as AdminMediaOwnerType, ownerId, mimeType);
-    const signed = await createSignedUpload(path);
-    return NextResponse.json({ ...signed, path, mediaUrl: storageMediaUrl(path) });
+    return NextResponse.json({
+      uploadMode: "local",
+      uploadUrl: `/api/admin/media/local-upload?path=${encodeURIComponent(path)}`,
+      path,
+      mediaUrl: storageMediaUrl(path),
+    });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Не удалось подготовить загрузку";
     const clientError = /Некорректный|Неподдерживаемый/.test(message);

@@ -1,5 +1,5 @@
-import { readFile } from "node:fs/promises";
-import { extname, resolve, sep } from "node:path";
+import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
+import { dirname, extname, resolve, sep } from "node:path";
 
 const contentTypes: Record<string, string> = {
   ".avif": "image/avif",
@@ -10,17 +10,43 @@ const contentTypes: Record<string, string> = {
   ".webp": "image/webp",
 };
 
-export const readLocalMedia = async (path: string, root = process.env.LOCAL_MEDIA_ROOT || "/app/media") => {
+const resolveLocalMediaPath = (path: string, root: string) => {
   if (!path || path.startsWith("/") || path.includes("\\") || path.includes("\0")) return null;
   const segments = path.split("/");
   if (segments.some((segment) => !segment || segment === "." || segment === "..")) return null;
   const absoluteRoot = resolve(root);
   const absolutePath = resolve(absoluteRoot, ...segments);
   if (!absolutePath.startsWith(`${absoluteRoot}${sep}`)) return null;
+  return absolutePath;
+};
+
+export const readLocalMedia = async (path: string, root = process.env.LOCAL_MEDIA_ROOT || "/app/media") => {
+  const absolutePath = resolveLocalMediaPath(path, root);
+  if (!absolutePath) return null;
   try {
     const body = await readFile(absolutePath);
     return { body, contentType: contentTypes[extname(absolutePath).toLowerCase()] || "application/octet-stream" };
   } catch {
     return null;
+  }
+};
+
+export const writeLocalMedia = async (path: string, body: Uint8Array, root = process.env.LOCAL_MEDIA_ROOT || "/app/media") => {
+  const absolutePath = resolveLocalMediaPath(path, root);
+  if (!absolutePath) return false;
+  await mkdir(dirname(absolutePath), { recursive: true });
+  await writeFile(absolutePath, body);
+  return true;
+};
+
+export const removeLocalMedia = async (path: string, root = process.env.LOCAL_MEDIA_ROOT || "/app/media") => {
+  const absolutePath = resolveLocalMediaPath(path, root);
+  if (!absolutePath) return false;
+  try {
+    await rm(absolutePath);
+    return true;
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === "ENOENT") return false;
+    throw error;
   }
 };

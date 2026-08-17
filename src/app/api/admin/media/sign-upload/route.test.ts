@@ -3,8 +3,6 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const auth = vi.hoisted(() => ({ getAdminSession: vi.fn() }));
 vi.mock("@/lib/auth", () => auth);
-vi.mock("@/lib/supabase-storage", () => ({ createSignedUpload: vi.fn(async () => ({ uploadUrl: "https://upload.example/signed", token: "token" })) }));
-
 import { POST } from "./route";
 
 const request = (body: unknown) => new NextRequest("http://localhost/api/admin/media/sign-upload", {
@@ -27,10 +25,10 @@ describe("POST /api/admin/media/sign-upload", () => {
     expect(response.status).toBe(400);
   });
 
-  it("returns a stable media URL for an authorized upload", async () => {
+  it("returns an authenticated local upload URL for an authorized upload", async () => {
     auth.getAdminSession.mockResolvedValue({ email: "admin@example.com" });
     const response = await POST(request({ ownerType: "cars", ownerId: "car-1", fileName: "x.jpg", mimeType: "image/jpeg", size: 100 }));
     expect(response.status).toBe(200);
-    expect(await response.json()).toEqual(expect.objectContaining({ uploadUrl: "https://upload.example/signed", token: "token", mediaUrl: expect.stringContaining("/api/media/storage?path=") }));
+    expect(await response.json()).toEqual(expect.objectContaining({ uploadMode: "local", uploadUrl: expect.stringContaining("/api/admin/media/local-upload?path="), mediaUrl: expect.stringContaining("/api/media/storage?path=") }));
   });
 });

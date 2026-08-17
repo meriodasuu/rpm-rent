@@ -36,8 +36,22 @@ const uploadFile = async (
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ ownerType, ownerId, fileName: file.name, mimeType: file.type, size: file.size }),
   });
-  const signed = await signedResponse.json() as { uploadUrl?: string; mediaUrl?: string; message?: string };
+  const signed = await signedResponse.json() as { uploadMode?: "local" | "supabase"; uploadUrl?: string; mediaUrl?: string; message?: string };
   if (!signedResponse.ok || !signed.uploadUrl || !signed.mediaUrl) throw new Error(signed.message || "Не удалось подготовить загрузку");
+
+  if (signed.uploadMode === "local") {
+    const response = await fetch(signed.uploadUrl, {
+      method: "PUT",
+      headers: { "Content-Type": file.type },
+      body: file,
+    });
+    if (!response.ok) {
+      const payload = await response.json().catch(() => null) as { message?: string } | null;
+      throw new Error(payload?.message || "Не удалось сохранить фотографию");
+    }
+    onProgress(100);
+    return signed.mediaUrl;
+  }
 
   await new Promise<void>((resolve, reject) => {
     const request = new XMLHttpRequest();

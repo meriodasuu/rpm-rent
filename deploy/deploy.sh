@@ -18,6 +18,7 @@ if "${compose[@]}" ps --services --status running | grep -qx db; then
 fi
 
 "${compose[@]}" build tools app
+"${compose[@]}" run --rm --no-deps --user root --entrypoint sh app -c 'chown -R nextjs:nodejs /app/media'
 "${compose[@]}" up -d db
 "${compose[@]}" run --rm tools pnpm prisma:deploy
 "${compose[@]}" up -d app caddy
