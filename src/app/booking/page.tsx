@@ -21,7 +21,7 @@ export default async function BookingPage({ searchParams }: { searchParams: Prom
 
       <BookingForm cars={cars} services={services} initialCarSlug={params.car} initialStart={params.start} initialEnd={params.end} initialServiceSlug={params.service} />
 
-      <section className="booking-after surface"><div><h2>Что произойдёт после отправки</h2></div><div className="booking-after-list"><span><Check size={16} /> Сервер повторно проверит возраст, стаж, срок и цену.</span><span><Check size={16} /> Менеджер проверит детали и доступность автомобиля.</span><span><Check size={16} /> Договор оформляется после согласования.</span></div><Link className="text-link" href="/rental-terms">Условия аренды</Link></section>
+      <section className="booking-after surface"><div><h2>Что произойдёт после отправки</h2></div><div className="booking-after-list"><span><Check size={16} /> Менеджер проверит даты и доступность автомобиля.</span><span><Check size={16} /> Уточнит возраст, стаж и остальные детали.</span><span><Check size={16} /> Договор оформляется после согласования.</span></div><Link className="text-link" href="/rental-terms">Условия аренды</Link></section>
     </div></div>
   );
 }

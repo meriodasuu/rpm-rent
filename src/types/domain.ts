@@ -93,7 +93,7 @@ export type Booking = {
   birthDate: string | null;
   licenseIssuedOn: string | null;
   driverAgeAtStart: number | null;
-  drivingExperienceMonths: number;
+  drivingExperienceMonths: number | null;
   minimumAgeApplied: number | null;
   minimumDrivingExperienceApplied: number | null;
   minimumRentalDaysApplied: number | null;

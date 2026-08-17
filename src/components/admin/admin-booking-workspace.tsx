@@ -160,8 +160,8 @@ export function AdminBookingWorkspace({
                     <h3><UserRound size={16} /> Водитель</h3>
                     <dl>
                       <div><dt>Телефон</dt><dd>{selected.phone}</dd></div>
-                      <div><dt>Возраст на начало</dt><dd>{selected.driverAgeAtStart ? `${selected.driverAgeAtStart} лет` : "Не указан"}</dd></div>
-                      <div><dt>Стаж</dt><dd>{selected.drivingExperienceMonths} мес.</dd></div>
+                      <div><dt>Возраст на начало</dt><dd>{selected.driverAgeAtStart !== null ? `${selected.driverAgeAtStart} лет` : "Уточнить"}</dd></div>
+                      <div><dt>Стаж</dt><dd>{selected.drivingExperienceMonths !== null ? `${selected.drivingExperienceMonths} мес.` : "Уточнить"}</dd></div>
                       <div><dt>Дата рождения</dt><dd>{selected.birthDate ? formatRentalDate(selected.birthDate) : "Не указана"}</dd></div>
                     </dl>
                   </section>

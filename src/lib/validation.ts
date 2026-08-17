@@ -34,8 +34,6 @@ export const bookingSchema = z
     customerName: safeText(2, 100, "Укажите имя"),
     phone,
     telegram: z.string().trim().max(33).regex(/^$|^@?[A-Za-z0-9_]{5,32}$/, "Укажите username Telegram").optional().default(""),
-    birthDate: dateOnly,
-    licenseIssuedOn: dateOnly,
     additionalServiceIds: z.array(z.string().trim().min(1).max(100)).max(RENTAL_POLICY.maximumSelectedServices).default([]),
     comment: z.string().trim().max(1000).refine((value) => !/[<>\u0000-\u0008\u000B\u000C\u000E-\u001F]/.test(value), "Недопустимые символы").optional().default(""),
     privacyConsent: z.literal(true, { error: "Подтвердите согласие на обработку данных" }),

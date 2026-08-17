@@ -84,7 +84,7 @@ model Booking {
   birthDate                 DateTime?     @db.Date
   licenseIssuedOn           DateTime?     @db.Date
   driverAgeAtStart          Int?
-  drivingExperienceMonths   Int
+  drivingExperienceMonths   Int?
   minimumAgeApplied         Int?
   minimumExperienceApplied  Int?
   minimumRentalDaysApplied  Int?

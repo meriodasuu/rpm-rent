@@ -22,8 +22,6 @@ const bookingInput = (overrides: Partial<BookingInput> = {}) => bookingSchema.pa
   customerName: "Иван",
   phone: "+7 999 111-22-33",
   telegram: "@ivan_77",
-  birthDate: "1990-01-01",
-  licenseIssuedOn: "2020-01-10",
   additionalServiceIds: [],
   comment: "",
   privacyConsent: true,
@@ -62,6 +60,17 @@ describe("FileStore booking integrity", () => {
     const second = await store.createBooking(input);
     expect(second.id).toBe(first.id);
     expect((await store.getBookings())).toHaveLength(1);
+  });
+
+  it("stores a new request without birth or driving licence dates", async () => {
+    const booking = await store.createBooking(bookingInput());
+
+    expect(booking).toMatchObject({
+      birthDate: null,
+      licenseIssuedOn: null,
+      driverAgeAtStart: null,
+      drivingExperienceMonths: null,
+    });
   });
 
   it("releases dates after cancellation but not while the request is active", async () => {
