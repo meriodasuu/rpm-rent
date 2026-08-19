@@ -421,6 +421,9 @@ img { max-width: 100%; }
 .rich-text h3 { margin: 30px 0 12px; color: var(--ink); font-size: 20px; }
 .rich-text ul { padding-left: 20px; }
 .contact-grid { display: grid; grid-template-columns: .8fr 1.2fr; gap: 20px; }
+.reviews-widget-section { margin-bottom: 80px; padding: clamp(18px, 3vw, 34px); overflow: hidden; }
+.myreviews-widget-frame { width: 100%; min-height: 520px; display: flex; justify-content: center; margin-top: 20px; border-radius: 20px; overflow: hidden; }
+.myreviews-widget-frame iframe { width: 100%; min-height: 520px; max-width: 1170px; border: 0; outline: 0; padding: 0; margin: 0; }
 .contact-card { min-height: 270px; padding: 30px; }
 .contact-card-rich { min-height: 520px; }
 .contact-card-rich > h2 { margin: 0 0 10px; font-size: 30px; letter-spacing: -.04em; }
