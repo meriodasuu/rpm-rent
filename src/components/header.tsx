@@ -14,9 +14,9 @@ export function Header() {
         <div className="header-brand"><Logo /><span>Saint Petersburg</span></div>
         <PrimaryNav />
         <div className="header-actions">
-          {phone ? <a className="header-phone" href={phoneHref(phone)}>{phone}</a> : null}
+          {phone ? <a className="header-phone" href={phoneHref(phone)} data-event="phone_click" data-event-label="header">{phone}</a> : null}
           <ThemeToggle />
-          <Link className="button small-button" href={telegram || "/contacts"} target={telegram ? "_blank" : undefined} data-event="contact_click" data-event-label="header">
+          <Link className="button small-button" href={telegram || "/contacts"} target={telegram ? "_blank" : undefined} data-event={telegram ? "telegram_click" : "contact_click"} data-event-label="header">
             <Send size={15} aria-hidden /> {telegram ? "Telegram" : "Связаться"}
           </Link>
           <details className="mobile-menu">

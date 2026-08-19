@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Manrope } from "next/font/google";
 import { Analytics } from "@/components/analytics";
 import { ExperienceAnalytics } from "@/components/experience-analytics";
+import { MarketingAttribution } from "@/components/marketing-attribution";
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
 import { SiteChrome } from "@/components/site-chrome";
@@ -32,14 +33,26 @@ export const metadata: Metadata = {
   alternates: { canonical: "/" }
 };
 
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "AutoRental",
+  name: "RPM Rent",
+  url: siteUrl,
+  telephone: "+7 993 983-80-80",
+  email: "rpmrent78@gmail.com",
+  address: { "@type": "PostalAddress", addressLocality: "Санкт-Петербург", streetAddress: "проспект Маршала Блюхера, 12к7" },
+  areaServed: "Санкт-Петербург"
+};
+
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="ru" data-scroll-behavior="smooth" className={manrope.variable} suppressHydrationWarning>
-      <head><ThemeInitScript /></head>
+      <head><ThemeInitScript /><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} /></head>
       <body>
         <SiteChrome header={<Header />} footer={<Footer />}>{children}</SiteChrome>
         <Analytics />
         <ExperienceAnalytics />
+        <MarketingAttribution />
       </body>
     </html>
   );

@@ -1,5 +1,5 @@
 export function ExperienceAnalytics() {
-  const configuredId = process.env.NEXT_PUBLIC_YANDEX_METRIKA_ID;
+  const configuredId = process.env.NEXT_PUBLIC_YANDEX_METRIKA_ID || "111757927";
   const metrikaId = configuredId && /^\d+$/.test(configuredId) ? Number(configuredId) : null;
 
   return (
@@ -33,6 +33,11 @@ export function ExperienceAnalytics() {
           var element = target instanceof Element ? target.closest("[data-event]") : null;
           if (element) emit(element.dataset.event || "interaction", element.dataset.eventLabel);
         }
+
+        window.addEventListener("rpm:analytics-track", function (event) {
+          var detail = event && event.detail;
+          if (detail && detail.event) emit(detail.event, detail.label);
+        });
 
         function emitPathOpen() {
           var path = window.location.pathname;

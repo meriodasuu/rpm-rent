@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, LoaderCircle, ShieldCheck } from "lucide-react";
+import { LoaderCircle, ShieldCheck } from "lucide-react";
 import Image from "next/image";
 import { isStorageMediaUrl } from "@/lib/admin-media";
 import { isYandexMediaUrl } from "@/lib/yandex-public-media";
@@ -10,6 +10,7 @@ import { RENTAL_POLICY } from "@/config/rental-policy";
 import { bookingPolicyProblem, hasConfiguredBookingPolicy } from "@/lib/domain/booking";
 import { parseDateOnly, todayInBusinessTimeZone } from "@/lib/domain/dates";
 import { formatDeposit, formatPrice } from "@/lib/format";
+import { getMarketingAttribution } from "@/components/marketing-attribution";
 import { calculateRental, type RentalCalculation } from "@/lib/rental";
 import type { Car, Service } from "@/types/domain";
 
@@ -35,8 +36,8 @@ export function BookingForm({ cars, services, initialCarSlug, initialStart, init
   const [selectedServices, setSelectedServices] = useState<string[]>(initialService ? [initialService.id] : []);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState(false);
   const idempotencyKey = useRef(crypto.randomUUID());
+  const bookingStarted = useRef(false);
   const selectedCar = cars.find((item) => item.id === carId) ?? initialCar;
   const policyProblem = selectedCar ? bookingPolicyProblem(selectedCar) : "Автомобиль не выбран";
 
@@ -61,23 +62,31 @@ export function BookingForm({ cars, services, initialCarSlug, initialStart, init
     setError("");
     const data = new FormData(form);
     const params = new URLSearchParams(window.location.search);
-    const utm = Object.fromEntries([...params.entries()].filter(([key]) => key.startsWith("utm_")).slice(0, 20));
-    const payload = { carId, startAt, endAt, pickupMethod, deliveryAddress: String(data.get("deliveryAddress") ?? ""), customerName: String(data.get("customerName") ?? ""), phone: String(data.get("phone") ?? ""), telegram: String(data.get("telegram") ?? ""), additionalServiceIds: selectedServices, comment: String(data.get("comment") ?? ""), privacyConsent: true, utm, referrer: document.referrer, idempotencyKey: idempotencyKey.current };
+    const storedAttribution = getMarketingAttribution();
+    const utm = Object.fromEntries([...Object.entries(storedAttribution), ...[...params.entries()]].filter(([key]) => key.startsWith("utm_")).slice(0, 20));
+    const payload = { carId, startAt, endAt, pickupMethod, deliveryAddress: String(data.get("deliveryAddress") ?? ""), customerName: String(data.get("customerName") ?? ""), phone: String(data.get("phone") ?? ""), telegram: String(data.get("telegram") ?? ""), additionalServiceIds: selectedServices, comment: String(data.get("comment") ?? ""), privacyConsent: true, utm, referrer: storedAttribution.referrer || document.referrer, idempotencyKey: idempotencyKey.current };
     try {
       const response = await fetch("/api/bookings", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
       const result = await response.json() as { ok?: boolean; message?: string; errors?: Record<string, string[]> };
       if (!response.ok) throw new Error(Object.values(result.errors ?? {}).flat()[0] || result.message || "Не удалось отправить обращение");
-      setSuccess(true);
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      window.location.assign(new URL("/spasibo", window.location.origin).toString());
     } catch (caught) {
+      window.dispatchEvent(new CustomEvent("rpm:analytics-track", { detail: { event: "booking_submit_error", path: window.location.pathname, timestamp: Date.now() } }));
       setError(caught instanceof Error ? caught.message : "Не удалось отправить обращение");
     } finally { setPending(false); }
   };
 
   if (!selectedCar) return <div className="surface empty-state"><h2>Нет опубликованных автомобилей</h2><Link className="button" href="/cars">Вернуться в каталог</Link></div>;
-  if (success) return <div className="surface success-panel"><div className="success-icon"><Check size={28} /></div><h1>Обращение отправлено</h1><p className="subtitle" style={{ marginInline: "auto" }}>Менеджер подтвердит доступность автомобиля и свяжется с вами. Отправка формы не является автоматическим подтверждением брони.</p><div className="button-row" style={{ justifyContent: "center", marginTop: 26 }}><Link className="button" href="/cars">Вернуться в каталог</Link><Link className="button ghost" href="/contacts">Контакты</Link></div></div>;
-
-  return <form className="booking-layout" onSubmit={submit} noValidate data-event="booking_submit" data-event-label={selectedCar.slug}>
+  return <form className="booking-layout" onSubmit={submit} onFocusCapture={() => {
+    if (bookingStarted.current) return;
+    bookingStarted.current = true;
+    window.dispatchEvent(new CustomEvent("rpm:analytics-track", { detail: { event: "booking_form_start", path: window.location.pathname, timestamp: Date.now() } }));
+  }} onClickCapture={(event) => {
+    const target = event.target;
+    if (target instanceof HTMLElement && target.closest('button[type="submit"]')) {
+      window.dispatchEvent(new CustomEvent("rpm:analytics-track", { detail: { event: "booking_submit_click", path: window.location.pathname, timestamp: Date.now() } }));
+    }
+  }} noValidate>
     <div className="surface booking-form">
       <section className="form-section"><h2>1. Автомобиль и даты</h2><p className="form-hint">Срок считается по календарным суткам: дата возврата не входит в оплачиваемый период.</p><div className="form-grid">
         <div className="field full"><label htmlFor="carId">Автомобиль</label><select className="select" id="carId" value={carId} onChange={(event) => setCarId(event.target.value)} data-event="booking_car_change">{cars.map((item) => { const reason = bookingPolicyProblem(item); return <option key={item.id} value={item.id}>{item.title}{reason ? `. ${reason}` : ""}</option>; })}</select></div>

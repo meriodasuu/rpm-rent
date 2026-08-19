@@ -7,7 +7,7 @@ const consentKey = "rpm-cookie-consent";
 type Consent = "accepted" | "declined" | null;
 
 export function Analytics() {
-  const configuredId = process.env.NEXT_PUBLIC_YANDEX_METRIKA_ID;
+  const configuredId = process.env.NEXT_PUBLIC_YANDEX_METRIKA_ID || "111757927";
   const id = configuredId && /^\d+$/.test(configuredId) ? configuredId : null;
   const consent = useSyncExternalStore(
     (onChange) => {
