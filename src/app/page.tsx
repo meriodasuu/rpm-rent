@@ -12,7 +12,8 @@ import {
   PackagePlus,
   Send,
   ShieldCheck,
-  Sparkles
+  Sparkles,
+  Star
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -136,6 +137,20 @@ export default async function HomePage() {
 
       <section className="section faq-home-section">
         <div className="container grid-2 faq-home"><div><h2 className="title">Главное<br />об аренде</h2><div className="button-row"><Link className="button ghost" href="/faq">Все вопросы</Link><Link className="button" href="/contacts">Уточнить вопрос</Link></div></div><FaqList items={homeFaqs} /></div>
+      </section>
+
+      <section className="section home-reviews-section" aria-labelledby="home-reviews-title">
+        <div className="container home-reviews-panel">
+          <div>
+            <p className="eyebrow">Опыт клиентов</p>
+            <h2 className="title" id="home-reviews-title">Нам доверяют<br /><span>свои маршруты</span></h2>
+          </div>
+          <div className="home-reviews-proof">
+            <div className="home-reviews-rating"><Star aria-hidden size={22} fill="currentColor" /><strong>5.0</strong><span>рейтинг на Авито</span></div>
+            <p>Посмотрите реальные отзывы клиентов о машинах, сервисе и аренде RPM Rent.</p>
+            <Link className="button red" href="/reviews">Смотреть все отзывы <ArrowRight size={17} /></Link>
+          </div>
+        </div>
       </section>
 
       <section className="section home-final-cta">
