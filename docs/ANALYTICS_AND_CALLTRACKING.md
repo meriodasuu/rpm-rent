@@ -14,6 +14,8 @@
 - `booking_submit_error` — ошибка API или техническая ошибка отправки.
 - `Клик по телефону` — `phone_click`.
 - `telegram_click` и `max_click` — переходы в мессенджеры.
+- `map_click` — открытие адреса на карте.
+- `social_vk_click`, `social_instagram_click`, `social_tiktok_click`, `social_youtube_click`, `social_avito_click`, `social_site_click` — переходы в остальные каналы и профили.
 - Составная цель: `/booking` → `booking_form_start` → `booking_submit_click` → `/spasibo`.
 
 Страница `/spasibo` не включена в sitemap, не добавлена в меню и отдаёт `noindex,nofollow`. Она появляется только после успешного ответа API формы; прямой переход на неё не создаёт заявку.

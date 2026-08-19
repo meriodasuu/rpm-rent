@@ -1,5 +1,7 @@
 export type SocialKind = "telegram" | "instagram" | "generic";
 
+export const socialEventSlug = (label: string) => ({ MAX: "max_click", "ВКонтакте": "social_vk_click", Instagram: "social_instagram_click", TikTok: "social_tiktok_click", YouTube: "social_youtube_click", Telegram: "telegram_click", Авито: "social_avito_click", Сайт: "social_site_click" }[label] ?? "social_other_click");
+
 export const normalizeSocialUrl = (kind: SocialKind, value: string): string => {
   if (/^https:\/\//i.test(value)) return value;
   const handle = value.replace(/^@/, "").replace(/^\/+/, "");
