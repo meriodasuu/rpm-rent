@@ -254,14 +254,8 @@ img { max-width: 100%; }
 .check-row svg { flex: 0 0 auto; color: var(--accent); }
 .faq-home .button-row { margin-top: 27px; }
 .home-reviews-section { background: var(--surface); }
-.home-reviews-panel { display: grid; grid-template-columns: minmax(0, 1fr) minmax(320px, .7fr); gap: 60px; align-items: end; padding: clamp(36px, 5vw, 72px) 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
-.home-reviews-panel .title { margin: 0; font-size: clamp(54px, 6.5vw, 88px); }
-.home-reviews-panel .eyebrow { margin-bottom: 16px; }
-.home-reviews-proof { max-width: 430px; }
-.home-reviews-rating { display: flex; align-items: center; gap: 10px; color: var(--accent); }
-.home-reviews-rating strong { color: var(--ink); font-size: 34px; letter-spacing: -.05em; }
-.home-reviews-rating span { color: var(--muted); font-size: 13px; }
-.home-reviews-proof p { margin: 18px 0 24px; color: var(--muted); font-size: 15px; line-height: 1.6; }
+.home-reviews-title { margin: 0 0 34px; font-size: clamp(54px, 6.5vw, 88px); }
+.reviews-widget-home { padding: clamp(18px, 3vw, 34px); overflow: hidden; }
 .cta-panel .cta-secondary { color: #fff; border-color: #4b4b4b; background: transparent; }
 .cta-panel .cta-secondary:hover { color: #080809; }
 .cta-secondary:hover { border-color: #fff; background: #fff; color: var(--ink); }
@@ -430,7 +424,6 @@ img { max-width: 100%; }
 .rich-text h3 { margin: 30px 0 12px; color: var(--ink); font-size: 20px; }
 .rich-text ul { padding-left: 20px; }
 .contact-grid { display: grid; grid-template-columns: .8fr 1.2fr; gap: 20px; }
-.reviews-widget-section { margin-bottom: 80px; padding: clamp(18px, 3vw, 34px); overflow: hidden; }
 .myreviews-widget-frame { width: 100%; min-height: 520px; display: flex; justify-content: center; margin-top: 20px; border-radius: 20px; overflow: hidden; }
 .myreviews-widget-frame iframe { width: 100%; min-height: 520px; max-width: 1170px; border: 0; outline: 0; padding: 0; margin: 0; }
 .contact-card { min-height: 270px; padding: 30px; }
@@ -1484,8 +1477,7 @@ body.gallery-open { overflow: hidden; }
   .steps-routes { justify-content: flex-start; }
   .faq-home { grid-template-columns: 1fr; }
   .faq-home .title { font-size: 60px; }
-  .home-reviews-panel { grid-template-columns: 1fr; gap: 32px; }
-  .home-reviews-proof { max-width: none; }
+  .home-reviews-title { margin-bottom: 24px; }
   .home-final-cta .cta-panel { min-height: 360px; padding: 34px 26px; }
 }
 

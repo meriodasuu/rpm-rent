@@ -9,7 +9,6 @@ export const PRIMARY_LINKS = [
   ["Услуги", "/services"],
   ["Условия", "/rental-terms"],
   ["О компании", "/about"],
-  ["Отзывы", "/reviews"],
   ["Контакты", "/contacts"]
 ] as const;
 

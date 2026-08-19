@@ -12,13 +12,13 @@ import {
   PackagePlus,
   Send,
   ShieldCheck,
-  Sparkles,
-  Star
+  Sparkles
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { CarShowcase } from "@/components/car-showcase";
 import { FaqList } from "@/components/faq-list";
+import { MyReviewsWidget } from "@/components/myreviews-widget";
 import { isStorageMediaUrl } from "@/lib/admin-media";
 import { getStore } from "@/lib/data";
 
@@ -140,15 +140,10 @@ export default async function HomePage() {
       </section>
 
       <section className="section home-reviews-section" aria-labelledby="home-reviews-title">
-        <div className="container home-reviews-panel">
-          <div>
-            <p className="eyebrow">Опыт клиентов</p>
-            <h2 className="title" id="home-reviews-title">Нам доверяют<br /><span>свои маршруты</span></h2>
-          </div>
-          <div className="home-reviews-proof">
-            <div className="home-reviews-rating"><Star aria-hidden size={22} fill="currentColor" /><strong>5.0</strong><span>рейтинг на Авито</span></div>
-            <p>Посмотрите реальные отзывы клиентов о машинах, сервисе и аренде RPM Rent.</p>
-            <Link className="button red" href="/reviews">Смотреть все отзывы <ArrowRight size={17} /></Link>
+        <div className="container">
+          <h2 className="title home-reviews-title" id="home-reviews-title">Отзывы<br /><span>клиентов RPM Rent</span></h2>
+          <div className="surface reviews-widget-home" aria-label="Отзывы клиентов RPM Rent">
+            <MyReviewsWidget />
           </div>
         </div>
       </section>
