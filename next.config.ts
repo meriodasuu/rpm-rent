@@ -13,10 +13,7 @@ const nextConfig: NextConfig = {
     ],
   },
   async redirects() {
-    return [
-      ...legacyRedirects,
-      { source: "/reviews", destination: "/about", permanent: true }
-    ];
+    return legacyRedirects;
   },
   async headers() {
     return [
