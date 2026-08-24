@@ -30,7 +30,7 @@ while (true) {
         },
         body: JSON.stringify(update)
       });
-      if (!forwarded.ok) throw new Error(`Webhook HTTP ${forwarded.status}`);
+      if (forwarded.status >= 500) throw new Error(`Webhook HTTP ${forwarded.status}`);
       offset = update.update_id + 1;
     }
   } catch (error) {
