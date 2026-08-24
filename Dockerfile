@@ -1,4 +1,10 @@
-FROM node:22-bookworm-slim AS base
+FROM mirror.gcr.io/library/node:22-bookworm AS openssl-source
+
+FROM mirror.gcr.io/library/node:22-bookworm-slim AS base
+
+COPY --from=openssl-source /usr/bin/openssl /usr/bin/openssl
+COPY --from=openssl-source /lib/x86_64-linux-gnu/libssl.so.3 /lib/x86_64-linux-gnu/libssl.so.3
+COPY --from=openssl-source /lib/x86_64-linux-gnu/libcrypto.so.3 /lib/x86_64-linux-gnu/libcrypto.so.3
 
 ENV PNPM_HOME=/pnpm
 ENV PATH=$PNPM_HOME:$PATH
@@ -54,7 +60,7 @@ COPY src ./src
 
 RUN pnpm prisma:generate
 
-FROM node:22-bookworm-slim AS runner
+FROM mirror.gcr.io/library/node:22-bookworm-slim AS runner
 
 ENV NODE_ENV=production
 ENV HOSTNAME=0.0.0.0
