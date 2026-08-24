@@ -44,7 +44,6 @@ ENV NEXT_PUBLIC_EMAIL=$NEXT_PUBLIC_EMAIL
 ENV NEXT_PUBLIC_HOURS=$NEXT_PUBLIC_HOURS
 ENV NEXT_PUBLIC_MAP_EMBED_URL=$NEXT_PUBLIC_MAP_EMBED_URL
 
-RUN pnpm prisma:generate
 RUN pnpm exec next build
 
 FROM base AS tools
@@ -57,7 +56,6 @@ COPY prisma ./prisma
 COPY scripts ./scripts
 COPY src ./src
 
-RUN pnpm prisma:generate
 
 FROM mirror.gcr.io/library/node:22-bookworm-slim AS runner
 
