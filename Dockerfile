@@ -24,7 +24,6 @@ RUN pnpm install --frozen-lockfile --ignore-scripts --network-concurrency=1 --fe
 FROM base AS builder
 
 COPY --from=dependencies /app/node_modules ./node_modules
-COPY --from=dependencies /corepack /corepack
 COPY . .
 
 ARG NEXT_PUBLIC_SITE_URL=https://rpm-rent.ru
@@ -53,7 +52,6 @@ FROM base AS tools
 ENV NODE_ENV=production
 
 COPY --from=dependencies /app/node_modules ./node_modules
-COPY --from=dependencies /corepack /corepack
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml prisma.config.ts tsconfig.json ./
 COPY prisma ./prisma
 COPY scripts ./scripts
