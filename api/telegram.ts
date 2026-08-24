@@ -1,5 +1,11 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
-import { telegramTarget } from "./relay-target";
+
+const telegramTarget = (path: string) => {
+  if (!/^bot\d+:[A-Za-z0-9_-]+\/[A-Za-z][A-Za-z0-9]+$/.test(path)) {
+    throw new Error("Invalid Telegram path");
+  }
+  return `https://api.telegram.org/${path}`;
+};
 
 const readBody = async (request: IncomingMessage) => {
   const chunks: Buffer[] = [];
@@ -7,10 +13,11 @@ const readBody = async (request: IncomingMessage) => {
   return Buffer.concat(chunks);
 };
 
-export default async function handler(request: IncomingMessage & { query?: Record<string, string> }, response: ServerResponse) {
+export default async function handler(request: IncomingMessage, response: ServerResponse) {
   try {
-    const path = request.query?.path;
-    const webhook = request.query?.webhook === "1";
+    const search = new URL(request.url ?? "/", "https://relay.invalid").searchParams;
+    const path = search.get("path");
+    const webhook = search.get("webhook") === "1";
     const target = webhook
       ? "https://rpm-rent.ru:8443/api/telegram/webhook"
       : telegramTarget(typeof path === "string" ? path : "");
