@@ -19,7 +19,7 @@ WORKDIR /app
 FROM base AS dependencies
 
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-RUN pnpm install --frozen-lockfile --network-concurrency=1 --fetch-retries=5 --fetch-timeout=120000
+RUN pnpm install --frozen-lockfile --ignore-scripts --network-concurrency=1 --fetch-retries=5 --fetch-timeout=120000
 
 FROM base AS builder
 
