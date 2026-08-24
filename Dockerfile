@@ -2,6 +2,8 @@ FROM node:22-bookworm-slim AS base
 
 ENV PNPM_HOME=/pnpm
 ENV PATH=$PNPM_HOME:$PATH
+ENV COREPACK_HOME=/corepack
+ENV COREPACK_DEFAULT_TO_LATEST=0
 
 RUN corepack enable
 
@@ -15,6 +17,7 @@ RUN pnpm install --frozen-lockfile
 FROM base AS builder
 
 COPY --from=dependencies /app/node_modules ./node_modules
+COPY --from=dependencies /corepack /corepack
 COPY . .
 
 ARG NEXT_PUBLIC_SITE_URL=https://rpm-rent.ru
@@ -43,6 +46,7 @@ FROM base AS tools
 ENV NODE_ENV=production
 
 COPY --from=dependencies /app/node_modules ./node_modules
+COPY --from=dependencies /corepack /corepack
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml prisma.config.ts tsconfig.json ./
 COPY prisma ./prisma
 COPY scripts ./scripts
@@ -70,4 +74,3 @@ USER nextjs
 EXPOSE 3000
 
 CMD ["node", "server.js"]
-
