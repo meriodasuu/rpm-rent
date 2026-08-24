@@ -76,11 +76,14 @@ export type Location = {
 };
 
 export type BookingStatus = "NEW" | "IN_PROGRESS" | "CONFIRMED" | "DECLINED" | "CANCELLED" | "COMPLETED";
+export type TelegramOperatorRole = "ADMIN" | "OPERATOR";
+export type TelegramOperator = { id: string; telegramUserId: string | null; username: string; role: TelegramOperatorRole; createdAt: string };
 
 export type BookingServiceSnapshot = { id: string; title: string; price: number };
 
 export type Booking = {
   id: string;
+  bookingNumber: number;
   carId: string;
   carTitle: string;
   startAt: string;
@@ -120,4 +123,5 @@ export type DevDatabase = {
   faqs: Faq[];
   locations: Location[];
   bookings: Booking[];
+  telegramOperators: TelegramOperator[];
 };

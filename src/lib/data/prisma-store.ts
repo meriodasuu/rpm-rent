@@ -7,7 +7,7 @@ import { prepareBooking } from "@/lib/domain/booking";
 import { assertRentalPeriod, normalizeStoredDate, parseDateOnly } from "@/lib/domain/dates";
 import { DomainError } from "@/lib/domain/errors";
 import type { BookingInput } from "@/lib/validation";
-import type { Booking, BookingServiceSnapshot, BookingStatus, Car, Faq, Location, Service } from "@/types/domain";
+import type { Booking, BookingServiceSnapshot, BookingStatus, Car, Faq, Location, Service, TelegramOperator } from "@/types/domain";
 import type { DataStore } from "./store";
 
 declare global {
@@ -333,6 +333,7 @@ export class PrismaStore implements DataStore {
     if (!record) throw new DomainError("NOT_FOUND", "Заявка не найдена", 404);
     return {
       id: record.id,
+      bookingNumber: record.bookingNumber,
       carId: record.carId,
       carTitle: record.carTitle,
       startAt: normalizeStoredDate(record.startAt),
@@ -379,5 +380,35 @@ export class PrismaStore implements DataStore {
       assertBookingStatusTransition(booking.status, status);
       await database.booking.update({ where: { id }, data: { status } });
     }, { isolationLevel: "Serializable" });
+  }
+
+  async getTelegramOperatorByUserId(telegramUserId: string) {
+    const operator = await getPrisma().telegramOperator.findUnique({ where: { telegramUserId } });
+    return operator ? this.mapTelegramOperator(operator) : null;
+  }
+
+  async activateTelegramOperator(input: { telegramUserId: string; username: string; bootstrapAdminUsernames: string[] }) {
+    const username = input.username.toLowerCase();
+    return getPrisma().$transaction(async (database) => {
+      const existingById = await database.telegramOperator.findUnique({ where: { telegramUserId: input.telegramUserId } });
+      if (existingById) return this.mapTelegramOperator(existingById);
+      const existingByUsername = await database.telegramOperator.findUnique({ where: { username } });
+      if (existingByUsername) {
+        if (existingByUsername.telegramUserId) return null;
+        return this.mapTelegramOperator(await database.telegramOperator.update({ where: { id: existingByUsername.id }, data: { telegramUserId: input.telegramUserId } }));
+      }
+      if (!input.bootstrapAdminUsernames.map((item) => item.toLowerCase()).includes(username)) return null;
+      return this.mapTelegramOperator(await database.telegramOperator.create({ data: { username, telegramUserId: input.telegramUserId, role: "ADMIN" } }));
+    }, { isolationLevel: "Serializable" });
+  }
+
+  async inviteTelegramOperator(input: { username: string }) {
+    const username = input.username.toLowerCase();
+    const operator = await getPrisma().telegramOperator.upsert({ where: { username }, create: { username, role: "OPERATOR" }, update: {} });
+    return this.mapTelegramOperator(operator);
+  }
+
+  private mapTelegramOperator(record: { id: string; telegramUserId: string | null; username: string; role: "ADMIN" | "OPERATOR"; createdAt: Date }): TelegramOperator {
+    return { id: record.id, telegramUserId: record.telegramUserId, username: record.username, role: record.role, createdAt: record.createdAt.toISOString() };
   }
 }

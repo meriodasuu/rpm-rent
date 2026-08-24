@@ -7,7 +7,7 @@ import { prepareBooking } from "@/lib/domain/booking";
 import { assertRentalPeriod, normalizeStoredDate } from "@/lib/domain/dates";
 import { DomainError } from "@/lib/domain/errors";
 import type { BookingInput } from "@/lib/validation";
-import type { Booking, BookingStatus, Car, DevDatabase, Faq, Location, Service } from "@/types/domain";
+import type { Booking, BookingStatus, Car, DevDatabase, Faq, Location, Service, TelegramOperator } from "@/types/domain";
 import type { DataStore } from "./store";
 
 const configuredDbPath = process.env.FILE_DATABASE_PATH?.trim();
@@ -34,11 +34,31 @@ const normalizeBooking = (booking: Booking): Booking => ({
   privacyConsentAt: booking.privacyConsentAt ?? null
 });
 
+const normalizeBookings = (bookings: Booking[]): Booking[] => {
+  const assigned = new Map<string, number>();
+  const occupied = new Set<number>();
+  for (const booking of bookings) {
+    if (Number.isSafeInteger(booking.bookingNumber) && booking.bookingNumber > 0 && !occupied.has(booking.bookingNumber)) {
+      assigned.set(booking.id, booking.bookingNumber);
+      occupied.add(booking.bookingNumber);
+    }
+  }
+  let next = 1;
+  for (const booking of [...bookings].sort((left, right) => left.createdAt.localeCompare(right.createdAt) || left.id.localeCompare(right.id))) {
+    if (assigned.has(booking.id)) continue;
+    while (occupied.has(next)) next += 1;
+    assigned.set(booking.id, next);
+    occupied.add(next);
+  }
+  return bookings.map((booking) => normalizeBooking({ ...booking, bookingNumber: assigned.get(booking.id)! }));
+};
+
 const normalizeDatabase = (database: DevDatabase): DevDatabase => ({
   ...database,
   cars: database.cars.map(normalizeCar),
-  bookings: database.bookings.map(normalizeBooking),
-  locations: database.locations ?? []
+  bookings: normalizeBookings(database.bookings),
+  locations: database.locations ?? [],
+  telegramOperators: database.telegramOperators ?? []
 });
 
 export class FileStore implements DataStore {
@@ -200,6 +220,7 @@ export class FileStore implements DataStore {
       }
       const booking: Booking = {
         id: crypto.randomUUID(),
+        bookingNumber: Math.max(0, ...database.bookings.map((item) => item.bookingNumber)) + 1,
         carId: car.id,
         carTitle: car.title,
         startAt: input.startAt,
@@ -247,6 +268,39 @@ export class FileStore implements DataStore {
       if (!booking) throw new DomainError("NOT_FOUND", "Заявка не найдена", 404);
       assertBookingStatusTransition(booking.status, status);
       booking.status = status;
+    });
+  }
+
+  async getTelegramOperatorByUserId(telegramUserId: string) {
+    return (await this.readDatabase()).telegramOperators.find((operator) => operator.telegramUserId === telegramUserId) ?? null;
+  }
+
+  async activateTelegramOperator(input: { telegramUserId: string; username: string; bootstrapAdminUsernames: string[] }) {
+    return this.mutate((database) => {
+      const existingById = database.telegramOperators.find((operator) => operator.telegramUserId === input.telegramUserId);
+      if (existingById) return existingById;
+      const username = input.username.toLowerCase();
+      const existingByUsername = database.telegramOperators.find((operator) => operator.username === username);
+      if (existingByUsername) {
+        if (existingByUsername.telegramUserId) return null;
+        existingByUsername.telegramUserId = input.telegramUserId;
+        return existingByUsername;
+      }
+      if (!input.bootstrapAdminUsernames.map((item) => item.toLowerCase()).includes(username)) return null;
+      const operator: TelegramOperator = { id: crypto.randomUUID(), telegramUserId: input.telegramUserId, username, role: "ADMIN", createdAt: new Date().toISOString() };
+      database.telegramOperators.push(operator);
+      return operator;
+    });
+  }
+
+  async inviteTelegramOperator(input: { username: string }) {
+    return this.mutate((database) => {
+      const username = input.username.toLowerCase();
+      const existing = database.telegramOperators.find((operator) => operator.username === username);
+      if (existing) return existing;
+      const operator: TelegramOperator = { id: crypto.randomUUID(), telegramUserId: null, username, role: "OPERATOR", createdAt: new Date().toISOString() };
+      database.telegramOperators.push(operator);
+      return operator;
     });
   }
 }

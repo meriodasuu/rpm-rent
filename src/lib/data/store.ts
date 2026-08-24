@@ -1,4 +1,4 @@
-import type { Booking, BookingStatus, Car, Faq, Location, Service } from "@/types/domain";
+import type { Booking, BookingStatus, Car, Faq, Location, Service, TelegramOperator } from "@/types/domain";
 import type { BookingInput } from "@/lib/validation";
 
 export interface DataStore {
@@ -21,4 +21,7 @@ export interface DataStore {
   isCarAvailable(carId: string, startDate: string, endDate: string): Promise<boolean>;
   getBookings(): Promise<Booking[]>;
   updateBookingStatus(id: string, status: BookingStatus): Promise<void>;
+  getTelegramOperatorByUserId(telegramUserId: string): Promise<TelegramOperator | null>;
+  activateTelegramOperator(input: { telegramUserId: string; username: string; bootstrapAdminUsernames: string[] }): Promise<TelegramOperator | null>;
+  inviteTelegramOperator(input: { username: string }): Promise<TelegramOperator>;
 }
