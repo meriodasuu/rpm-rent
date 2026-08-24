@@ -3,7 +3,18 @@ import type { Booking } from "@/types/domain";
 type TelegramReplyMarkup = { inline_keyboard: Array<Array<{ text: string; callback_data: string }>> };
 type TelegramMessageOptions = { replyMarkup?: TelegramReplyMarkup };
 
-const botApiUrl = (method: string) => `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/${method}`;
+export const telegramBotApiUrl = (token: string, method: string, relayUrl?: string) => {
+  const path = `bot${token}/${method}`;
+  return relayUrl?.trim()
+    ? `${relayUrl.trim()}?path=${encodeURIComponent(path)}`
+    : `https://api.telegram.org/${path}`;
+};
+
+const botApiUrl = (method: string) => telegramBotApiUrl(
+  process.env.TELEGRAM_BOT_TOKEN ?? "",
+  method,
+  process.env.TELEGRAM_API_RELAY_URL
+);
 const money = (amount: number) => new Intl.NumberFormat("ru-RU").format(amount) + " ₽";
 const pickupMethod = (booking: Booking) => booking.pickupMethod === "delivery" ? "Доставка" : "Офис";
 
