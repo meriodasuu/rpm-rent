@@ -5,10 +5,7 @@ ENV PATH=$PNPM_HOME:$PATH
 ENV COREPACK_HOME=/corepack
 ENV COREPACK_DEFAULT_TO_LATEST=0
 
-RUN apt-get update \
-  && apt-get install -y --no-install-recommends openssl \
-  && rm -rf /var/lib/apt/lists/* \
-  && corepack enable
+RUN corepack enable
 
 WORKDIR /app
 
