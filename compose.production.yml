@@ -61,6 +61,22 @@ services:
     networks:
       - web
 
+  telegram:
+    image: rpm-rent-app
+    restart: unless-stopped
+    env_file:
+      - .env.production
+    command: ["node", "/app/telegram-poller.mjs"]
+    depends_on:
+      app:
+        condition: service_started
+    extra_hosts:
+      - "api.telegram.org:149.154.167.220"
+    volumes:
+      - ./deploy/telegram-poller.mjs:/app/telegram-poller.mjs:ro
+    networks:
+      - web
+
   tools:
     build:
       context: .
