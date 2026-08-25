@@ -44,7 +44,7 @@ ENV NEXT_PUBLIC_EMAIL=$NEXT_PUBLIC_EMAIL
 ENV NEXT_PUBLIC_HOURS=$NEXT_PUBLIC_HOURS
 ENV NEXT_PUBLIC_MAP_EMBED_URL=$NEXT_PUBLIC_MAP_EMBED_URL
 
-RUN pnpm exec next build
+RUN pnpm prisma:generate && pnpm exec next build
 
 FROM base AS tools
 
