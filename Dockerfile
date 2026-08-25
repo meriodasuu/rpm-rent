@@ -1,7 +1,16 @@
-FROM node:22-bookworm-slim AS base
+FROM mirror.gcr.io/library/node:22-bookworm AS openssl-source
+
+FROM mirror.gcr.io/library/node:22-bookworm-slim AS base
+
+COPY --from=openssl-source /usr/bin/openssl /usr/bin/openssl
+COPY --from=openssl-source /lib/x86_64-linux-gnu/libssl.so.3 /lib/x86_64-linux-gnu/libssl.so.3
+COPY --from=openssl-source /lib/x86_64-linux-gnu/libcrypto.so.3 /lib/x86_64-linux-gnu/libcrypto.so.3
 
 ENV PNPM_HOME=/pnpm
 ENV PATH=$PNPM_HOME:$PATH
+ENV COREPACK_HOME=/corepack
+ENV COREPACK_DEFAULT_TO_LATEST=0
+ENV PRISMA_SKIP_POSTINSTALL_GENERATE=1
 
 RUN corepack enable
 
@@ -10,7 +19,7 @@ WORKDIR /app
 FROM base AS dependencies
 
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-RUN pnpm install --frozen-lockfile
+RUN pnpm install --frozen-lockfile --ignore-scripts --network-concurrency=1 --fetch-retries=5 --fetch-timeout=120000
 
 FROM base AS builder
 
@@ -35,7 +44,6 @@ ENV NEXT_PUBLIC_EMAIL=$NEXT_PUBLIC_EMAIL
 ENV NEXT_PUBLIC_HOURS=$NEXT_PUBLIC_HOURS
 ENV NEXT_PUBLIC_MAP_EMBED_URL=$NEXT_PUBLIC_MAP_EMBED_URL
 
-RUN pnpm prisma:generate
 RUN pnpm exec next build
 
 FROM base AS tools
@@ -48,9 +56,8 @@ COPY prisma ./prisma
 COPY scripts ./scripts
 COPY src ./src
 
-RUN pnpm prisma:generate
 
-FROM node:22-bookworm-slim AS runner
+FROM mirror.gcr.io/library/node:22-bookworm-slim AS runner
 
 ENV NODE_ENV=production
 ENV HOSTNAME=0.0.0.0
@@ -70,4 +77,3 @@ USER nextjs
 EXPOSE 3000
 
 CMD ["node", "server.js"]
-

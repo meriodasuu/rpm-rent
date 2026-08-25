@@ -3,7 +3,7 @@ import { hasBookingConflict, periodsOverlap } from "./availability";
 import type { Booking } from "@/types/domain";
 
 const booking = (status: Booking["status"]): Booking => ({
-  id: "booking-1", carId: "car-1", carTitle: "Car", startAt: "2027-01-10", endAt: "2027-01-12", pickupMethod: "office",
+  id: "booking-1", bookingNumber: 1, carId: "car-1", carTitle: "Car", startAt: "2027-01-10", endAt: "2027-01-12", pickupMethod: "office",
   deliveryAddress: null, customerName: "Иван", phone: "+79990000000", telegram: null, birthDate: "1990-01-01", licenseIssuedOn: "2010-01-01",
   driverAgeAtStart: 37, drivingExperienceMonths: 204, minimumAgeApplied: 18, minimumDrivingExperienceApplied: 0, minimumRentalDaysApplied: 1,
   additionalServiceIds: [], additionalServicesSnapshot: [], comment: null, rentalDays: 2, pricePerDaySnapshot: 10_000, rentalPrice: 20_000,

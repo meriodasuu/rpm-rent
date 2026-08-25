@@ -13,6 +13,7 @@ import {
 
 const booking = (overrides: Partial<Booking> = {}): Booking => ({
   id: "booking-1",
+  bookingNumber: 1,
   carId: "car-1",
   carTitle: "Porsche 911 Carrera 4S",
   startAt: "2026-08-12",

@@ -32,6 +32,8 @@ services:
     restart: unless-stopped
     env_file:
       - .env.production
+    extra_hosts:
+      - "api.telegram.org:149.154.167.220"
     depends_on:
       db:
         condition: service_healthy
@@ -56,6 +58,22 @@ services:
       - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy_data:/data
       - caddy_config:/config
+    networks:
+      - web
+
+  telegram:
+    image: rpm-rent-app
+    restart: unless-stopped
+    env_file:
+      - .env.production
+    command: ["node", "/app/telegram-poller.mjs"]
+    depends_on:
+      app:
+        condition: service_started
+    extra_hosts:
+      - "api.telegram.org:149.154.167.220"
+    volumes:
+      - ./deploy/telegram-poller.mjs:/app/telegram-poller.mjs:ro
     networks:
       - web
 

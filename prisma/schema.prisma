@@ -1,6 +1,7 @@
 generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
+  engineType = "client"
 }
 
 datasource db {
@@ -14,6 +15,11 @@ enum BookingStatus {
   DECLINED
   CANCELLED
   COMPLETED
+}
+
+enum TelegramOperatorRole {
+  ADMIN
+  OPERATOR
 }
 
 model Car {
@@ -72,6 +78,7 @@ model CarImage {
 
 model Booking {
   id                        String        @id @default(cuid())
+  bookingNumber             Int           @unique @default(autoincrement())
   carId                     String
   car                       Car           @relation(fields: [carId], references: [id], onDelete: Restrict)
   carTitle                  String
@@ -171,4 +178,13 @@ model Location {
   seoDescription String?
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
+}
+
+model TelegramOperator {
+  id             String               @id @default(cuid())
+  telegramUserId String?              @unique
+  username       String               @unique
+  role           TelegramOperatorRole
+  createdAt      DateTime             @default(now())
+  updatedAt      DateTime             @updatedAt
 }
