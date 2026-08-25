@@ -60,14 +60,19 @@ export function DirectLeadForm({ car, initialStart }: DirectLeadFormProps) {
     started.current = true;
     window.dispatchEvent(new CustomEvent("rpm:analytics-track", { detail: { event: "direct_lead_start" } }));
   }}>
-    <span className="tag">Заявка за минуту</span>
-    <p className="booking-card-label">{car.title}</p>
-    <strong className="direct-lead-price">от {new Intl.NumberFormat("ru-RU").format(car.pricePerDay)} ₽ / сутки</strong>
-    <div className="field"><label htmlFor="direct-start">Дата начала</label><input className="input" id="direct-start" type="date" value={startAt} min={initialStart} onChange={(event) => setStartAt(event.target.value)} required /></div>
-    <div className="field"><label htmlFor="direct-phone">Телефон</label><input className="input" id="direct-phone" type="tel" value={phone} onChange={(event) => setPhone(formatPhone(event.target.value))} inputMode="tel" autoComplete="tel" placeholder="+7 999 123-45-67" pattern="[+0-9() \-]{7,30}" minLength={7} maxLength={30} required /></div>
-    <label className="direct-lead-consent"><input type="checkbox" required /> <span>Согласен на обработку данных для связи по заявке.</span></label>
+    <header className="direct-lead-header">
+      <span className="direct-lead-eyebrow">Заявка на аренду</span>
+      <p className="direct-lead-car">{car.title}</p>
+      <strong className="direct-lead-price">от {new Intl.NumberFormat("ru-RU").format(car.pricePerDay)} ₽ <span>/ сутки</span></strong>
+      <p className="direct-lead-intro">Оставьте телефон — менеджер свяжется и уточнит детали аренды.</p>
+    </header>
+    <div className="direct-lead-fields">
+      <div className="field"><label htmlFor="direct-start">Дата начала</label><input className="input" id="direct-start" type="date" value={startAt} min={initialStart} onChange={(event) => setStartAt(event.target.value)} required /></div>
+      <div className="field"><label htmlFor="direct-phone">Телефон для связи</label><input className="input" id="direct-phone" type="tel" value={phone} onChange={(event) => setPhone(formatPhone(event.target.value))} inputMode="tel" autoComplete="tel" placeholder="+7 999 123-45-67" pattern="[+0-9() \-]{7,30}" minLength={7} maxLength={30} required /></div>
+    </div>
+    <label className="direct-lead-consent"><input type="checkbox" required /> <span>Соглашаюсь на обработку персональных данных для связи по заявке.</span></label>
     {error ? <p className="field-error" role="alert">{error}</p> : null}
     <button className="button red" type="submit" disabled={pending}>{pending ? <><LoaderCircle size={17} className="spin" /> Отправляем…</> : <><Phone size={17} /> Получить предложение</>}</button>
-    <p className="muted small">Менеджер уточнит дату возврата, способ получения и остальные детали.</p>
+    <p className="direct-lead-note">Отправка формы не является бронированием.</p>
   </form>;
 }
