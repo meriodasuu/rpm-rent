@@ -6,27 +6,28 @@ import { Breadcrumbs } from "@/components/breadcrumbs";
 import { CarGallery } from "@/components/car-gallery";
 import { CarCard } from "@/components/car-card";
 import { CarImportedDetails } from "@/components/car-imported-details";
+import { DirectTrafficBookingPanel, DirectTrafficMobileCta } from "@/components/direct-traffic-booking-panel";
 import { FaqList } from "@/components/faq-list";
 import { getCarEditorial } from "@/lib/content";
 import { getStore } from "@/lib/data";
 import { bookingPolicyProblem } from "@/lib/domain/booking";
-import { assertRentalPeriod, parseDateOnly } from "@/lib/domain/dates";
+import { assertRentalPeriod, parseDateOnly, todayInBusinessTimeZone } from "@/lib/domain/dates";
+import { isYandexDirectAttribution } from "@/lib/direct-traffic";
 import { formatDeposit, formatPrice } from "@/lib/format";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const car = await (await getStore()).getCarBySlug(slug);
   if (!car) return { title: "Автомобиль не найден" };
-  const editorial = getCarEditorial(car);
   return {
-    title: car.seoTitle || `${car.title} | аренда в Санкт-Петербурге`,
-    description: car.seoDescription || editorial.intro,
+    title: `${car.title} — аренда и прокат в Санкт-Петербурге`,
+    description: `Аренда ${car.title} в Санкт-Петербурге: стоимость в сутки, условия и заявка на удобную дату в RPM Rent.`,
     alternates: { canonical: `/cars/${car.slug}` },
     openGraph: { images: car.images[0] ? [{ url: car.images[0].url, alt: car.images[0].alt }] : [] }
   };
 }
 
-export default async function CarPage({ params, searchParams }: { params: Promise<{ slug: string }>; searchParams: Promise<{ start?: string; end?: string }> }) {
+export default async function CarPage({ params, searchParams }: { params: Promise<{ slug: string }>; searchParams: Promise<{ start?: string; end?: string; yclid?: string; utm_source?: string }> }) {
   const { slug } = await params;
   const period = await searchParams;
   const store = await getStore();
@@ -43,6 +44,7 @@ export default async function CarPage({ params, searchParams }: { params: Promis
   const policyProblem = bookingPolicyProblem(car);
   const busyForPeriod = periodAvailable === false && !policyProblem;
   const bookable = !policyProblem && !busyForPeriod;
+  const isDirect = isYandexDirectAttribution(new URLSearchParams(Object.entries(period).flatMap(([key, value]) => value ? [[key, value]] : [])));
 
   const editorial = getCarEditorial(car);
   const specs = [
@@ -77,7 +79,7 @@ export default async function CarPage({ params, searchParams }: { params: Promis
 
         <div className="detail-layout">
           <CarGallery images={car.images} title={car.title} />
-          <aside className="surface booking-card">
+          <DirectTrafficBookingPanel directOnEntry={isDirect} car={{ id: car.id, title: car.title, pricePerDay: car.pricePerDay }} initialStart={todayInBusinessTimeZone()}><aside className="surface booking-card">
             <span className="tag">{bookable ? "Доступен для оформления" : busyForPeriod ? "Занят на выбранные даты" : "Онлайн-оформление недоступно"}</span>
             <p className="booking-card-label">Стоимость аренды</p>
             <div className="price">{formatPrice(car.pricePerDay)} <small>/ сутки</small></div>
@@ -89,7 +91,7 @@ export default async function CarPage({ params, searchParams }: { params: Promis
             {policyProblem ? <p className="period-note"><FileCheck2 size={16} /> {policyProblem}. Точные требования должен опубликовать владелец.</p> : busyForPeriod ? <p className="period-note"><CalendarDays size={16} /> На выбранный период уже есть активное обращение. Измените даты в каталоге.</p> : period.start && period.end ? <p className="period-note"><CalendarDays size={16} /> Автомобиль свободен на выбранный период; сервер проверит его ещё раз при отправке.</p> : <p className="period-note"><CalendarDays size={16} /> Укажите период при оформлении. Система повторно проверит доступность.</p>}
             <Link className="button red" href={busyForPeriod ? "/cars" : bookingHref} data-event={busyForPeriod ? "date_check" : "booking_open"} data-event-label={car.slug}>{busyForPeriod ? "Изменить даты" : "Забронировать"} <ArrowRight size={17} /></Link>
             <Link className="booking-secondary" href="/rental-terms">Посмотреть общие условия</Link>
-          </aside>
+          </aside></DirectTrafficBookingPanel>
         </div>
 
         <section className="detail-section detail-editorial">
@@ -119,7 +121,7 @@ export default async function CarPage({ params, searchParams }: { params: Promis
 
         <section className="detail-section" style={{ borderBottom: 0 }}><div className="section-head section-head-copy"><div><p className="eyebrow">Продолжите выбор</p><h2 className="title">Похожие автомобили</h2></div><p className="section-lead">Альтернативы подобраны по классу и близости суточной ставки. Сравните несколько вариантов перед выбором дат.</p></div><div className="car-grid">{recommendations.map((item) => <CarCard key={item.id} car={item} period={period} />)}</div><div className="section-action"><Link className="button ghost" href="/cars">Вернуться в каталог <ArrowRight size={17} /></Link></div></section>
       </div>
-      <div className="mobile-cta"><Link className="button red" href={busyForPeriod ? "/cars" : bookingHref} data-event={busyForPeriod ? "date_check" : "booking_open"} data-event-label={`${car.slug}_sticky`}>{busyForPeriod ? "Изменить даты" : `Забронировать · ${formatPrice(car.pricePerDay)}`}</Link></div>
+      <DirectTrafficMobileCta directOnEntry={isDirect} fallbackHref={busyForPeriod ? "/cars" : bookingHref} fallbackEvent={busyForPeriod ? "date_check" : "booking_open"} fallbackLabel={`${car.slug}_sticky`} fallbackText={busyForPeriod ? "Изменить даты" : `Забронировать · ${formatPrice(car.pricePerDay)}`} />
     </div>
   );
 }

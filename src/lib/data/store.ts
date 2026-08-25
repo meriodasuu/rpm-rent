@@ -1,5 +1,5 @@
-import type { Booking, BookingStatus, Car, Faq, Location, Service } from "@/types/domain";
-import type { BookingInput } from "@/lib/validation";
+import type { Booking, BookingStatus, Car, Faq, Lead, LeadCreateResult, Location, Service } from "@/types/domain";
+import type { BookingInput, DirectLeadInput } from "@/lib/validation";
 
 export interface DataStore {
   getCars(options?: { includeHidden?: boolean }): Promise<Car[]>;
@@ -18,7 +18,9 @@ export interface DataStore {
   saveLocation(location: Location): Promise<Location>;
   deleteLocation(id: string): Promise<void>;
   createBooking(input: BookingInput): Promise<Booking>;
+  createLead(input: DirectLeadInput): Promise<LeadCreateResult>;
   isCarAvailable(carId: string, startDate: string, endDate: string): Promise<boolean>;
   getBookings(): Promise<Booking[]>;
+  getLeads(): Promise<Lead[]>;
   updateBookingStatus(id: string, status: BookingStatus): Promise<void>;
 }

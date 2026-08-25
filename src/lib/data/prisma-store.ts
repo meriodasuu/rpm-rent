@@ -6,8 +6,8 @@ import { assertBookingStatusTransition } from "@/lib/domain/booking-status";
 import { prepareBooking } from "@/lib/domain/booking";
 import { assertRentalPeriod, normalizeStoredDate, parseDateOnly } from "@/lib/domain/dates";
 import { DomainError } from "@/lib/domain/errors";
-import type { BookingInput } from "@/lib/validation";
-import type { Booking, BookingServiceSnapshot, BookingStatus, Car, Faq, Location, Service } from "@/types/domain";
+import type { BookingInput, DirectLeadInput } from "@/lib/validation";
+import type { Booking, BookingServiceSnapshot, BookingStatus, Car, Faq, Lead, LeadCreateResult, Location, Service } from "@/types/domain";
 import type { DataStore } from "./store";
 
 declare global {
@@ -329,6 +329,31 @@ export class PrismaStore implements DataStore {
     return !conflict;
   }
 
+  async createLead(input: DirectLeadInput): Promise<LeadCreateResult> {
+    try {
+      const result = await getPrisma().$transaction(async (database) => {
+        const existing = await database.lead.findUnique({ where: { idempotencyKey: input.idempotencyKey } });
+        if (existing) return { record: existing, created: false };
+        const car = await database.car.findFirst({ where: { id: input.carId, published: true } });
+        if (!car) throw new DomainError("NOT_FOUND", "Автомобиль недоступен для заявки", 404);
+        const record = await database.lead.create({ data: {
+          carId: car.id, carTitle: car.title, startAt: toDatabaseDate(input.startAt), phone: input.phone,
+          source: "yandex_direct", utm: input.utm, landingPath: input.landingPath, referrer: input.referrer || null,
+          idempotencyKey: input.idempotencyKey, privacyConsentAt: new Date(), status: "NEW"
+        } });
+        return { record, created: true };
+      }, { isolationLevel: "Serializable" });
+      return { lead: this.mapLead(result.record), created: result.created };
+    } catch (error) {
+      if (error instanceof DomainError) throw error;
+      if (isIdempotencyConflict(error)) {
+        const existing = await getPrisma().lead.findUnique({ where: { idempotencyKey: input.idempotencyKey } });
+        if (existing) return { lead: this.mapLead(existing), created: false };
+      }
+      throw error;
+    }
+  }
+
   private mapBooking(record: Awaited<ReturnType<ReturnType<typeof getPrisma>["booking"]["findFirst"]>>): Booking {
     if (!record) throw new DomainError("NOT_FOUND", "Заявка не найдена", 404);
     return {
@@ -370,6 +395,19 @@ export class PrismaStore implements DataStore {
   async getBookings() {
     const rows = await getPrisma().booking.findMany({ orderBy: { createdAt: "desc" } });
     return rows.map((row) => this.mapBooking(row));
+  }
+
+  async getLeads() {
+    const rows = await getPrisma().lead.findMany({ orderBy: { createdAt: "desc" } });
+    return rows.map((row) => this.mapLead(row));
+  }
+
+  private mapLead(record: { id: string; carId: string; carTitle: string; startAt: Date; phone: string; utm: unknown; landingPath: string; referrer: string | null; idempotencyKey: string; privacyConsentAt: Date; createdAt: Date }): Lead {
+    return {
+      id: record.id, carId: record.carId, carTitle: record.carTitle, startAt: normalizeStoredDate(record.startAt), phone: record.phone,
+      source: "yandex_direct", utm: asStringRecord(record.utm), landingPath: record.landingPath, referrer: record.referrer,
+      idempotencyKey: record.idempotencyKey, privacyConsentAt: record.privacyConsentAt.toISOString(), status: "NEW", createdAt: record.createdAt.toISOString()
+    };
   }
 
   async updateBookingStatus(id: string, status: BookingStatus) {

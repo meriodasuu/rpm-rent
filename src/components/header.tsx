@@ -16,7 +16,7 @@ export function Header() {
         <div className="header-actions">
           {phone ? <a className="header-phone" href={phoneHref(phone)} data-event="phone_click" data-event-label="header">{phone}</a> : null}
           <ThemeToggle />
-          <Link className="button small-button" href={telegram || "/contacts"} target={telegram ? "_blank" : undefined} data-event={telegram ? "telegram_click" : "contact_click"} data-event-label="header">
+          <Link className="button small-button" data-direct-messenger={telegram ? "true" : undefined} href={telegram || "/contacts"} target={telegram ? "_blank" : undefined} data-event={telegram ? "telegram_click" : "contact_click"} data-event-label="header">
             <Send size={15} aria-hidden /> {telegram ? "Telegram" : "Связаться"}
           </Link>
           <details className="mobile-menu">

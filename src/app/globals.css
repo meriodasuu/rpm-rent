@@ -786,8 +786,8 @@ img { max-width: 100%; }
 .admin-booking-workspace { display: grid; grid-template-columns: minmax(300px, .82fr) minmax(500px, 1.5fr); align-items: start; border: 1px solid #dededb; border-radius: 8px; overflow: hidden; background: #fff; }
 .admin-booking-list { max-height: calc(100vh - 205px); min-height: 640px; overflow-y: auto; border-right: 1px solid #dededb; background: #fafaf8; }
 .admin-booking-list-meta { min-height: 38px; display: flex; align-items: center; justify-content: space-between; padding: 0 15px; border-bottom: 1px solid #e7e7e4; color: #96969b; font-size: 9px; }
-.admin-booking-list > button { width: 100%; display: grid; gap: 4px; padding: 16px; border: 0; border-bottom: 1px solid #e7e7e4; color: #171719; background: transparent; text-align: left; cursor: pointer; }
-.admin-booking-list > button:hover { background: #fff; }
+.admin-booking-list > button, .admin-booking-list > a { width: 100%; display: grid; gap: 4px; padding: 16px; border: 0; border-bottom: 1px solid #e7e7e4; color: #171719; background: transparent; text-align: left; cursor: pointer; }
+.admin-booking-list > button:hover, .admin-booking-list > a:hover { background: #fff; }
 .admin-booking-list > button.is-selected { position: relative; background: #fff; box-shadow: inset 3px 0 #ff4c51; }
 .admin-booking-list-top, .admin-booking-list-bottom { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .admin-booking-list-top strong { overflow: hidden; font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
@@ -1002,6 +1002,13 @@ body {
   font-family: var(--font-manrope), Arial, Helvetica, sans-serif;
 }
 body.gallery-open { overflow: hidden; }
+
+html[data-direct-traffic="true"] [data-direct-messenger="true"] { display: none !important; }
+.direct-lead-form { display: grid; gap: 14px; align-content: start; }
+.direct-lead-form .field { margin: 0; }
+.direct-lead-form .button { width: 100%; justify-content: center; }
+.direct-lead-price { font-size: 1.35rem; }
+.direct-lead-consent { display: flex; gap: 8px; align-items: flex-start; font-size: 12px; color: #5c5e64; }
 .container { width: min(1536px, calc(100% - 64px)); }
 .page { padding-top: 28px; }
 .section { padding: clamp(76px, 8vw, 132px) 0; }

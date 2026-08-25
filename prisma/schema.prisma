@@ -54,6 +54,7 @@ model Car {
   seoDescription           String?
   images                    CarImage[]
   bookings                 Booking[]
+  leads                    Lead[]
   createdAt                 DateTime   @default(now())
   updatedAt                 DateTime   @updatedAt
 }
@@ -107,6 +108,26 @@ model Booking {
   updatedAt                 DateTime      @updatedAt
 
   @@index([carId, startAt, endAt])
+}
+
+model Lead {
+  id                 String   @id @default(cuid())
+  carId              String
+  car                Car      @relation(fields: [carId], references: [id], onDelete: Restrict)
+  carTitle           String
+  startAt            DateTime @db.Date
+  phone              String
+  source             String   @default("yandex_direct")
+  utm                Json     @default("{}")
+  landingPath        String
+  referrer           String?
+  idempotencyKey     String   @unique
+  privacyConsentAt   DateTime
+  status             String   @default("NEW")
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@index([carId, createdAt])
 }
 
 model Service {

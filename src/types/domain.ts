@@ -76,6 +76,7 @@ export type Location = {
 };
 
 export type BookingStatus = "NEW" | "IN_PROGRESS" | "CONFIRMED" | "DECLINED" | "CANCELLED" | "COMPLETED";
+export type LeadStatus = "NEW";
 
 export type BookingServiceSnapshot = { id: string; title: string; price: number };
 
@@ -114,10 +115,29 @@ export type Booking = {
   createdAt: string;
 };
 
+export type Lead = {
+  id: string;
+  carId: string;
+  carTitle: string;
+  startAt: string;
+  phone: string;
+  source: "yandex_direct";
+  utm: Record<string, string>;
+  landingPath: string;
+  referrer: string | null;
+  idempotencyKey: string;
+  privacyConsentAt: string;
+  status: LeadStatus;
+  createdAt: string;
+};
+
+export type LeadCreateResult = { lead: Lead; created: boolean };
+
 export type DevDatabase = {
   cars: Car[];
   services: Service[];
   faqs: Faq[];
   locations: Location[];
   bookings: Booking[];
+  leads: Lead[];
 };

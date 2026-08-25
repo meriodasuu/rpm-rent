@@ -6,8 +6,8 @@ import { assertBookingStatusTransition } from "@/lib/domain/booking-status";
 import { prepareBooking } from "@/lib/domain/booking";
 import { assertRentalPeriod, normalizeStoredDate } from "@/lib/domain/dates";
 import { DomainError } from "@/lib/domain/errors";
-import type { BookingInput } from "@/lib/validation";
-import type { Booking, BookingStatus, Car, DevDatabase, Faq, Location, Service } from "@/types/domain";
+import type { BookingInput, DirectLeadInput } from "@/lib/validation";
+import type { Booking, BookingStatus, Car, DevDatabase, Faq, Lead, LeadCreateResult, Location, Service } from "@/types/domain";
 import type { DataStore } from "./store";
 
 const configuredDbPath = process.env.FILE_DATABASE_PATH?.trim();
@@ -38,6 +38,7 @@ const normalizeDatabase = (database: DevDatabase): DevDatabase => ({
   ...database,
   cars: database.cars.map(normalizeCar),
   bookings: database.bookings.map(normalizeBooking),
+  leads: database.leads ?? [],
   locations: database.locations ?? []
 });
 
@@ -100,7 +101,7 @@ export class FileStore implements DataStore {
 
   async deleteCar(id: string) {
     await this.mutate((database) => {
-      if (database.bookings.some((booking) => booking.carId === id)) {
+      if (database.bookings.some((booking) => booking.carId === id) || database.leads.some((lead) => lead.carId === id)) {
         throw new DomainError("VALIDATION_ERROR", "Нельзя удалить автомобиль с заявками: снимите его с публикации", 409);
       }
       database.cars = database.cars.filter((item) => item.id !== id);
@@ -239,6 +240,26 @@ export class FileStore implements DataStore {
 
   async getBookings() {
     return (await this.readDatabase()).bookings.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  }
+
+  async createLead(input: DirectLeadInput): Promise<LeadCreateResult> {
+    return this.mutate((database) => {
+      const existing = database.leads.find((item) => item.idempotencyKey === input.idempotencyKey);
+      if (existing) return { lead: existing, created: false };
+      const car = database.cars.find((item) => item.id === input.carId && item.published);
+      if (!car) throw new DomainError("NOT_FOUND", "Автомобиль недоступен для заявки", 404);
+      const lead: Lead = {
+        id: crypto.randomUUID(), carId: car.id, carTitle: car.title, startAt: input.startAt, phone: input.phone,
+        source: "yandex_direct", utm: input.utm, landingPath: input.landingPath, referrer: input.referrer || null,
+        idempotencyKey: input.idempotencyKey, privacyConsentAt: new Date().toISOString(), status: "NEW", createdAt: new Date().toISOString()
+      };
+      database.leads.unshift(lead);
+      return { lead, created: true };
+    });
+  }
+
+  async getLeads() {
+    return (await this.readDatabase()).leads.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
   }
 
   async updateBookingStatus(id: string, status: BookingStatus) {

@@ -2,6 +2,7 @@
 
 import Script from "next/script";
 import { useEffect, useState } from "react";
+import { isYandexDirectAttribution } from "@/lib/direct-traffic";
 
 const attributionKey = "rpm-marketing-attribution";
 const consentKey = "rpm-cookie-consent";
@@ -21,6 +22,9 @@ export function MarketingAttribution() {
     const previous = readAttribution();
     const attribution: Attribution = { ...previous, ...current, landingPath: previous.landingPath ?? window.location.pathname, referrer: previous.referrer ?? document.referrer };
     if (Object.keys(attribution).length > 0) window.sessionStorage.setItem(attributionKey, JSON.stringify(attribution));
+    const isDirect = isYandexDirectAttribution(params) || window.sessionStorage.getItem("rpm-yandex-direct") === "1";
+    if (isDirect) window.sessionStorage.setItem("rpm-yandex-direct", "1");
+    document.documentElement.dataset.directTraffic = isDirect ? "true" : "false";
   }, []);
   useEffect(() => {
     const syncConsent = () => {

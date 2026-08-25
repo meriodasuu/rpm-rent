@@ -9,14 +9,17 @@ export default async function AdminBookingsPage({
 }: {
   searchParams: Promise<{ filter?: string; booking?: string }>;
 }) {
-  const [bookings, query] = await Promise.all([
-    (await getStore()).getBookings(),
+  const store = await getStore();
+  const [bookings, leads, query] = await Promise.all([
+    store.getBookings(),
+    store.getLeads(),
     searchParams,
   ]);
 
   return (
     <AdminBookingWorkspace
       bookings={bookings}
+      leads={leads}
       initialFilter={parseAdminBookingFilter(query.filter)}
       initialBookingId={query.booking}
       now={new Date().toISOString()}

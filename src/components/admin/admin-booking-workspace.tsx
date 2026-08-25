@@ -23,7 +23,7 @@ import {
 } from "@/lib/admin-operations";
 import { allowedBookingTransitions, bookingStatusLabels } from "@/lib/domain/booking-status";
 import { formatDateTime, formatDeposit, formatPrice, formatRentalDate, phoneHref } from "@/lib/format";
-import type { Booking } from "@/types/domain";
+import type { Booking, Lead } from "@/types/domain";
 import { BookingStatusBadge } from "./booking-status-badge";
 
 const tabs: { value: AdminBookingFilter; label: string }[] = [
@@ -41,11 +41,13 @@ function StatusSubmitButton() {
 
 export function AdminBookingWorkspace({
   bookings,
+  leads,
   initialFilter,
   initialBookingId,
   now,
 }: {
   bookings: Booking[];
+  leads: Lead[];
   initialFilter: AdminBookingFilter;
   initialBookingId?: string;
   now: string;
@@ -90,7 +92,7 @@ export function AdminBookingWorkspace({
             <h1>Обращения</h1>
             <p>Очередь, контакты и решение по бронированию в одном окне.</p>
           </div>
-          <div className="admin-booking-total"><Inbox aria-hidden="true" size={17} /><strong>{bookings.length}</strong><span>всего</span></div>
+          <div className="admin-booking-total"><Inbox aria-hidden="true" size={17} /><strong>{bookings.length + leads.length}</strong><span>всего</span></div>
         </header>
 
         <div className="admin-booking-toolbar">
@@ -199,6 +201,13 @@ export function AdminBookingWorkspace({
         ) : (
           <div className="admin-panel admin-panel-empty"><Inbox size={28} /><strong>Обращений пока нет</strong><span>После отправки формы новое обращение появится здесь.</span></div>
         )}
+        {leads.length ? <section className="admin-panel" style={{ marginTop: 24 }}>
+          <p className="admin-kicker">Яндекс.Директ</p><h2>Короткие лиды</h2>
+          <div className="admin-booking-list" aria-label="Лиды Яндекс.Директа">{leads.map((lead) => <a key={lead.id} href={phoneHref(lead.phone)}>
+            <span className="admin-booking-list-top"><strong>Лид Директа · {lead.carTitle}</strong><time>{formatDateTime(lead.createdAt)}</time></span>
+            <span className="admin-booking-list-contact">{lead.phone}</span><span className="admin-booking-list-car">Дата начала: {formatRentalDate(lead.startAt)}</span>
+          </a>)}</div>
+        </section> : null}
       </div>
     </div>
   );

@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { RENTAL_POLICY } from "@/config/rental-policy";
-import { DATE_ONLY_PATTERN, differenceInCalendarDays, parseDateOnly } from "@/lib/domain/dates";
+import { DATE_ONLY_PATTERN, differenceInCalendarDays, parseDateOnly, todayInBusinessTimeZone } from "@/lib/domain/dates";
 import { VEHICLE_CLASSES } from "@/lib/vehicle-class";
 
 const safeText = (minimum: number, maximum: number, requiredMessage: string) =>
@@ -61,6 +61,23 @@ export const bookingSchema = z
   });
 
 export type BookingInput = z.infer<typeof bookingSchema>;
+
+export const directLeadSchema = z.object({
+  carId: z.string().trim().min(1).max(100),
+  startAt: dateOnly,
+  phone,
+  privacyConsent: z.literal(true, { error: "Подтвердите согласие на обработку данных" }),
+  utm: z.record(z.string().regex(/^(utm_[A-Za-z0-9_]{1,50}|yclid)$/), z.string().trim().max(200).refine((value) => !/[<>\u0000-\u001F]/.test(value), "Недопустимые символы")).default({}),
+  landingPath: z.string().trim().min(1).max(500).startsWith("/", "Укажите путь посадочной страницы"),
+  referrer: z.union([z.literal(""), httpUrl]).optional().default(""),
+  idempotencyKey: z.uuid()
+}).strict().superRefine((value, context) => {
+  if (Object.keys(value.utm).length > 20) context.addIssue({ code: "custom", path: ["utm"], message: "Слишком много UTM-параметров" });
+  if (!value.utm.yclid && value.utm.utm_source?.toLowerCase() !== "yandex") context.addIssue({ code: "custom", path: ["utm"], message: "Лид доступен только для трафика Яндекс.Директа" });
+  if (value.startAt < todayInBusinessTimeZone()) context.addIssue({ code: "custom", path: ["startAt"], message: "Дата начала не может быть в прошлом" });
+});
+
+export type DirectLeadInput = z.infer<typeof directLeadSchema>;
 
 const optionalInteger = (minimum: number, maximum: number) =>
   z.preprocess(
