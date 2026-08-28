@@ -1,7 +1,7 @@
 import { timingSafeEqual } from "node:crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { getStore } from "@/lib/data";
-import { answerTelegramCallbackQuery, bookingDetailsReplyMarkup, formatBookingDetails, formatBookingSummary, sendTelegramMessage } from "@/lib/telegram";
+import { answerTelegramCallbackQuery, bookingDetailsReplyMarkup, editTelegramMessage, formatBookingDetails, formatBookingSummary, sendTelegramMessage } from "@/lib/telegram";
 import { bookingStatusLabels } from "@/lib/domain/booking-status";
 import type { Booking, BookingStatus } from "@/types/domain";
 
@@ -10,12 +10,13 @@ type TelegramUpdate = {
     text?: unknown;
     chat?: { id?: unknown };
     from?: { id?: unknown; username?: unknown };
+    reply_to_message?: { text?: unknown };
   };
   callback_query?: {
     id?: unknown;
     data?: unknown;
     from?: { id?: unknown; username?: unknown };
-    message?: { chat?: { id?: unknown } };
+    message?: { message_id?: unknown; chat?: { id?: unknown } };
   };
 };
 
@@ -31,6 +32,7 @@ const adminHelpText = `${helpText}\n/allow @username — дать сотрудн
 const usernamePattern = /^@?([a-zA-Z0-9_]{5,32})$/;
 const bookingStatuses: readonly BookingStatus[] = ["NEW", "IN_PROGRESS", "CONFIRMED", "DECLINED", "CANCELLED", "COMPLETED"];
 const pageSize = 10;
+const searchPrompt = "Введите имя, телефон или номер заявки:";
 const historyPeriods = ["7", "30", "all"] as const;
 type HistoryPeriod = typeof historyPeriods[number];
 type HistoryStatus = BookingStatus | "ALL";
@@ -43,17 +45,30 @@ const findBookingByNumber = (bookings: Booking[], number: string) => bookings.fi
 const historyStatusFromValue = (value: string): HistoryStatus | null => value === "ALL" || bookingStatuses.includes(value as BookingStatus) ? value as HistoryStatus : null;
 const historyPeriodFromValue = (value: string): HistoryPeriod | null => historyPeriods.includes(value as HistoryPeriod) ? value as HistoryPeriod : null;
 
-const historyReplyMarkup = (status: HistoryStatus, period: HistoryPeriod, page: number, totalPages: number) => ({
+const mainMenuReplyMarkup = {
+  inline_keyboard: [[
+    { text: "Все заявки", callback_data: "menu:all" },
+    { text: "Новые", callback_data: "menu:new" },
+    { text: "Поиск", callback_data: "menu:search" }
+  ]]
+};
+
+const historyReplyMarkup = (bookings: Booking[], status: HistoryStatus, period: HistoryPeriod, page: number, totalPages: number) => ({
   inline_keyboard: [
-    [{ text: "Все", callback_data: `bookings:ALL:${period}:0` }, { text: "Новые", callback_data: `bookings:NEW:${period}:0` }, { text: "В работе", callback_data: `bookings:IN_PROGRESS:${period}:0` }],
-    [{ text: "Подтверждённые", callback_data: `bookings:CONFIRMED:${period}:0` }, { text: "Отклонённые", callback_data: `bookings:DECLINED:${period}:0` }, { text: "Отменённые", callback_data: `bookings:CANCELLED:${period}:0` }],
-    [{ text: "Завершённые", callback_data: `bookings:COMPLETED:${period}:0` }],
-    [{ text: "7 дней", callback_data: `bookings:${status}:7:0` }, { text: "30 дней", callback_data: `bookings:${status}:30:0` }, { text: "Всё время", callback_data: `bookings:${status}:all:0` }],
+    ...bookings.map((booking) => [{
+      text: `#${booking.bookingNumber} · ${booking.customerName}`.slice(0, 40),
+      callback_data: `bookingview:${booking.bookingNumber}:${status}:${period}:${page}`
+    }]),
+    [{ text: `${status === "ALL" ? "✓ " : ""}Все`, callback_data: `bookings:ALL:${period}:0` }, { text: `${status === "NEW" ? "✓ " : ""}Новые`, callback_data: `bookings:NEW:${period}:0` }, { text: `${status === "IN_PROGRESS" ? "✓ " : ""}В работе`, callback_data: `bookings:IN_PROGRESS:${period}:0` }],
+    [{ text: `${status === "CONFIRMED" ? "✓ " : ""}Подтверждённые`, callback_data: `bookings:CONFIRMED:${period}:0` }, { text: `${status === "DECLINED" ? "✓ " : ""}Отклонённые`, callback_data: `bookings:DECLINED:${period}:0` }, { text: `${status === "CANCELLED" ? "✓ " : ""}Отменённые`, callback_data: `bookings:CANCELLED:${period}:0` }],
+    [{ text: `${status === "COMPLETED" ? "✓ " : ""}Завершённые`, callback_data: `bookings:COMPLETED:${period}:0` }],
+    [{ text: `${period === "7" ? "✓ " : ""}7 дней`, callback_data: `bookings:${status}:7:0` }, { text: `${period === "30" ? "✓ " : ""}30 дней`, callback_data: `bookings:${status}:30:0` }, { text: `${period === "all" ? "✓ " : ""}Всё время`, callback_data: `bookings:${status}:all:0` }],
     ...(totalPages > 1 ? [[
       ...(page > 0 ? [{ text: "← Назад", callback_data: `bookings:${status}:${period}:${page - 1}` }] : []),
       { text: `${page + 1}/${totalPages}`, callback_data: "history:noop" },
       ...(page + 1 < totalPages ? [{ text: "Вперёд →", callback_data: `bookings:${status}:${period}:${page + 1}` }] : [])
-    ]] : [])
+    ]] : []),
+    [{ text: "🔎 Поиск", callback_data: "menu:search" }, { text: "↻ Обновить", callback_data: `bookings:${status}:${period}:${page}` }]
   ]
 });
 
@@ -63,20 +78,29 @@ const periodLabel = (period: HistoryPeriod) => period === "all" ? "Всё вре
 const filterHistoryBookings = (bookings: Booking[], status: HistoryStatus, period: HistoryPeriod) => {
   const cutoff = period === "all" ? null : Date.now() - Number(period) * 24 * 60 * 60 * 1000;
   return bookings.filter((booking) => status === "ALL" || booking.status === status)
-    .filter((booking) => cutoff === null || new Date(booking.createdAt).getTime() >= cutoff);
+    .filter((booking) => cutoff === null || new Date(booking.createdAt).getTime() >= cutoff)
+    .sort((left, right) => new Date(right.createdAt).getTime() - new Date(left.createdAt).getTime());
 };
 
-const sendBookingHistory = async (recipient: string, bookings: Booking[], status: HistoryStatus, period: HistoryPeriod, requestedPage = 0) => {
+const bookingHistoryView = (bookings: Booking[], status: HistoryStatus, period: HistoryPeriod, requestedPage = 0) => {
   const filtered = filterHistoryBookings(bookings, status, period);
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
   const page = Math.min(Math.max(requestedPage, 0), totalPages - 1);
   const pageBookings = filtered.slice(page * pageSize, (page + 1) * pageSize);
-  await sendTelegramMessage(recipient, `Заявки · ${historyLabel(status)} · ${periodLabel(period)}${filtered.length ? `\nНайдено: ${filtered.length}` : "\nЗаявок не найдено."}`, {
-    replyMarkup: historyReplyMarkup(status, period, page, totalPages)
-  });
-  for (const booking of pageBookings) {
-    await sendTelegramMessage(recipient, formatBookingSummary(booking), { replyMarkup: bookingDetailsReplyMarkup(booking) });
+  const heading = `Заявки · ${historyLabel(status)} · ${periodLabel(period)}${filtered.length ? `\nНайдено: ${filtered.length}` : "\nЗаявок не найдено."}`;
+  return {
+    text: [heading, ...pageBookings.map((booking) => formatBookingSummary(booking))].join("\n\n"),
+    replyMarkup: historyReplyMarkup(pageBookings, status, period, page, totalPages)
+  };
+};
+
+const sendBookingHistory = async (recipient: string, bookings: Booking[], status: HistoryStatus, period: HistoryPeriod, requestedPage = 0, messageId?: number) => {
+  const view = bookingHistoryView(bookings, status, period, requestedPage);
+  if (messageId !== undefined) {
+    await editTelegramMessage(recipient, messageId, view.text, { replyMarkup: view.replyMarkup });
+    return;
   }
+  await sendTelegramMessage(recipient, view.text, { replyMarkup: view.replyMarkup });
 };
 
 const searchBookings = (bookings: Booking[], query: string) => {
@@ -87,6 +111,19 @@ const searchBookings = (bookings: Booking[], query: string) => {
     || (phoneQuery.length > 0 && booking.phone.replace(/\D/g, "").includes(phoneQuery))
     || booking.customerName.toLocaleLowerCase("ru-RU").includes(normalizedQuery)
   ).slice(0, pageSize);
+};
+
+const sendSearchResults = async (recipient: string, bookings: Booking[]) => {
+  if (!bookings.length) {
+    await sendTelegramMessage(recipient, "Заявки не найдены.", { replyMarkup: mainMenuReplyMarkup });
+    return;
+  }
+  await sendTelegramMessage(recipient, [`Найдено заявок: ${bookings.length}`, ...bookings.map((booking) => formatBookingSummary(booking))].join("\n\n"), {
+    replyMarkup: { inline_keyboard: [
+      ...bookings.map((booking) => [{ text: `#${booking.bookingNumber} · ${booking.customerName}`.slice(0, 40), callback_data: `bookingview:${booking.bookingNumber}:ALL:all:0` }]),
+      [{ text: "Все заявки", callback_data: "menu:all" }, { text: "Новый поиск", callback_data: "menu:search" }]
+    ] }
+  });
 };
 
 export async function POST(request: NextRequest) {
@@ -116,14 +153,35 @@ export async function POST(request: NextRequest) {
   if (callback) {
     const callbackId = typeof callback.id === "string" ? callback.id : "";
     const callbackData = typeof callback.data === "string" ? callback.data : "";
+    const callbackMessageId = typeof callback.message?.message_id === "number" ? callback.message.message_id : undefined;
     const operator = await store.getTelegramOperatorByUserId(String(userId));
     if (!operator) return NextResponse.json({ ok: false }, { status: 403 });
     await answerTelegramCallbackQuery(callbackId);
+    if (callbackData === "menu:search") {
+      await sendTelegramMessage(recipient, searchPrompt, { replyMarkup: { force_reply: true, selective: true } });
+      return NextResponse.json({ ok: true });
+    }
+    if (callbackData === "menu:all" || callbackData === "menu:new") {
+      await sendBookingHistory(recipient, await store.getBookings(), callbackData === "menu:new" ? "NEW" : "ALL", "all", 0, callbackMessageId);
+      return NextResponse.json({ ok: true });
+    }
     const historyMatch = callbackData.match(/^bookings:([A-Z_]+|ALL):(7|30|all):(\d+)$/);
     if (historyMatch) {
       const status = historyStatusFromValue(historyMatch[1] ?? "");
       const period = historyPeriodFromValue(historyMatch[2] ?? "");
-      if (status && period) await sendBookingHistory(recipient, await store.getBookings(), status, period, Number(historyMatch[3] ?? 0));
+      if (status && period) await sendBookingHistory(recipient, await store.getBookings(), status, period, Number(historyMatch[3] ?? 0), callbackMessageId);
+      return NextResponse.json({ ok: true });
+    }
+    const bookingViewMatch = callbackData.match(/^bookingview:(\d+):([A-Z_]+|ALL):(7|30|all):(\d+)$/);
+    if (bookingViewMatch) {
+      const status = historyStatusFromValue(bookingViewMatch[2] ?? "");
+      const period = historyPeriodFromValue(bookingViewMatch[3] ?? "");
+      const booking = findBookingByNumber(await store.getBookings(), bookingViewMatch[1] ?? "");
+      if (status && period && callbackMessageId !== undefined) {
+        await editTelegramMessage(recipient, callbackMessageId, booking ? formatBookingDetails(booking, "Заявка") : "Заявка не найдена.", {
+          replyMarkup: { inline_keyboard: [[{ text: "← К списку", callback_data: `bookings:${status}:${period}:${bookingViewMatch[4] ?? 0}` }]] }
+        });
+      }
       return NextResponse.json({ ok: true });
     }
     const number = callbackData.match(/^booking:(\d+)$/)?.[1];
@@ -141,14 +199,18 @@ export async function POST(request: NextRequest) {
     }) : null;
     await sendTelegramMessage(recipient, operator
       ? `Доступ активирован. ${operator.role === "ADMIN" ? "Администратор." : "Сотрудник."}\n${operator.role === "ADMIN" ? adminHelpText : helpText}`
-      : "Доступ не выдан. Попросите администратора добавить ваш @username через /allow.");
+      : "Доступ не выдан. Попросите администратора добавить ваш @username через /allow.", operator ? { replyMarkup: mainMenuReplyMarkup } : undefined);
     return NextResponse.json({ ok: true });
   }
 
   const operator = await store.getTelegramOperatorByUserId(String(userId));
   if (!operator) return NextResponse.json({ ok: false }, { status: 403 });
   if (normalized === "/help") {
-    await sendTelegramMessage(recipient, operator.role === "ADMIN" ? adminHelpText : helpText);
+    await sendTelegramMessage(recipient, operator.role === "ADMIN" ? adminHelpText : helpText, { replyMarkup: mainMenuReplyMarkup });
+    return NextResponse.json({ ok: true });
+  }
+  if (message?.reply_to_message?.text === searchPrompt && normalized.length > 0) {
+    await sendSearchResults(recipient, searchBookings(await store.getBookings(), normalized));
     return NextResponse.json({ ok: true });
   }
   const allowMatch = normalized.match(/^\/allow\s+(@?[a-zA-Z0-9_]{5,32})$/);
@@ -186,14 +248,7 @@ export async function POST(request: NextRequest) {
   const findMatch = normalized.match(/^\/find\s+(.+)$/);
   if (findMatch) {
     const bookings = searchBookings(await store.getBookings(), findMatch[1] ?? "");
-    if (!bookings.length) {
-      await sendTelegramMessage(recipient, "Заявки не найдены.");
-      return NextResponse.json({ ok: true });
-    }
-    await sendTelegramMessage(recipient, `Найдено заявок: ${bookings.length}`);
-    for (const booking of bookings) {
-      await sendTelegramMessage(recipient, formatBookingSummary(booking), { replyMarkup: bookingDetailsReplyMarkup(booking) });
-    }
+    await sendSearchResults(recipient, bookings);
     return NextResponse.json({ ok: true });
   }
 
@@ -204,6 +259,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ ok: true });
   }
 
-  await sendTelegramMessage(recipient, operator.role === "ADMIN" ? adminHelpText : helpText);
+  await sendTelegramMessage(recipient, operator.role === "ADMIN" ? adminHelpText : helpText, { replyMarkup: mainMenuReplyMarkup });
   return NextResponse.json({ ok: true });
 }

@@ -8,7 +8,10 @@ const store = vi.hoisted(() => ({
   activateTelegramOperator: vi.fn(),
   inviteTelegramOperator: vi.fn()
 }));
-const telegram = vi.hoisted(() => ({ sendTelegramMessage: vi.fn(async () => true) }));
+const telegram = vi.hoisted(() => ({
+  editTelegramMessage: vi.fn(async () => true),
+  sendTelegramMessage: vi.fn(async () => true)
+}));
 
 vi.mock("@/lib/data", () => ({ getStore: async () => store }));
 vi.mock("@/lib/telegram", async (importOriginal) => ({ ...await importOriginal<typeof import("@/lib/telegram")>(), ...telegram }));
@@ -49,7 +52,12 @@ describe("POST /api/telegram/webhook", () => {
 
     expect(response.status).toBe(200);
     expect(store.activateTelegramOperator).toHaveBeenCalledWith({ telegramUserId: "123", username: "konstant1n_abramov", bootstrapAdminUsernames: ["konstant1n_abramov", "wthtwn"] });
-    expect(telegram.sendTelegramMessage).toHaveBeenCalledWith("-100456", expect.stringContaining("Администратор"));
+    expect(telegram.sendTelegramMessage).toHaveBeenCalledWith("-100456", expect.stringContaining("Администратор"), expect.objectContaining({
+      replyMarkup: expect.objectContaining({ inline_keyboard: expect.arrayContaining([
+        expect.arrayContaining([expect.objectContaining({ callback_data: "menu:all" })]),
+        expect.arrayContaining([expect.objectContaining({ callback_data: "menu:search" })])
+      ]) })
+    }));
   });
 
   it("lets an activated admin invite an operator by username", async () => {
@@ -147,8 +155,12 @@ describe("POST /api/telegram/webhook", () => {
 
     await POST(request("/all"));
 
-    expect(telegram.sendTelegramMessage).toHaveBeenCalledWith("-100456", expect.stringContaining("Заявка #42"), expect.anything());
-    expect(telegram.sendTelegramMessage).toHaveBeenCalledWith("-100456", expect.stringContaining("Заявка #44"), expect.anything());
+    expect(telegram.sendTelegramMessage).toHaveBeenCalledTimes(1);
+    expect(telegram.sendTelegramMessage).toHaveBeenCalledWith("-100456", expect.stringMatching(/Заявка #42[\s\S]*Заявка #44/), expect.objectContaining({
+      replyMarkup: expect.objectContaining({ inline_keyboard: expect.arrayContaining([
+        expect.arrayContaining([expect.objectContaining({ callback_data: "bookingview:42:ALL:all:0" })])
+      ]) })
+    }));
   });
 
   it("opens the requested page of the journal from an inline button", async () => {
@@ -159,14 +171,72 @@ describe("POST /api/telegram/webhook", () => {
       method: "POST",
       headers: { "content-type": "application/json", "x-telegram-bot-api-secret-token": "webhook-secret" },
       body: JSON.stringify({ callback_query: {
-        id: "callback-history", data: "bookings:ALL:all:1", from: { id: 123, username: "konstant1n_abramov" }, message: { chat: { id: -100456 } }
+        id: "callback-history", data: "bookings:ALL:all:1", from: { id: 123, username: "konstant1n_abramov" }, message: { message_id: 77, chat: { id: -100456 } }
       } })
     });
 
     await POST(callbackRequest);
 
-    expect(telegram.sendTelegramMessage).toHaveBeenCalledWith("-100456", expect.stringContaining("Заявка #90"), expect.anything());
-    expect(telegram.sendTelegramMessage).not.toHaveBeenCalledWith("-100456", expect.stringContaining("Заявка #100"), expect.anything());
+    expect(telegram.editTelegramMessage).toHaveBeenCalledWith("-100456", 77, expect.stringContaining("Заявка #90"), expect.anything());
+    expect(telegram.editTelegramMessage).not.toHaveBeenCalledWith("-100456", 77, expect.stringContaining("Заявка #100"), expect.anything());
+    expect(telegram.sendTelegramMessage).not.toHaveBeenCalled();
+  });
+
+  it("opens a booking inside the journal and provides a back button", async () => {
+    store.getBookings.mockResolvedValue([booking]);
+    const callbackRequest = new NextRequest("http://localhost/api/telegram/webhook", {
+      method: "POST",
+      headers: { "content-type": "application/json", "x-telegram-bot-api-secret-token": "webhook-secret" },
+      body: JSON.stringify({ callback_query: {
+        id: "callback-details", data: "bookingview:42:ALL:all:0", from: { id: 123, username: "konstant1n_abramov" }, message: { message_id: 78, chat: { id: -100456 } }
+      } })
+    });
+
+    await POST(callbackRequest);
+
+    expect(telegram.editTelegramMessage).toHaveBeenCalledWith("-100456", 78, expect.stringContaining("Заявка #42"), {
+      replyMarkup: { inline_keyboard: [[{ text: "← К списку", callback_data: "bookings:ALL:all:0" }]] }
+    });
+  });
+
+  it("opens search from the menu without requiring a command", async () => {
+    const callbackRequest = new NextRequest("http://localhost/api/telegram/webhook", {
+      method: "POST",
+      headers: { "content-type": "application/json", "x-telegram-bot-api-secret-token": "webhook-secret" },
+      body: JSON.stringify({ callback_query: {
+        id: "callback-search", data: "menu:search", from: { id: 123, username: "konstant1n_abramov" }, message: { message_id: 79, chat: { id: -100456 } }
+      } })
+    });
+
+    await POST(callbackRequest);
+
+    expect(telegram.sendTelegramMessage).toHaveBeenCalledWith("-100456", expect.stringContaining("Введите имя"), {
+      replyMarkup: { force_reply: true, selective: true }
+    });
+  });
+
+  it("searches when the user replies to the search prompt", async () => {
+    store.getBookings.mockResolvedValue([
+      { ...booking, id: "booking-maria", bookingNumber: 43, customerName: "Мария Смирнова" },
+      booking
+    ]);
+    const searchRequest = new NextRequest("http://localhost/api/telegram/webhook", {
+      method: "POST",
+      headers: { "content-type": "application/json", "x-telegram-bot-api-secret-token": "webhook-secret" },
+      body: JSON.stringify({ message: {
+        chat: { id: -100456 }, from: { id: 123, username: "konstant1n_abramov" }, text: "Мария",
+        reply_to_message: { text: "Введите имя, телефон или номер заявки:" }
+      } })
+    });
+
+    await POST(searchRequest);
+
+    expect(telegram.sendTelegramMessage).toHaveBeenCalledTimes(1);
+    expect(telegram.sendTelegramMessage).toHaveBeenCalledWith("-100456", expect.stringContaining("Заявка #43"), expect.objectContaining({
+      replyMarkup: expect.objectContaining({ inline_keyboard: expect.arrayContaining([
+        expect.arrayContaining([expect.objectContaining({ callback_data: "bookingview:43:ALL:all:0" })])
+      ]) })
+    }));
   });
 
   it("finds bookings by a customer name", async () => {

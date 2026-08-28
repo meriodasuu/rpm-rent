@@ -1,6 +1,8 @@
 import type { Booking } from "@/types/domain";
 
-type TelegramReplyMarkup = { inline_keyboard: Array<Array<{ text: string; callback_data: string }>> };
+type TelegramReplyMarkup =
+  | { inline_keyboard: Array<Array<{ text: string; callback_data: string }>> }
+  | { force_reply: true; selective?: boolean };
 type TelegramMessageOptions = { replyMarkup?: TelegramReplyMarkup };
 
 export const telegramBotApiUrl = (token: string, method: string, relayUrl?: string) => {
@@ -58,6 +60,19 @@ export const sendTelegramMessage = async (chatId: string, text: string, options:
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ chat_id: chatId, text, disable_web_page_preview: true, ...(options.replyMarkup ? { reply_markup: options.replyMarkup } : {}) })
+    });
+    const result: unknown = await response.json();
+    return response.ok && typeof result === "object" && result !== null && "ok" in result && result.ok === true;
+  } catch { return false; }
+};
+
+export const editTelegramMessage = async (chatId: string, messageId: number, text: string, options: TelegramMessageOptions = {}): Promise<boolean> => {
+  if (!process.env.TELEGRAM_BOT_TOKEN || !chatId || !Number.isInteger(messageId)) return false;
+  try {
+    const response = await fetch(botApiUrl("editMessageText"), {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ chat_id: chatId, message_id: messageId, text, disable_web_page_preview: true, ...(options.replyMarkup ? { reply_markup: options.replyMarkup } : {}) })
     });
     const result: unknown = await response.json();
     return response.ok && typeof result === "object" && result !== null && "ok" in result && result.ok === true;
