@@ -26,7 +26,7 @@ const matchesSecret = (received: string | null, expected: string | undefined) =>
   return left.length === right.length && timingSafeEqual(left, right);
 };
 
-const helpText = "Команды:\n/new — новые заявки\n/bookings — журнал заявок\n/find <номер, телефон или имя> — поиск заявок\n/booking <номер> — полная карточка заявки, например /booking 123";
+const helpText = "Команды:\n/new — новые заявки\n/all — все заявки\n/bookings — журнал заявок\n/find <номер, телефон или имя> — поиск заявок\n/booking <номер> — полная карточка заявки, например /booking 123";
 const adminHelpText = `${helpText}\n/allow @username — дать сотруднику доступ`;
 const usernamePattern = /^@?([a-zA-Z0-9_]{5,32})$/;
 const bookingStatuses: readonly BookingStatus[] = ["NEW", "IN_PROGRESS", "CONFIRMED", "DECLINED", "CANCELLED", "COMPLETED"];
@@ -169,6 +169,11 @@ export async function POST(request: NextRequest) {
     for (const booking of bookings) {
       await sendTelegramMessage(recipient, formatBookingSummary(booking), { replyMarkup: bookingDetailsReplyMarkup(booking) });
     }
+    return NextResponse.json({ ok: true });
+  }
+
+  if (normalized === "/all") {
+    await sendBookingHistory(recipient, await store.getBookings(), "ALL", "all");
     return NextResponse.json({ ok: true });
   }
 

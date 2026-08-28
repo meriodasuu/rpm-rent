@@ -139,6 +139,18 @@ describe("POST /api/telegram/webhook", () => {
     expect(telegram.sendTelegramMessage).not.toHaveBeenCalledWith("-100456", expect.stringContaining("Заявка #43"), expect.anything());
   });
 
+  it("returns bookings of every status for /all", async () => {
+    store.getBookings.mockResolvedValue([
+      booking,
+      { ...booking, id: "booking-confirmed", bookingNumber: 44, status: "CONFIRMED" }
+    ]);
+
+    await POST(request("/all"));
+
+    expect(telegram.sendTelegramMessage).toHaveBeenCalledWith("-100456", expect.stringContaining("Заявка #42"), expect.anything());
+    expect(telegram.sendTelegramMessage).toHaveBeenCalledWith("-100456", expect.stringContaining("Заявка #44"), expect.anything());
+  });
+
   it("opens the requested page of the journal from an inline button", async () => {
     store.getBookings.mockResolvedValue(Array.from({ length: 11 }, (_, index) => ({
       ...booking, id: `booking-${index}`, bookingNumber: 100 - index, customerName: `Клиент ${index}`
