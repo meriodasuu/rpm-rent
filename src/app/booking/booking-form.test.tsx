@@ -24,6 +24,12 @@ describe("BookingForm", () => {
     expect(html).not.toContain("Дата выдачи водительского удостоверения");
   });
 
+  it("marks the rental policy hint for spacing below the date grid", () => {
+    const html = renderToStaticMarkup(<BookingForm cars={[car]} services={[]} />);
+
+    expect(html).toContain('class="form-hint booking-policy-hint"');
+  });
+
   it("marks the required contacts, keeps consent enabled, and uses the rental CTA", () => {
     const html = renderToStaticMarkup(<BookingForm cars={[car]} services={[]} />);
 

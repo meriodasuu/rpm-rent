@@ -402,6 +402,7 @@ img { max-width: 100%; }
 .form-section:last-child { padding-bottom: 0; border-bottom: 0; }
 .form-section h2 { margin: 0 0 20px; font-size: 22px; letter-spacing: -.03em; }
 .form-hint { margin: -10px 0 20px; color: var(--muted); font-size: 14px; line-height: 1.5; }
+.booking-policy-hint { margin: 14px 0 0; }
 .summary { position: sticky; top: 100px; overflow: hidden; }
 .summary-image { position: relative; aspect-ratio: 16/10; }
 .summary-image img { object-fit: cover; }
