@@ -80,6 +80,7 @@ export type BookingMinAggregateOutputType = {
   additionalServicesPrice: number | null
   deposit: number | null
   source: string | null
+  originDomain: string | null
   referrer: string | null
   idempotencyKey: string | null
   privacyConsentAt: Date | null
@@ -115,6 +116,7 @@ export type BookingMaxAggregateOutputType = {
   additionalServicesPrice: number | null
   deposit: number | null
   source: string | null
+  originDomain: string | null
   referrer: string | null
   idempotencyKey: string | null
   privacyConsentAt: Date | null
@@ -152,6 +154,7 @@ export type BookingCountAggregateOutputType = {
   additionalServicesPrice: number
   deposit: number
   source: number
+  originDomain: number
   utm: number
   referrer: number
   idempotencyKey: number
@@ -218,6 +221,7 @@ export type BookingMinAggregateInputType = {
   additionalServicesPrice?: true
   deposit?: true
   source?: true
+  originDomain?: true
   referrer?: true
   idempotencyKey?: true
   privacyConsentAt?: true
@@ -253,6 +257,7 @@ export type BookingMaxAggregateInputType = {
   additionalServicesPrice?: true
   deposit?: true
   source?: true
+  originDomain?: true
   referrer?: true
   idempotencyKey?: true
   privacyConsentAt?: true
@@ -290,6 +295,7 @@ export type BookingCountAggregateInputType = {
   additionalServicesPrice?: true
   deposit?: true
   source?: true
+  originDomain?: true
   utm?: true
   referrer?: true
   idempotencyKey?: true
@@ -415,6 +421,7 @@ export type BookingGroupByOutputType = {
   additionalServicesPrice: number
   deposit: number
   source: string
+  originDomain: string | null
   utm: runtime.JsonValue | null
   referrer: string | null
   idempotencyKey: string
@@ -476,6 +483,7 @@ export type BookingWhereInput = {
   additionalServicesPrice?: Prisma.IntFilter<"Booking"> | number
   deposit?: Prisma.IntFilter<"Booking"> | number
   source?: Prisma.StringFilter<"Booking"> | string
+  originDomain?: Prisma.StringNullableFilter<"Booking"> | string | null
   utm?: Prisma.JsonNullableFilter<"Booking">
   referrer?: Prisma.StringNullableFilter<"Booking"> | string | null
   idempotencyKey?: Prisma.StringFilter<"Booking"> | string
@@ -515,6 +523,7 @@ export type BookingOrderByWithRelationInput = {
   additionalServicesPrice?: Prisma.SortOrder
   deposit?: Prisma.SortOrder
   source?: Prisma.SortOrder
+  originDomain?: Prisma.SortOrderInput | Prisma.SortOrder
   utm?: Prisma.SortOrderInput | Prisma.SortOrder
   referrer?: Prisma.SortOrderInput | Prisma.SortOrder
   idempotencyKey?: Prisma.SortOrder
@@ -558,6 +567,7 @@ export type BookingWhereUniqueInput = Prisma.AtLeast<{
   additionalServicesPrice?: Prisma.IntFilter<"Booking"> | number
   deposit?: Prisma.IntFilter<"Booking"> | number
   source?: Prisma.StringFilter<"Booking"> | string
+  originDomain?: Prisma.StringNullableFilter<"Booking"> | string | null
   utm?: Prisma.JsonNullableFilter<"Booking">
   referrer?: Prisma.StringNullableFilter<"Booking"> | string | null
   privacyConsentAt?: Prisma.DateTimeNullableFilter<"Booking"> | Date | string | null
@@ -596,6 +606,7 @@ export type BookingOrderByWithAggregationInput = {
   additionalServicesPrice?: Prisma.SortOrder
   deposit?: Prisma.SortOrder
   source?: Prisma.SortOrder
+  originDomain?: Prisma.SortOrderInput | Prisma.SortOrder
   utm?: Prisma.SortOrderInput | Prisma.SortOrder
   referrer?: Prisma.SortOrderInput | Prisma.SortOrder
   idempotencyKey?: Prisma.SortOrder
@@ -642,6 +653,7 @@ export type BookingScalarWhereWithAggregatesInput = {
   additionalServicesPrice?: Prisma.IntWithAggregatesFilter<"Booking"> | number
   deposit?: Prisma.IntWithAggregatesFilter<"Booking"> | number
   source?: Prisma.StringWithAggregatesFilter<"Booking"> | string
+  originDomain?: Prisma.StringNullableWithAggregatesFilter<"Booking"> | string | null
   utm?: Prisma.JsonNullableWithAggregatesFilter<"Booking">
   referrer?: Prisma.StringNullableWithAggregatesFilter<"Booking"> | string | null
   idempotencyKey?: Prisma.StringWithAggregatesFilter<"Booking"> | string
@@ -679,6 +691,7 @@ export type BookingCreateInput = {
   additionalServicesPrice: number
   deposit: number
   source: string
+  originDomain?: string | null
   utm?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   referrer?: string | null
   idempotencyKey: string
@@ -718,6 +731,7 @@ export type BookingUncheckedCreateInput = {
   additionalServicesPrice: number
   deposit: number
   source: string
+  originDomain?: string | null
   utm?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   referrer?: string | null
   idempotencyKey: string
@@ -754,6 +768,7 @@ export type BookingUpdateInput = {
   additionalServicesPrice?: Prisma.IntFieldUpdateOperationsInput | number
   deposit?: Prisma.IntFieldUpdateOperationsInput | number
   source?: Prisma.StringFieldUpdateOperationsInput | string
+  originDomain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   utm?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   referrer?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   idempotencyKey?: Prisma.StringFieldUpdateOperationsInput | string
@@ -793,6 +808,7 @@ export type BookingUncheckedUpdateInput = {
   additionalServicesPrice?: Prisma.IntFieldUpdateOperationsInput | number
   deposit?: Prisma.IntFieldUpdateOperationsInput | number
   source?: Prisma.StringFieldUpdateOperationsInput | string
+  originDomain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   utm?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   referrer?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   idempotencyKey?: Prisma.StringFieldUpdateOperationsInput | string
@@ -831,6 +847,7 @@ export type BookingCreateManyInput = {
   additionalServicesPrice: number
   deposit: number
   source: string
+  originDomain?: string | null
   utm?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   referrer?: string | null
   idempotencyKey: string
@@ -867,6 +884,7 @@ export type BookingUpdateManyMutationInput = {
   additionalServicesPrice?: Prisma.IntFieldUpdateOperationsInput | number
   deposit?: Prisma.IntFieldUpdateOperationsInput | number
   source?: Prisma.StringFieldUpdateOperationsInput | string
+  originDomain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   utm?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   referrer?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   idempotencyKey?: Prisma.StringFieldUpdateOperationsInput | string
@@ -905,6 +923,7 @@ export type BookingUncheckedUpdateManyInput = {
   additionalServicesPrice?: Prisma.IntFieldUpdateOperationsInput | number
   deposit?: Prisma.IntFieldUpdateOperationsInput | number
   source?: Prisma.StringFieldUpdateOperationsInput | string
+  originDomain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   utm?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   referrer?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   idempotencyKey?: Prisma.StringFieldUpdateOperationsInput | string
@@ -953,6 +972,7 @@ export type BookingCountOrderByAggregateInput = {
   additionalServicesPrice?: Prisma.SortOrder
   deposit?: Prisma.SortOrder
   source?: Prisma.SortOrder
+  originDomain?: Prisma.SortOrder
   utm?: Prisma.SortOrder
   referrer?: Prisma.SortOrder
   idempotencyKey?: Prisma.SortOrder
@@ -1003,6 +1023,7 @@ export type BookingMaxOrderByAggregateInput = {
   additionalServicesPrice?: Prisma.SortOrder
   deposit?: Prisma.SortOrder
   source?: Prisma.SortOrder
+  originDomain?: Prisma.SortOrder
   referrer?: Prisma.SortOrder
   idempotencyKey?: Prisma.SortOrder
   privacyConsentAt?: Prisma.SortOrder
@@ -1038,6 +1059,7 @@ export type BookingMinOrderByAggregateInput = {
   additionalServicesPrice?: Prisma.SortOrder
   deposit?: Prisma.SortOrder
   source?: Prisma.SortOrder
+  originDomain?: Prisma.SortOrder
   referrer?: Prisma.SortOrder
   idempotencyKey?: Prisma.SortOrder
   privacyConsentAt?: Prisma.SortOrder
@@ -1138,6 +1160,7 @@ export type BookingCreateWithoutCarInput = {
   additionalServicesPrice: number
   deposit: number
   source: string
+  originDomain?: string | null
   utm?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   referrer?: string | null
   idempotencyKey: string
@@ -1175,6 +1198,7 @@ export type BookingUncheckedCreateWithoutCarInput = {
   additionalServicesPrice: number
   deposit: number
   source: string
+  originDomain?: string | null
   utm?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   referrer?: string | null
   idempotencyKey: string
@@ -1242,6 +1266,7 @@ export type BookingScalarWhereInput = {
   additionalServicesPrice?: Prisma.IntFilter<"Booking"> | number
   deposit?: Prisma.IntFilter<"Booking"> | number
   source?: Prisma.StringFilter<"Booking"> | string
+  originDomain?: Prisma.StringNullableFilter<"Booking"> | string | null
   utm?: Prisma.JsonNullableFilter<"Booking">
   referrer?: Prisma.StringNullableFilter<"Booking"> | string | null
   idempotencyKey?: Prisma.StringFilter<"Booking"> | string
@@ -1279,6 +1304,7 @@ export type BookingCreateManyCarInput = {
   additionalServicesPrice: number
   deposit: number
   source: string
+  originDomain?: string | null
   utm?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   referrer?: string | null
   idempotencyKey: string
@@ -1315,6 +1341,7 @@ export type BookingUpdateWithoutCarInput = {
   additionalServicesPrice?: Prisma.IntFieldUpdateOperationsInput | number
   deposit?: Prisma.IntFieldUpdateOperationsInput | number
   source?: Prisma.StringFieldUpdateOperationsInput | string
+  originDomain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   utm?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   referrer?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   idempotencyKey?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1352,6 +1379,7 @@ export type BookingUncheckedUpdateWithoutCarInput = {
   additionalServicesPrice?: Prisma.IntFieldUpdateOperationsInput | number
   deposit?: Prisma.IntFieldUpdateOperationsInput | number
   source?: Prisma.StringFieldUpdateOperationsInput | string
+  originDomain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   utm?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   referrer?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   idempotencyKey?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1389,6 +1417,7 @@ export type BookingUncheckedUpdateManyWithoutCarInput = {
   additionalServicesPrice?: Prisma.IntFieldUpdateOperationsInput | number
   deposit?: Prisma.IntFieldUpdateOperationsInput | number
   source?: Prisma.StringFieldUpdateOperationsInput | string
+  originDomain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   utm?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   referrer?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   idempotencyKey?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1429,6 +1458,7 @@ export type BookingSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   additionalServicesPrice?: boolean
   deposit?: boolean
   source?: boolean
+  originDomain?: boolean
   utm?: boolean
   referrer?: boolean
   idempotencyKey?: boolean
@@ -1468,6 +1498,7 @@ export type BookingSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   additionalServicesPrice?: boolean
   deposit?: boolean
   source?: boolean
+  originDomain?: boolean
   utm?: boolean
   referrer?: boolean
   idempotencyKey?: boolean
@@ -1507,6 +1538,7 @@ export type BookingSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   additionalServicesPrice?: boolean
   deposit?: boolean
   source?: boolean
+  originDomain?: boolean
   utm?: boolean
   referrer?: boolean
   idempotencyKey?: boolean
@@ -1546,6 +1578,7 @@ export type BookingSelectScalar = {
   additionalServicesPrice?: boolean
   deposit?: boolean
   source?: boolean
+  originDomain?: boolean
   utm?: boolean
   referrer?: boolean
   idempotencyKey?: boolean
@@ -1556,7 +1589,7 @@ export type BookingSelectScalar = {
   updatedAt?: boolean
 }
 
-export type BookingOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "bookingNumber" | "carId" | "carTitle" | "startAt" | "endAt" | "pickupMethod" | "deliveryAddress" | "customerName" | "phone" | "telegram" | "birthDate" | "licenseIssuedOn" | "driverAgeAtStart" | "drivingExperienceMonths" | "minimumAgeApplied" | "minimumExperienceApplied" | "minimumRentalDaysApplied" | "additionalServiceIds" | "additionalServicesSnapshot" | "comment" | "rentalDays" | "pricePerDaySnapshot" | "rentalPrice" | "additionalServicesPrice" | "deposit" | "source" | "utm" | "referrer" | "idempotencyKey" | "privacyConsentAt" | "integrityProtected" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["booking"]>
+export type BookingOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "bookingNumber" | "carId" | "carTitle" | "startAt" | "endAt" | "pickupMethod" | "deliveryAddress" | "customerName" | "phone" | "telegram" | "birthDate" | "licenseIssuedOn" | "driverAgeAtStart" | "drivingExperienceMonths" | "minimumAgeApplied" | "minimumExperienceApplied" | "minimumRentalDaysApplied" | "additionalServiceIds" | "additionalServicesSnapshot" | "comment" | "rentalDays" | "pricePerDaySnapshot" | "rentalPrice" | "additionalServicesPrice" | "deposit" | "source" | "originDomain" | "utm" | "referrer" | "idempotencyKey" | "privacyConsentAt" | "integrityProtected" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["booking"]>
 export type BookingInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   car?: boolean | Prisma.CarDefaultArgs<ExtArgs>
 }
@@ -1600,6 +1633,7 @@ export type $BookingPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     additionalServicesPrice: number
     deposit: number
     source: string
+    originDomain: string | null
     utm: runtime.JsonValue | null
     referrer: string | null
     idempotencyKey: string
@@ -2059,6 +2093,7 @@ export interface BookingFieldRefs {
   readonly additionalServicesPrice: Prisma.FieldRef<"Booking", 'Int'>
   readonly deposit: Prisma.FieldRef<"Booking", 'Int'>
   readonly source: Prisma.FieldRef<"Booking", 'String'>
+  readonly originDomain: Prisma.FieldRef<"Booking", 'String'>
   readonly utm: Prisma.FieldRef<"Booking", 'Json'>
   readonly referrer: Prisma.FieldRef<"Booking", 'String'>
   readonly idempotencyKey: Prisma.FieldRef<"Booking", 'String'>

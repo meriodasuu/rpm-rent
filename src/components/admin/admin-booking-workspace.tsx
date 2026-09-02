@@ -180,7 +180,7 @@ export function AdminBookingWorkspace({
                   <section className="admin-booking-note"><h3>Дополнительные услуги</h3><p>{selected.additionalServicesSnapshot.map((service) => service.title).join(", ")}</p></section>
                 ) : null}
                 {selected.comment ? <section className="admin-booking-note"><h3>Комментарий клиента</h3><p>{selected.comment}</p></section> : null}
-                <section className="admin-booking-note admin-booking-source"><h3>Источник</h3><p><MapPin size={14} /> {selected.source}{selected.referrer ? ` · ${selected.referrer}` : ""}</p></section>
+                <section className="admin-booking-note admin-booking-source"><h3>Источник</h3><p><MapPin size={14} /> {selected.source} · {selected.originDomain ?? "Домен не определён"}{selected.referrer ? ` · ${selected.referrer}` : ""}</p></section>
 
                 <footer className="admin-booking-decision">
                   <div><Clock3 size={17} /><span><strong>Следующий шаг</strong><small>Выберите новый статус обращения</small></span></div>
@@ -205,7 +205,7 @@ export function AdminBookingWorkspace({
           <p className="admin-kicker">Яндекс.Директ</p><h2>Короткие лиды</h2>
           <div className="admin-booking-list" aria-label="Лиды Яндекс.Директа">{leads.map((lead) => <a key={lead.id} href={phoneHref(lead.phone)}>
             <span className="admin-booking-list-top"><strong>Лид Директа · {lead.carTitle}</strong><time>{formatDateTime(lead.createdAt)}</time></span>
-            <span className="admin-booking-list-contact">{lead.phone}</span><span className="admin-booking-list-car">Дата начала: {formatRentalDate(lead.startAt)}</span>
+            <span className="admin-booking-list-contact">{lead.phone}</span><span className="admin-booking-list-car">Дата начала: {formatRentalDate(lead.startAt)} · {lead.originDomain ?? "Домен не определён"}</span>
           </a>)}</div>
         </section> : null}
       </div>

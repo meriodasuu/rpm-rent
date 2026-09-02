@@ -7,7 +7,7 @@ import { prepareBooking } from "@/lib/domain/booking";
 import { assertRentalPeriod, normalizeStoredDate } from "@/lib/domain/dates";
 import { DomainError } from "@/lib/domain/errors";
 import type { BookingInput, DirectLeadInput } from "@/lib/validation";
-import type { Booking, BookingStatus, Car, DevDatabase, Faq, Lead, LeadCreateResult, Location, Service, TelegramOperator } from "@/types/domain";
+import type { Booking, BookingStatus, Car, DevDatabase, Faq, Lead, LeadCreateResult, Location, OriginDomain, Service, TelegramOperator } from "@/types/domain";
 import type { DataStore } from "./store";
 
 const configuredDbPath = process.env.FILE_DATABASE_PATH?.trim();
@@ -21,6 +21,7 @@ const normalizeCar = (car: Car): Car => {
 
 const normalizeBooking = (booking: Booking): Booking => ({
   ...booking,
+  originDomain: booking.originDomain ?? null,
   startAt: normalizeStoredDate(booking.startAt),
   endAt: normalizeStoredDate(booking.endAt),
   birthDate: booking.birthDate ? normalizeStoredDate(booking.birthDate) : null,
@@ -57,7 +58,7 @@ const normalizeDatabase = (database: DevDatabase): DevDatabase => ({
   ...database,
   cars: database.cars.map(normalizeCar),
   bookings: normalizeBookings(database.bookings),
-  leads: database.leads ?? [],
+  leads: (database.leads ?? []).map((lead) => ({ ...lead, originDomain: lead.originDomain ?? null })),
   locations: database.locations ?? [],
   telegramOperators: database.telegramOperators ?? []
 });
@@ -209,7 +210,7 @@ export class FileStore implements DataStore {
     return !hasBookingConflict(database.bookings, carId, startDate, endDate);
   }
 
-  async createBooking(input: BookingInput): Promise<Booking> {
+  async createBooking(input: BookingInput, originDomain: OriginDomain | null = null): Promise<Booking> {
     return this.mutate((database) => {
       const existing = database.bookings.find((item) => item.idempotencyKey === input.idempotencyKey);
       if (existing) return existing;
@@ -247,6 +248,7 @@ export class FileStore implements DataStore {
         additionalServicesPrice: prepared.calculation.servicesPrice,
         deposit: prepared.calculation.deposit,
         source: "website_booking",
+        originDomain,
         utm: input.utm,
         referrer: input.referrer || null,
         idempotencyKey: input.idempotencyKey,
@@ -263,7 +265,7 @@ export class FileStore implements DataStore {
     return (await this.readDatabase()).bookings.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
   }
 
-  async createLead(input: DirectLeadInput): Promise<LeadCreateResult> {
+  async createLead(input: DirectLeadInput, originDomain: OriginDomain | null = null): Promise<LeadCreateResult> {
     return this.mutate((database) => {
       const existing = database.leads.find((item) => item.idempotencyKey === input.idempotencyKey);
       if (existing) return { lead: existing, created: false };
@@ -271,7 +273,7 @@ export class FileStore implements DataStore {
       if (!car) throw new DomainError("NOT_FOUND", "Автомобиль недоступен для заявки", 404);
       const lead: Lead = {
         id: crypto.randomUUID(), carId: car.id, carTitle: car.title, startAt: input.startAt, phone: input.phone,
-        source: "yandex_direct", utm: input.utm, landingPath: input.landingPath, referrer: input.referrer || null,
+        source: "yandex_direct", originDomain, utm: input.utm, landingPath: input.landingPath, referrer: input.referrer || null,
         idempotencyKey: input.idempotencyKey, privacyConsentAt: new Date().toISOString(), status: "NEW", createdAt: new Date().toISOString()
       };
       database.leads.unshift(lead);

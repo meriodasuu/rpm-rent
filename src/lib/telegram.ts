@@ -34,6 +34,7 @@ export const formatBookingDetails = (booking: Booking, heading = "Новая з�
     `Услуги: ${services}`,
     `Стоимость: ${money(booking.rentalPrice + booking.additionalServicesPrice)}, залог ${money(booking.deposit)}`,
     `Комментарий: ${booking.comment ?? "нет"}`,
+    `Домен: ${booking.originDomain ?? "не определён"}`,
     `Статус: ${booking.status}`,
     `Команда: /booking ${booking.bookingNumber}`
   ].join("\n");

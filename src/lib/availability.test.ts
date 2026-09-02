@@ -7,7 +7,7 @@ const booking = (status: Booking["status"]): Booking => ({
   deliveryAddress: null, customerName: "Иван", phone: "+79990000000", telegram: null, birthDate: "1990-01-01", licenseIssuedOn: "2010-01-01",
   driverAgeAtStart: 37, drivingExperienceMonths: 204, minimumAgeApplied: 18, minimumDrivingExperienceApplied: 0, minimumRentalDaysApplied: 1,
   additionalServiceIds: [], additionalServicesSnapshot: [], comment: null, rentalDays: 2, pricePerDaySnapshot: 10_000, rentalPrice: 20_000,
-  additionalServicesPrice: 0, deposit: 30_000, source: "test", utm: {}, referrer: null, idempotencyKey: crypto.randomUUID(), privacyConsentAt: new Date().toISOString(), status, createdAt: new Date().toISOString()
+  additionalServicesPrice: 0, deposit: 30_000, source: "test", originDomain: null, utm: {}, referrer: null, idempotencyKey: crypto.randomUUID(), privacyConsentAt: new Date().toISOString(), status, createdAt: new Date().toISOString()
 });
 
 describe("availability", () => {

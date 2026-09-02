@@ -105,6 +105,7 @@ model Booking {
   additionalServicesPrice   Int
   deposit                   Int
   source                    String
+  originDomain              String?
   utm                       Json?
   referrer                  String?
   idempotencyKey            String        @unique
@@ -125,6 +126,7 @@ model Lead {
   startAt            DateTime @db.Date
   phone              String
   source             String   @default("yandex_direct")
+  originDomain       String?
   utm                Json     @default("{}")
   landingPath        String
   referrer           String?

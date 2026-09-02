@@ -3,7 +3,7 @@ import { directLeadSchema } from "./validation";
 
 const validLead = {
   carId: "tesla-model-3",
-  startAt: "2026-09-01",
+  startAt: "2027-09-01",
   phone: "+7 999 123-45-67",
   privacyConsent: true,
   utm: { utm_source: "yandex", yclid: "123" },

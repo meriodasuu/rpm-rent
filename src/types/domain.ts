@@ -77,6 +77,7 @@ export type Location = {
 
 export type BookingStatus = "NEW" | "IN_PROGRESS" | "CONFIRMED" | "DECLINED" | "CANCELLED" | "COMPLETED";
 export type LeadStatus = "NEW";
+export type OriginDomain = "rpm-rent.ru" | "rpmrent.ru";
 export type TelegramOperatorRole = "ADMIN" | "OPERATOR";
 export type TelegramOperator = { id: string; telegramUserId: string | null; username: string; role: TelegramOperatorRole; createdAt: string };
 
@@ -110,6 +111,7 @@ export type Booking = {
   additionalServicesPrice: number;
   deposit: number;
   source: string;
+  originDomain: OriginDomain | null;
   utm: Record<string, string>;
   referrer: string | null;
   idempotencyKey: string;
@@ -125,6 +127,7 @@ export type Lead = {
   startAt: string;
   phone: string;
   source: "yandex_direct";
+  originDomain: OriginDomain | null;
   utm: Record<string, string>;
   landingPath: string;
   referrer: string | null;

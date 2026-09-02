@@ -11,6 +11,7 @@
 export type * from './models/Car'
 export type * from './models/CarImage'
 export type * from './models/Booking'
+export type * from './models/Lead'
 export type * from './models/Service'
 export type * from './models/Faq'
 export type * from './models/Location'

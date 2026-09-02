@@ -7,7 +7,7 @@ import { prepareBooking } from "@/lib/domain/booking";
 import { assertRentalPeriod, normalizeStoredDate, parseDateOnly } from "@/lib/domain/dates";
 import { DomainError } from "@/lib/domain/errors";
 import type { BookingInput, DirectLeadInput } from "@/lib/validation";
-import type { Booking, BookingServiceSnapshot, BookingStatus, Car, Faq, Lead, LeadCreateResult, Location, Service, TelegramOperator } from "@/types/domain";
+import type { Booking, BookingServiceSnapshot, BookingStatus, Car, Faq, Lead, LeadCreateResult, Location, OriginDomain, Service, TelegramOperator } from "@/types/domain";
 import type { DataStore } from "./store";
 
 declare global {
@@ -248,7 +248,7 @@ export class PrismaStore implements DataStore {
 
   async deleteLocation(id: string) { await getPrisma().location.delete({ where: { id } }); }
 
-  async createBooking(input: BookingInput): Promise<Booking> {
+  async createBooking(input: BookingInput, originDomain: OriginDomain | null = null): Promise<Booking> {
     try {
       const result = await getPrisma().$transaction(async (database) => {
         const existing = await database.booking.findUnique({ where: { idempotencyKey: input.idempotencyKey } });
@@ -291,6 +291,7 @@ export class PrismaStore implements DataStore {
             additionalServicesPrice: prepared.calculation.servicesPrice,
             deposit: prepared.calculation.deposit,
             source: "website_booking",
+            originDomain,
             utm: input.utm,
             referrer: input.referrer || null,
             idempotencyKey: input.idempotencyKey,
@@ -329,7 +330,7 @@ export class PrismaStore implements DataStore {
     return !conflict;
   }
 
-  async createLead(input: DirectLeadInput): Promise<LeadCreateResult> {
+  async createLead(input: DirectLeadInput, originDomain: OriginDomain | null = null): Promise<LeadCreateResult> {
     try {
       const result = await getPrisma().$transaction(async (database) => {
         const existing = await database.lead.findUnique({ where: { idempotencyKey: input.idempotencyKey } });
@@ -338,7 +339,7 @@ export class PrismaStore implements DataStore {
         if (!car) throw new DomainError("NOT_FOUND", "Автомобиль недоступен для заявки", 404);
         const record = await database.lead.create({ data: {
           carId: car.id, carTitle: car.title, startAt: toDatabaseDate(input.startAt), phone: input.phone,
-          source: "yandex_direct", utm: input.utm, landingPath: input.landingPath, referrer: input.referrer || null,
+          source: "yandex_direct", originDomain, utm: input.utm, landingPath: input.landingPath, referrer: input.referrer || null,
           idempotencyKey: input.idempotencyKey, privacyConsentAt: new Date(), status: "NEW"
         } });
         return { record, created: true };
@@ -384,6 +385,7 @@ export class PrismaStore implements DataStore {
       additionalServicesPrice: record.additionalServicesPrice,
       deposit: record.deposit,
       source: record.source,
+      originDomain: record.originDomain as OriginDomain | null,
       utm: asStringRecord(record.utm),
       referrer: record.referrer,
       idempotencyKey: record.idempotencyKey,
@@ -403,10 +405,10 @@ export class PrismaStore implements DataStore {
     return rows.map((row) => this.mapLead(row));
   }
 
-  private mapLead(record: { id: string; carId: string; carTitle: string; startAt: Date; phone: string; utm: unknown; landingPath: string; referrer: string | null; idempotencyKey: string; privacyConsentAt: Date; createdAt: Date }): Lead {
+  private mapLead(record: { id: string; carId: string; carTitle: string; startAt: Date; phone: string; originDomain: string | null; utm: unknown; landingPath: string; referrer: string | null; idempotencyKey: string; privacyConsentAt: Date; createdAt: Date }): Lead {
     return {
       id: record.id, carId: record.carId, carTitle: record.carTitle, startAt: normalizeStoredDate(record.startAt), phone: record.phone,
-      source: "yandex_direct", utm: asStringRecord(record.utm), landingPath: record.landingPath, referrer: record.referrer,
+      source: "yandex_direct", originDomain: record.originDomain as OriginDomain | null, utm: asStringRecord(record.utm), landingPath: record.landingPath, referrer: record.referrer,
       idempotencyKey: record.idempotencyKey, privacyConsentAt: record.privacyConsentAt.toISOString(), status: "NEW", createdAt: record.createdAt.toISOString()
     };
   }

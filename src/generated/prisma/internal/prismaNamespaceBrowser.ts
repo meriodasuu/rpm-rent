@@ -54,6 +54,7 @@ export const ModelName = {
   Car: 'Car',
   CarImage: 'CarImage',
   Booking: 'Booking',
+  Lead: 'Lead',
   Service: 'Service',
   Faq: 'Faq',
   Location: 'Location',
@@ -158,6 +159,7 @@ export const BookingScalarFieldEnum = {
   additionalServicesPrice: 'additionalServicesPrice',
   deposit: 'deposit',
   source: 'source',
+  originDomain: 'originDomain',
   utm: 'utm',
   referrer: 'referrer',
   idempotencyKey: 'idempotencyKey',
@@ -169,6 +171,27 @@ export const BookingScalarFieldEnum = {
 } as const
 
 export type BookingScalarFieldEnum = (typeof BookingScalarFieldEnum)[keyof typeof BookingScalarFieldEnum]
+
+
+export const LeadScalarFieldEnum = {
+  id: 'id',
+  carId: 'carId',
+  carTitle: 'carTitle',
+  startAt: 'startAt',
+  phone: 'phone',
+  source: 'source',
+  originDomain: 'originDomain',
+  utm: 'utm',
+  landingPath: 'landingPath',
+  referrer: 'referrer',
+  idempotencyKey: 'idempotencyKey',
+  privacyConsentAt: 'privacyConsentAt',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type LeadScalarFieldEnum = (typeof LeadScalarFieldEnum)[keyof typeof LeadScalarFieldEnum]
 
 
 export const ServiceScalarFieldEnum = {

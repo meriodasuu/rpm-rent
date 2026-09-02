@@ -11,6 +11,7 @@ export const notifyLeadCreated = async (lead: Lead): Promise<boolean> => {
     `Автомобиль: ${lead.carTitle}`,
     `Дата начала: ${lead.startAt}`,
     `Телефон: ${lead.phone}`,
+    `Домен: ${lead.originDomain ?? "не определён"}`,
     `Посадочная: ${lead.landingPath}`,
     `Источник: ${lead.utm.yclid ? "yclid" : "utm_source=yandex"}`
   ].join("\n");
