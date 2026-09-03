@@ -9,4 +9,12 @@ describe("getRequestOriginDomain", () => {
   ])("maps %s to %s", (url, expected) => {
     expect(getRequestOriginDomain(new Request(url))).toBe(expected);
   });
+
+  it("uses the public Host header when Next.js exposes its internal standalone URL", () => {
+    const request = new Request("http://0.0.0.0:3000/api/bookings", {
+      headers: { host: "rpmrent.ru" },
+    });
+
+    expect(getRequestOriginDomain(request)).toBe("rpmrent.ru");
+  });
 });
