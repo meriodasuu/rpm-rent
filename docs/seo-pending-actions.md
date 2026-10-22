@@ -17,3 +17,4 @@
 - Заявки закрыты от индексации, параметры каталога canonical на `/cars`.
 - Sitemap проверен: 66 URL без ошибок, повторных Title и Description нет.
 - Цель Метрики `673244095` создана и назначена в кампании BMW; сама кампания остановлена.
+- Для Porsche 911 Carrera 4S, Lamborghini Urus, BMW M5, Mercedes-Benz AMG G 63, Porsche Cayenne GTS/Turbo, Porsche Panamera 4 и Porsche Taycan Turbo S добавлены уникальные description из production-данных. Live-проверка пройдена; повторов среди опубликованных автомобилей нет.
