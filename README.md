@@ -42,6 +42,10 @@ pnpm dev
 - `NEXT_PUBLIC_YANDEX_METRIKA_ID` — необязательный ID Метрики;
 - `NEXT_PUBLIC_TELEGRAM_URL`, `NEXT_PUBLIC_PHONE`, `NEXT_PUBLIC_ADDRESS` — только подтверждённые контакты;
 - `CRM_WEBHOOK_URL` — необязательный серверный webhook для копии новой заявки.
+- `TELEGRAM_BOT_TOKEN` — токен бота из BotFather; хранится только на сервере;
+- `TELEGRAM_ALERT_CHAT_ID` — необязательный ID служебного чата для лидов Яндекс.Директ; заявки на аренду бот отправляет всем активированным сотрудникам;
+- `TELEGRAM_BOOTSTRAP_ADMINS` — usernames первых администраторов через запятую, без `@`; после первого `/start` доступ закрепляется за их Telegram ID;
+- `TELEGRAM_WEBHOOK_SECRET` — случайный секрет для проверки входящих Telegram webhook-запросов.
 
 Создание хеша:
 
@@ -99,6 +103,18 @@ Seed находится в `src/data/seed.ts`. Полный архив не ко
 3. Выполните `pnpm build` и `pnpm start` либо используйте Node-compatible платформу.
 4. Снимите `isDemo` только у проверенных записей.
 5. Не переносите локальный `.env.local` и `.data/db.json` в production.
+
+## Telegram-бот заявок
+
+1. Создайте бота через BotFather и добавьте `TELEGRAM_BOT_TOKEN` в production environment.
+2. Каждый сотрудник должен открыть бота и выполнить `/start`. Администратор добавляет новых сотрудников командой `/allow @username`, после чего сотрудник также выполняет `/start`.
+3. Создайте случайный `TELEGRAM_WEBHOOK_SECRET` и установите webhook после деплоя:
+
+```bash
+curl -X POST "https://api.telegram.org/bot<TOKEN>/setWebhook" -d "url=https://<DOMAIN>/api/telegram/webhook" -d "secret_token=<WEBHOOK_SECRET>" -d 'allowed_updates=["message"]'
+```
+
+Доступные команды: `/new` выводит до десяти новых заявок, `/booking <id>` — полную карточку. Новая заявка сначала сохраняется в базе и админке, затем отправляется всем активированным сотрудникам в Telegram; недоступность Telegram не мешает оформлению заявки.
 
 ## SEO redirects
 

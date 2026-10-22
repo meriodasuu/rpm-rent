@@ -1,9 +1,6 @@
-DO $$ BEGIN
-  CREATE TYPE "TelegramOperatorRole" AS ENUM ('ADMIN', 'OPERATOR');
-EXCEPTION WHEN duplicate_object THEN NULL;
-END $$;
+CREATE TYPE "TelegramOperatorRole" AS ENUM ('ADMIN', 'OPERATOR');
 
-CREATE TABLE IF NOT EXISTS "TelegramOperator" (
+CREATE TABLE "TelegramOperator" (
   "id" TEXT NOT NULL,
   "telegramUserId" TEXT,
   "username" TEXT NOT NULL,
@@ -13,5 +10,5 @@ CREATE TABLE IF NOT EXISTS "TelegramOperator" (
   CONSTRAINT "TelegramOperator_pkey" PRIMARY KEY ("id")
 );
 
-CREATE UNIQUE INDEX IF NOT EXISTS "TelegramOperator_telegramUserId_key" ON "TelegramOperator"("telegramUserId");
-CREATE UNIQUE INDEX IF NOT EXISTS "TelegramOperator_username_key" ON "TelegramOperator"("username");
+CREATE UNIQUE INDEX "TelegramOperator_telegramUserId_key" ON "TelegramOperator"("telegramUserId");
+CREATE UNIQUE INDEX "TelegramOperator_username_key" ON "TelegramOperator"("username");

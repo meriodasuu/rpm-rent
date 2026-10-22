@@ -1,5 +1,5 @@
 export const formatPrice = (value: number) =>
-  new Intl.NumberFormat("ru-RU", { maximumFractionDigits: 0 }).format(value) + " ₽";
+  new Intl.NumberFormat("ru-RU", { maximumFractionDigits: 2 }).format(value) + " ₽";
 
 export const formatDeposit = (value: number) => value > 0 ? formatPrice(value) : "Индивидуально";
 

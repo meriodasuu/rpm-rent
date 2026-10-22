@@ -1,26 +1,38 @@
+import { getPaidTrafficSource } from "@/lib/direct-traffic";
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import { createSeedDatabase } from "@/data/seed";
+import { normalizeImportedPublicCopy } from "@/data/imported-cars";
 import { hasBookingConflict } from "@/lib/availability";
 import { assertBookingStatusTransition } from "@/lib/domain/booking-status";
+import { parseLeadStatus } from "@/lib/domain/lead-status";
 import { prepareBooking } from "@/lib/domain/booking";
 import { assertRentalPeriod, normalizeStoredDate } from "@/lib/domain/dates";
 import { DomainError } from "@/lib/domain/errors";
 import type { BookingInput, DirectLeadInput } from "@/lib/validation";
-import type { Booking, BookingStatus, Car, DevDatabase, Faq, Lead, LeadCreateResult, Location, Service, TelegramOperator } from "@/types/domain";
+import type { Booking, BookingStatus, Car, DevDatabase, Faq, Lead, LeadCreateResult, Location, OriginDomain, Service, TelegramOperator } from "@/types/domain";
 import type { DataStore } from "./store";
 
 const configuredDbPath = process.env.FILE_DATABASE_PATH?.trim();
 const defaultDbPath = configuredDbPath ? path.resolve(configuredDbPath) : path.join(process.cwd(), ".data", "db.json");
 
 const normalizeCar = (car: Car): Car => {
-  const normalized = { ...car, minimumRentalDays: car.minimumRentalDays ?? null };
+  const normalized = {
+    ...car,
+    minimumRentalDays: car.minimumRentalDays ?? null,
+    shortDescription: normalizeImportedPublicCopy(car.shortDescription),
+    description: normalizeImportedPublicCopy(car.description),
+    seoDescription: car.seoDescription ? normalizeImportedPublicCopy(car.seoDescription) : car.seoDescription,
+    features: car.features.map(normalizeImportedPublicCopy),
+    rentalConditions: car.rentalConditions.map(normalizeImportedPublicCopy),
+  };
   const policyComplete = normalized.minimumAge !== null && normalized.minimumDrivingExperience !== null && normalized.minimumRentalDays !== null;
   return { ...normalized, available: normalized.available && (!normalized.published || policyComplete) };
 };
 
 const normalizeBooking = (booking: Booking): Booking => ({
   ...booking,
+  originDomain: booking.originDomain ?? null,
   startAt: normalizeStoredDate(booking.startAt),
   endAt: normalizeStoredDate(booking.endAt),
   birthDate: booking.birthDate ? normalizeStoredDate(booking.birthDate) : null,
@@ -57,7 +69,7 @@ const normalizeDatabase = (database: DevDatabase): DevDatabase => ({
   ...database,
   cars: database.cars.map(normalizeCar),
   bookings: normalizeBookings(database.bookings),
-  leads: database.leads ?? [],
+  leads: (database.leads ?? []).map((lead) => ({ ...lead, originDomain: lead.originDomain ?? null })),
   locations: database.locations ?? [],
   telegramOperators: database.telegramOperators ?? []
 });
@@ -209,7 +221,7 @@ export class FileStore implements DataStore {
     return !hasBookingConflict(database.bookings, carId, startDate, endDate);
   }
 
-  async createBooking(input: BookingInput): Promise<Booking> {
+  async createBooking(input: BookingInput, originDomain: OriginDomain | null = null): Promise<Booking> {
     return this.mutate((database) => {
       const existing = database.bookings.find((item) => item.idempotencyKey === input.idempotencyKey);
       if (existing) return existing;
@@ -247,6 +259,7 @@ export class FileStore implements DataStore {
         additionalServicesPrice: prepared.calculation.servicesPrice,
         deposit: prepared.calculation.deposit,
         source: "website_booking",
+        originDomain,
         utm: input.utm,
         referrer: input.referrer || null,
         idempotencyKey: input.idempotencyKey,
@@ -263,7 +276,7 @@ export class FileStore implements DataStore {
     return (await this.readDatabase()).bookings.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
   }
 
-  async createLead(input: DirectLeadInput): Promise<LeadCreateResult> {
+  async createLead(input: DirectLeadInput, originDomain: OriginDomain | null = null): Promise<LeadCreateResult> {
     return this.mutate((database) => {
       const existing = database.leads.find((item) => item.idempotencyKey === input.idempotencyKey);
       if (existing) return { lead: existing, created: false };
@@ -271,7 +284,7 @@ export class FileStore implements DataStore {
       if (!car) throw new DomainError("NOT_FOUND", "Автомобиль недоступен для заявки", 404);
       const lead: Lead = {
         id: crypto.randomUUID(), carId: car.id, carTitle: car.title, startAt: input.startAt, phone: input.phone,
-        source: "yandex_direct", utm: input.utm, landingPath: input.landingPath, referrer: input.referrer || null,
+        source: getPaidTrafficSource(new URLSearchParams(input.utm)) ?? "yandex_direct", originDomain, utm: input.utm, landingPath: input.landingPath, referrer: input.referrer || null,
         idempotencyKey: input.idempotencyKey, privacyConsentAt: new Date().toISOString(), status: "NEW", createdAt: new Date().toISOString()
       };
       database.leads.unshift(lead);
@@ -290,6 +303,27 @@ export class FileStore implements DataStore {
       assertBookingStatusTransition(booking.status, status);
       booking.status = status;
     });
+  }
+
+  async updateInquiryComment(kind: "booking" | "lead", id: string, comment: string | null) {
+    await this.mutate((database) => {
+      const inquiry = (kind === "booking" ? database.bookings : database.leads).find((item) => item.id === id);
+      if (!inquiry) throw new DomainError("NOT_FOUND", "Обращение не найдено", 404);
+      inquiry.managerComment = comment;
+    });
+  }
+
+  async updateLeadStatus(id: string, status: import("@/types/domain").LeadStatus) {
+    const validated = parseLeadStatus(status);
+    await this.mutate((database) => {
+      const lead = database.leads.find((item) => item.id === id);
+      if (!lead) throw new DomainError("NOT_FOUND", "Лид не найден", 404);
+      lead.status = validated;
+    });
+  }
+
+  async getTelegramOperators() {
+    return (await this.readDatabase()).telegramOperators;
   }
 
   async getTelegramOperatorByUserId(telegramUserId: string) {

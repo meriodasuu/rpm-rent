@@ -3,6 +3,7 @@
 import { LoaderCircle, Phone } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useRef, useState } from "react";
+import { trackVkLead } from "@/lib/vk-pixel";
 import { getMarketingAttribution } from "@/components/marketing-attribution";
 
 type DirectLeadFormProps = { car: { id: string; title: string; pricePerDay: number }; initialStart: string };
@@ -37,17 +38,18 @@ export function DirectLeadForm({ car, initialStart }: DirectLeadFormProps) {
     const attribution = getMarketingAttribution();
     const queryAttribution = new URLSearchParams(window.location.search);
     const utm = Object.fromEntries([
-      ...Object.entries(attribution).filter(([key]) => key.startsWith("utm_") || key === "yclid"),
-      ...[...queryAttribution.entries()].filter(([key]) => key.startsWith("utm_") || key === "yclid")
+      ...Object.entries(attribution).filter(([key]) => key.startsWith("utm_") || key === "yclid" || key === "rb_clickid"),
+      ...[...queryAttribution.entries()].filter(([key]) => key.startsWith("utm_") || key === "yclid" || key === "rb_clickid")
     ]);
     try {
       const response = await fetch("/api/leads", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({
         carId: car.id, startAt, phone, privacyConsent: true, utm, landingPath: attribution.landingPath || window.location.pathname,
         referrer: attribution.referrer || document.referrer, idempotencyKey: idempotencyKey.current
       }) });
-      const result = await response.json() as { message?: string; errors?: Record<string, string[]> };
+      const result = await response.json() as { id?: string; message?: string; errors?: Record<string, string[]> };
       if (!response.ok) throw new Error(Object.values(result.errors ?? {}).flat()[0] || result.message || "Не удалось отправить заявку");
       window.dispatchEvent(new CustomEvent("rpm:analytics-track", { detail: { event: "direct_lead_submit" } }));
+      trackVkLead("lead", result.id || idempotencyKey.current);
       router.push("/spasibo");
     } catch (caught) {
       window.dispatchEvent(new CustomEvent("rpm:analytics-track", { detail: { event: "direct_lead_submit_error" } }));

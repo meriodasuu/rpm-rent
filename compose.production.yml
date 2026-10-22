@@ -23,6 +23,8 @@ services:
       args:
         NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL}
         NEXT_PUBLIC_YANDEX_METRIKA_ID: ${NEXT_PUBLIC_YANDEX_METRIKA_ID:-}
+        NEXT_PUBLIC_VK_PIXEL_ID: ${NEXT_PUBLIC_VK_PIXEL_ID:-}
+        NEXT_PUBLIC_VK_LEAD_GOAL: ${NEXT_PUBLIC_VK_LEAD_GOAL:-lead}
         NEXT_PUBLIC_TELEGRAM_URL: ${NEXT_PUBLIC_TELEGRAM_URL:-}
         NEXT_PUBLIC_PHONE: ${NEXT_PUBLIC_PHONE:-}
         NEXT_PUBLIC_ADDRESS: ${NEXT_PUBLIC_ADDRESS:-}
@@ -32,8 +34,8 @@ services:
     restart: unless-stopped
     env_file:
       - .env.production
-    extra_hosts:
-      - "api.telegram.org:149.154.167.220"
+    environment:
+      NODE_OPTIONS: --dns-result-order=ipv6first --no-network-family-autoselection
     depends_on:
       db:
         condition: service_healthy
@@ -44,6 +46,7 @@ services:
     networks:
       - backend
       - web
+      - telegram_egress
 
   caddy:
     image: caddy:2.10-alpine
@@ -70,12 +73,13 @@ services:
     depends_on:
       app:
         condition: service_started
-    extra_hosts:
-      - "api.telegram.org:149.154.167.220"
+    environment:
+      NODE_OPTIONS: --dns-result-order=ipv6first
     volumes:
       - ./deploy/telegram-poller.mjs:/app/telegram-poller.mjs:ro
     networks:
       - web
+      - telegram_egress
 
   tools:
     build:
@@ -99,6 +103,8 @@ networks:
   backend:
     internal: true
   web:
+  telegram_egress:
+    enable_ipv6: true
 
 volumes:
   postgres_data:

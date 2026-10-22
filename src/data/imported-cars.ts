@@ -2409,8 +2409,24 @@ const importedCarRecords: Car[] = [
   }
 ];
 
+export const normalizeImportedPublicCopy = (value: string) => value
+  .replace(/Характеристики и тарифы импортированы из рабочего стандарта RPM\./g, "Технические характеристики и условия аренды для этой модели.")
+  .replace(/Импортировано из рабочего стандарта RPM\./g, "Технические характеристики и условия аренды для этой модели.")
+  .replace(/Тариф на 12 часов не указан/g, "Тариф на 12 часов уточняется у менеджера")
+  .replace(/Тариф на 3–7 суток не указан/g, "Тариф на 3–7 суток уточняется у менеджера")
+  .replace("Сompetition", "Competition")
+  .replace("Разгон: дo 100 км/ч зaнимaет окoлo", "Разгон: до 100 км/ч занимает около")
+  .replace("Sроrt Сhrоnо", "Sport Chrono")
+  .replace("ceкунды", "секунды")
+  .replace("Поколение: Поколение: I (2013—2026", "Поколение: I (2013—2026");
+
 export const importedCars: Car[] = importedCarRecords.map((car) => ({
   ...car,
   category: vehicleClassForCar(car.slug),
   vehicleClass: vehicleClassForCar(car.slug),
+  shortDescription: normalizeImportedPublicCopy(car.shortDescription),
+  description: normalizeImportedPublicCopy(car.description),
+  seoDescription: car.seoDescription ? normalizeImportedPublicCopy(car.seoDescription) : car.seoDescription,
+  features: car.features.map(normalizeImportedPublicCopy),
+  rentalConditions: car.rentalConditions.map(normalizeImportedPublicCopy),
 }));
